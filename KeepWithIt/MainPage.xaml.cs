@@ -7,6 +7,7 @@ using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -20,43 +21,67 @@ namespace KeepWithIt {
 
 		public MainPage() {
 			this.InitializeComponent();
-			AddSquare();
-			AddSquare();
-			AddSquare();
-			AddSquare();
-			AddSquare();
-			AddSquare();
+			AddInterfaceSquares();
 
-
-
-#if DEBUG
-			var bigSquare = GetPresentationSquare(
-				squareElements[0]
-			);
-
-			PresentSquare(bigSquare);
-
-			Thread.Sleep(1000);
-
-			ClearPresentSquare();
-
-#endif
-
+			AddPrototypeSquare("First square (index 0)");
+			AddPrototypeSquare("Second square (index 1)");
+			AddPrototypeSquare("Third square (index 2)");
 
 		}
 
-		private List<Grid> squareElements = new List<Grid>();
+		private void AddPrototypeSquare(string text) {
+			AddSquare(
+				new List<UIElement>() {
+						new TextBlock() {
+							Text = text,
+							Foreground = new SolidColorBrush(Colors.Red)
+						}
+					}
+			);
+		}
 
+		private void AddInterfaceSquares() {
+				AddSquare(
+					new List<UIElement>() {
+						new TextBlock() {
+							Text = "Create",
+							Foreground = new SolidColorBrush(Colors.Red)
+						}
+					}
+				);
+				AddSquare(
+					new List<UIElement>() {
+						new TextBlock() {
+							Text = "Import",
+							Foreground = new SolidColorBrush(Colors.Red)
+						}
+					}
+				);
+				AddSquare(
+					new List<UIElement>() {
+						new TextBlock() {
+							Text = "Export",
+							Foreground = new SolidColorBrush(Colors.Red)
+						}
+					}
+				);
+			
+		}
 
-		private Grid GetPresentationSquare(Grid square) {
+		private void Button_Tapped(object sender,TappedRoutedEventArgs e) {
+			//use presented square index to access a more root data class
+		}
 
-			//todo once we aren't using grids - grids are for prototyping
-			var grid = new Grid() {
-				Background = new SolidColorBrush(Colors.DarkSlateGray),
-			};
+		private Grid PresentationSquare {
+			get {
+				var grid = new Grid() {
+					Background = new SolidColorBrush(Colors.Black),
+				};
 
-			return grid;
+				//use presented square index to access a more root data class
 
+				return grid;
+			}
 		}
 
 		private Grid presentedSquare = null;
@@ -66,8 +91,11 @@ namespace KeepWithIt {
 				TopGrid.Children.Remove(presentedSquare);
 			}
 			presentedSquare = null;
+			presentedSquareIndex = -1;
 			CentralizeSquares();
 		}
+
+		private int presentedSquareIndex = -1;
 
 		public void PresentSquare(Grid square) {
 			if(presentedSquare != null) {
@@ -76,6 +104,45 @@ namespace KeepWithIt {
 			presentedSquare = square;
 			PushSquaresLeft();
 			TopGrid.Children.Add(square);
+			Page_LayoutUpdated(null,null);
+		}
+
+		private void SquareTapped(Grid grid) {
+
+			var gridIndex = squaresGrid.Children.IndexOf(grid);
+
+			if(gridIndex < 3) {
+				switch(gridIndex) {
+					case 0:
+						break;
+					case 1:
+						break;
+					case 2:
+						break;
+				}
+			} else {
+
+				presentedSquareIndex = gridIndex - 3;
+				var presentationSquare = PresentationSquare;
+				PresentSquare(presentationSquare);
+
+				var currentView = SystemNavigationManager.GetForCurrentView();
+				currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+				currentView.BackRequested +=CurrentView_BackRequested;
+			}
+
+
+		}
+
+		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
+
+			ClearPresentSquare();
+
+			var currentView = SystemNavigationManager.GetForCurrentView();
+			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+			currentView.BackRequested -= CurrentView_BackRequested;
+
+			e.Handled = true;
 		}
 
 		public void AddSquare(IEnumerable<UIElement> content = null) {
@@ -92,16 +159,21 @@ namespace KeepWithIt {
 				}
 			}
 
-			if(squareElements.Count % 2 == 0) {
+			if(squaresGrid.Children.Count % 2 == 0) {
 				grid.HorizontalAlignment = HorizontalAlignment.Right;
-				grid.SetValue(Grid.ColumnProperty,1);
+				Grid.SetColumn(grid,1);
 			} else {
 				grid.HorizontalAlignment = HorizontalAlignment.Left;
-				grid.SetValue(Grid.ColumnProperty,3);
+				Grid.SetColumn(grid,3);
 			}
 
-			squareElements.Add(grid);
+			grid.Tapped += (sender,e) => {
+				SquareTapped(sender as Grid);
+			};
+
 			squaresGrid.Children.Add(grid);
+
+
 
 		}
 
@@ -124,7 +196,7 @@ namespace KeepWithIt {
 
 		private void layoutSquares() {
 
-			var squareCount = squareElements.Count;
+			var squareCount = squaresGrid.Children.Count;
 
 			if(--squareCount == -1) {
 				return;
@@ -137,7 +209,7 @@ namespace KeepWithIt {
 			var rightSize = ContentColumn2.ActualWidth;
 
 			void layoutSquare(int index,bool last) {
-				var square = squareElements[index];
+				var square = squaresGrid.Children[index] as Grid;
 
 				double width;
 				if(index % 2 == 0) {
@@ -172,11 +244,45 @@ namespace KeepWithIt {
 
 		}
 
+		private void resetGridMode() {
+			if(presentedSquare != null) {
+				Grid.SetRow(presentedSquare,0);
+				Grid.SetRowSpan(presentedSquare,2);
+				Grid.SetColumn(presentedSquare,0);
+				Grid.SetColumnSpan(presentedSquare,1);
+			}
+			Grid.SetRow(focusRightSide,0);
+			Grid.SetRowSpan(focusRightSide,2);
+			Grid.SetColumn(focusRightSide,2);
+			Grid.SetColumnSpan(focusRightSide,1);
+			calendar.Margin = new Thickness(0,65,15,15);
+			focusRightSide.Margin = new Thickness(0,0,0,0);
+		}
+
+		private void mobilePresentView() {
+
+			Grid.SetRow(focusRightSide,0);
+			Grid.SetRowSpan(focusRightSide,1);
+			Grid.SetColumn(focusRightSide,0);
+			Grid.SetColumnSpan(focusRightSide,3);
+
+			Grid.SetRow(presentedSquare,1);
+			Grid.SetRowSpan(presentedSquare,1);
+			Grid.SetColumn(presentedSquare,0);
+			Grid.SetColumnSpan(presentedSquare,3);
+			calendar.Margin = new Thickness(0,65,15,0);
+			focusRightSide.Margin = new Thickness(15,0,0,0);
+		}
+
+		private bool gridAlignmentDefault = true;
+
 		private void Page_LayoutUpdated(object sender,object e) {
+
+			var usingMobileishMode = ActualWidth < ActualHeight;
 
 			if(squaresCentered) {
 				GridLength columnSize;
-				if(ActualWidth < ActualHeight) {
+				if(usingMobileishMode) {
 					columnSize = new GridLength(0.75,GridUnitType.Star);
 				} else {
 					columnSize = new GridLength(12,GridUnitType.Star);
@@ -184,15 +290,41 @@ namespace KeepWithIt {
 				SubColumnFirst.Width = columnSize;
 				SubColumnLast.Width = columnSize;
 				layoutSquares();
+				if(!gridAlignmentDefault) {
+					resetGridMode();
+					gridAlignmentDefault = true;
+				}
 			} else {
-				double actualActualWidth;
-				if(Column1.ActualWidth > TopGrid.ActualHeight) {
-					actualActualWidth = TopGrid.ActualHeight - (Column1.ActualWidth * 0.05);
+
+				double leftSize;
+				double rightSize;
+
+				if(usingMobileishMode) {
+					mobilePresentView();
+					gridAlignmentDefault = false;
+
+					leftSize = TopGrid.ActualHeight / 2;
+					rightSize = TopGrid.ActualWidth;
+
 				} else {
-					actualActualWidth = Column1.ActualWidth * 0.95;
+					resetGridMode();
+					gridAlignmentDefault = true;
+
+					leftSize = Column1.ActualWidth;
+					rightSize = TopGrid.ActualHeight;
+
+				}
+
+
+				double actualActualWidth;
+				if(leftSize > rightSize) {
+					actualActualWidth = rightSize - (leftSize * 0.05);
+				} else {
+					actualActualWidth = leftSize * 0.95;
 				}
 				presentedSquare.Width = actualActualWidth;
 				presentedSquare.Height = actualActualWidth;
+
 			}
 		
 		}

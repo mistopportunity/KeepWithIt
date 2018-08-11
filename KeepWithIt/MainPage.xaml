@@ -16,17 +16,22 @@
 			<ColumnDefinition x:Name="Column3" Width="0*"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
 
-<Grid Height="960" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+		<Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+			<RowDefinition></RowDefinition>
+		</Grid.RowDefinitions>
 
-		<Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<Button Content="let's get it started in here!" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,15,15,0" FontSize="18" />
-			<CalendarView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="None" NumberOfWeeksInView="3" IsTodayHighlighted="False" Margin="0,67,0,0" CalendarIdentifier="GregorianCalendar"/>
+	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+		<Grid x:Name="focusRightSide" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="2" Margin="15,0,0,0">
+			<Button Content="let's get it started in here!" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,15,15,0" FontSize="18" Height="35" Tapped="Button_Tapped" />
+			<CalendarView x:Name="calendar" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="None" NumberOfWeeksInView="3" IsTodayHighlighted="False" Margin="0,65,15,15" CalendarIdentifier="GregorianCalendar"/>
 		</Grid>
 
 
 
 
-		<ScrollViewer Grid.Column="1" VerticalScrollMode="Enabled" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+		<ScrollViewer Grid.Column="1" VerticalScrollMode="Enabled" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden" Grid.RowSpan="2">
 			<Grid x:Name="squaresGrid">
 
 				<Grid.ColumnDefinitions>
