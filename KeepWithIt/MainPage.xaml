@@ -5,9 +5,35 @@
     xmlns:local="using:KeepWithIt"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" LayoutUpdated="Page_LayoutUpdated">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		
+		<!-- Change these column definitions change to pop the central ui to the left -->
+		<Grid.ColumnDefinitions> 
+			<ColumnDefinition x:Name="Column1" Width="0"></ColumnDefinition>
+			<ColumnDefinition x:Name="Central2"></ColumnDefinition>
+			<ColumnDefinition x:Name="Column3" Width="0"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		
+		<Grid Grid.Column="1">
+			<Grid.ColumnDefinitions>
+				<!-- change width to 1* for mobile - more for desktop -->
+				<ColumnDefinition x:Name="SubColumnFirst" Width="0.75*"></ColumnDefinition>
+				
+				<ColumnDefinition x:Name="ContentColumn1" Width="8*"></ColumnDefinition>
+				<ColumnDefinition x:Name="CentralSubColumn" Width="0.75*"></ColumnDefinition>
+				<ColumnDefinition x:Name="ContentColumn2" Width="8*"></ColumnDefinition>
 
-    </Grid>
+				<!-- change width to 1* for mobile - more for desktop-->
+				<ColumnDefinition x:Name="SubColumnLast" Width="0.75*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+
+			<Grid x:Name="PlaceholderGrid1" Grid.Column="1" Background="Red" HorizontalAlignment="Right" VerticalAlignment="Top"></Grid>
+
+			<Grid x:Name="PlaceholderGrid2" Grid.Column="3" Background="#FF0097FF" HorizontalAlignment="Left" VerticalAlignment="Top"></Grid>
+
+		</Grid>
+
+	</Grid>
 </Page>

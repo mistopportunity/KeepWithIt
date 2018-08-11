@@ -26,5 +26,30 @@ namespace KeepWithIt
         {
             this.InitializeComponent();
         }
-    }
+
+		private void Page_LayoutUpdated(object sender,object e) {
+
+			GridLength columnSize;
+			if(ActualWidth < ActualHeight) {
+				columnSize = new GridLength(0.75,GridUnitType.Star);
+			} else {
+				columnSize = new GridLength(12,GridUnitType.Star);
+			}
+			SubColumnFirst.Width = columnSize;
+			SubColumnLast.Width = columnSize;
+
+			PlaceholderGrid1.Width = ContentColumn1.ActualWidth;
+			PlaceholderGrid1.Height = PlaceholderGrid1.Width;
+
+			PlaceholderGrid2.Width = ContentColumn2.ActualWidth;
+			PlaceholderGrid2.Height = PlaceholderGrid2.Width;
+
+			var poorlyDynamicMargin = new Thickness(0,CentralSubColumn.ActualWidth,0,0);
+
+			PlaceholderGrid1.Margin = poorlyDynamicMargin;
+			PlaceholderGrid2.Margin = poorlyDynamicMargin;
+
+
+		}
+	}
 }
