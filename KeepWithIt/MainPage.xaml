@@ -7,33 +7,42 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" LayoutUpdated="Page_LayoutUpdated">
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		
+	<Grid x:Name="TopGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
 		<!-- Change these column definitions change to pop the central ui to the left -->
-		<Grid.ColumnDefinitions> 
-			<ColumnDefinition x:Name="Column1" Width="0"></ColumnDefinition>
-			<ColumnDefinition x:Name="Central2"></ColumnDefinition>
-			<ColumnDefinition x:Name="Column3" Width="0"></ColumnDefinition>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition x:Name="Column1" Width="0*"></ColumnDefinition>
+			<ColumnDefinition x:Name="Column2" Width="1*"></ColumnDefinition>
+			<ColumnDefinition x:Name="Column3" Width="0*"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
-		
-		<Grid Grid.Column="1">
-			<Grid.ColumnDefinitions>
-				<!-- change width to 1* for mobile - more for desktop -->
-				<ColumnDefinition x:Name="SubColumnFirst" Width="0.75*"></ColumnDefinition>
-				
-				<ColumnDefinition x:Name="ContentColumn1" Width="8*"></ColumnDefinition>
-				<ColumnDefinition x:Name="CentralSubColumn" Width="0.75*"></ColumnDefinition>
-				<ColumnDefinition x:Name="ContentColumn2" Width="8*"></ColumnDefinition>
 
-				<!-- change width to 1* for mobile - more for desktop-->
-				<ColumnDefinition x:Name="SubColumnLast" Width="0.75*"></ColumnDefinition>
-			</Grid.ColumnDefinitions>
+<Grid Height="960" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-			<Grid x:Name="PlaceholderGrid1" Grid.Column="1" Background="Red" HorizontalAlignment="Right" VerticalAlignment="Top"></Grid>
-
-			<Grid x:Name="PlaceholderGrid2" Grid.Column="3" Background="#FF0097FF" HorizontalAlignment="Left" VerticalAlignment="Top"></Grid>
-
+		<Grid Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<Button Content="let's get it started in here!" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,15,15,0" FontSize="18" />
+			<CalendarView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="None" NumberOfWeeksInView="3" IsTodayHighlighted="False" Margin="0,67,0,0" CalendarIdentifier="GregorianCalendar"/>
 		</Grid>
 
+
+
+
+		<ScrollViewer Grid.Column="1" VerticalScrollMode="Enabled" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+			<Grid x:Name="squaresGrid">
+
+				<Grid.ColumnDefinitions>
+					<!-- change width to 1* for mobile - more for desktop -->
+					<ColumnDefinition x:Name="SubColumnFirst" Width="0.75*"></ColumnDefinition>
+
+					<ColumnDefinition x:Name="ContentColumn1" Width="8*"></ColumnDefinition>
+					<ColumnDefinition x:Name="CentralSubColumn" Width="0.75*"></ColumnDefinition>
+					<ColumnDefinition x:Name="ContentColumn2" Width="8*"></ColumnDefinition>
+
+					<!-- change width to 1* for mobile - more for desktop-->
+					<ColumnDefinition x:Name="SubColumnLast" Width="0.75*"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+
+			</Grid>
+		</ScrollViewer>
 	</Grid>
+
 </Page>
