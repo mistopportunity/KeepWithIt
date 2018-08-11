@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.System;
 
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
@@ -40,42 +41,21 @@ namespace KeepWithIt {
 			);
 		}
 
+		private int interfaceSquaresCount = 0;
 		private void AddInterfaceSquares() {
-				AddSquare(
-					new List<UIElement>() {
-						new TextBlock() {
-							Text = "Create",
-							Foreground = new SolidColorBrush(Colors.Red)
-						}
-					}
-				);
-				AddSquare(
-					new List<UIElement>() {
-						new TextBlock() {
-							Text = "Import",
-							Foreground = new SolidColorBrush(Colors.Red)
-						}
-					}
-				);
-				AddSquare(
-					new List<UIElement>() {
-						new TextBlock() {
-							Text = "Export",
-							Foreground = new SolidColorBrush(Colors.Red)
-						}
-					}
-				);
-			
+			AddPrototypeSquare("Create");
+			AddPrototypeSquare("Import");
+			interfaceSquaresCount = 2;
 		}
 
-		private void Button_Tapped(object sender,TappedRoutedEventArgs e) {
+		private void StartButton_Tapped(object sender,TappedRoutedEventArgs e) {
 			//use presented square index to access a more root data class
 		}
 
 		private Grid PresentationSquare {
 			get {
 				var grid = new Grid() {
-					Background = new SolidColorBrush(Colors.Black),
+					Background = new SolidColorBrush(Color.FromArgb(127,0,0,0)),
 				};
 
 				//use presented square index to access a more root data class
@@ -111,7 +91,7 @@ namespace KeepWithIt {
 
 			var gridIndex = squaresGrid.Children.IndexOf(grid);
 
-			if(gridIndex < 3) {
+			if(gridIndex < interfaceSquaresCount) {
 				switch(gridIndex) {
 					case 0:
 						break;
@@ -122,8 +102,11 @@ namespace KeepWithIt {
 				}
 			} else {
 
-				presentedSquareIndex = gridIndex - 3;
+				presentedSquareIndex = gridIndex - interfaceSquaresCount;
 				var presentationSquare = PresentationSquare;
+
+				//use presentedSquareIndex to populate and depopulate calendar
+
 				PresentSquare(presentationSquare);
 
 				var currentView = SystemNavigationManager.GetForCurrentView();
@@ -173,11 +156,10 @@ namespace KeepWithIt {
 
 			squaresGrid.Children.Add(grid);
 
-
-
 		}
 
 		private bool squaresCentered = true;
+
 		private void PushSquaresLeft() {
 			Column1.Width = new GridLength(1,GridUnitType.Star);
 			Column2.Width = new GridLength(0,GridUnitType.Star);
@@ -186,12 +168,10 @@ namespace KeepWithIt {
 		}
 
 		private void CentralizeSquares() {
-
 			Column1.Width = new GridLength(0,GridUnitType.Star);
 			Column2.Width = new GridLength(1,GridUnitType.Star);
 			Column3.Width = new GridLength(0,GridUnitType.Star);
 			squaresCentered = true;
-
 		}
 
 		private void layoutSquares() {
@@ -327,6 +307,45 @@ namespace KeepWithIt {
 
 			}
 		
+		}
+
+		private int selectedIndex = -1;
+		private Grid selectedGrid = null;
+
+		private void updateSelection(int xDelta,int yDelta) {
+			
+		}
+
+		private void StartButton_KeyDown(object sender,KeyRoutedEventArgs e) {
+			switch(e.Key) {
+
+				case VirtualKey.GamepadA:
+				case VirtualKey.Enter:
+					if(selectedGrid != null) {
+						SquareTapped(selectedGrid);
+					}
+					break;
+				case VirtualKey.Up:
+				case VirtualKey.GamepadDPadUp:
+				case VirtualKey.GamepadLeftThumbstickUp:
+
+					break;
+				case VirtualKey.Down:
+				case VirtualKey.GamepadDPadDown:
+				case VirtualKey.GamepadLeftThumbstickDown:
+
+					break;
+				case VirtualKey.Left:
+				case VirtualKey.GamepadDPadLeft:
+				case VirtualKey.GamepadLeftThumbstickLeft:
+
+					break;
+				case VirtualKey.Right:
+				case VirtualKey.GamepadDPadRight:
+				case VirtualKey.GamepadLeftThumbstickRight:
+
+					break;
+			}
 		}
 	}
 }
