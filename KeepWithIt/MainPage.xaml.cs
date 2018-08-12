@@ -262,7 +262,7 @@ namespace KeepWithIt {
 			Grid.SetRowSpan(focusRightSide,2);
 			Grid.SetColumn(focusRightSide,2);
 			Grid.SetColumnSpan(focusRightSide,1);
-			calendar.Margin = new Thickness(0,145,15,15);
+			calendar.Margin = new Thickness(0,100,15,15);
 			focusRightSide.Margin = new Thickness(0,0,0,0);
 		}
 		private void mobilePresentView() {
@@ -276,7 +276,7 @@ namespace KeepWithIt {
 			Grid.SetRowSpan(presentedSquare,1);
 			Grid.SetColumn(presentedSquare,0);
 			Grid.SetColumnSpan(presentedSquare,3);
-			calendar.Margin = new Thickness(0,145,15,0);
+			calendar.Margin = new Thickness(0,100,15,0);
 			focusRightSide.Margin = new Thickness(15,0,0,0);
 		}
 		private bool gridAlignmentDefault = true;
@@ -357,7 +357,6 @@ namespace KeepWithIt {
 					}
 				}
 
-				//Add vertical rollover and reverse-rollover?
 				if(yDelta > 0) {
 					if(selectedIndex >= squaresCount - 3) {
 
@@ -418,12 +417,16 @@ namespace KeepWithIt {
 						break;
 					case VirtualKey.GamepadDPadDown:
 					case VirtualKey.GamepadDPadRight:
+					case VirtualKey.GamepadLeftThumbstickRight:
+					case VirtualKey.GamepadLeftThumbstickDown:
 					case VirtualKey.Right:
 					case VirtualKey.Down:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
 						break;
 					case VirtualKey.GamepadDPadLeft:
 					case VirtualKey.GamepadDPadUp:
+					case VirtualKey.GamepadLeftThumbstickUp:
+					case VirtualKey.GamepadLeftThumbstickLeft:
 					case VirtualKey.Left:
 					case VirtualKey.Up:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
@@ -513,6 +516,24 @@ namespace KeepWithIt {
 			}
 		}
 
+		private async void DeletionPrompt() {
+			if(!squaresCentered) {
+				MessageDialog messageDialog = new MessageDialog(
+					"Are you sure you want to delete this? There's an old adage that goes \"once you do this you can't undo this\"",
+					"THIS IS SO SAD") {
+					DefaultCommandIndex = 0,
+					CancelCommandIndex = 1,
+				};
+				messageDialog.Commands.Add(new UICommand("Yes. Leave me alone!",(command) => {
+					//actually delete the damn thing
+					ReloadSquares();
+					ClearPresentSquare();
+				}));
+				messageDialog.Commands.Add(new UICommand("No! Please, Daddy don't delete it!"));
+				await messageDialog.ShowAsync();
+			}
+		}
+
 		private void ExportButton_Click(object sender,RoutedEventArgs e) {
 			GotoExport();
 		}
@@ -521,6 +542,9 @@ namespace KeepWithIt {
 		}
 		private void StartButton_Click(object sender,RoutedEventArgs e) {
 			GotoActualWorkout();
+		}
+		private void DeleteButton_Click(object sender,RoutedEventArgs e) {
+			DeletionPrompt();
 		}
 	}
 }
