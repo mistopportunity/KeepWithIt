@@ -16,18 +16,38 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.System;
+using Windows.UI.Popups;
 
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
 
 		public MainPage() {
 			this.InitializeComponent();
+		}
+
+		private void ReloadSquares() {
+			squaresGrid.Children.Clear();
+
 			AddInterfaceSquares();
+
+			//Populate squaresGrid with WorkoutManager.Workouts
 
 			AddPrototypeSquare("First square (index 0)");
 			AddPrototypeSquare("Second square (index 1)");
 			AddPrototypeSquare("Third square (index 2)");
+		}
+		protected override void OnNavigatedTo(NavigationEventArgs e) {
+			base.OnNavigatedTo(e);
 
+			ReloadSquares();
+
+			Window.Current.CoreWindow.KeyDown +=CoreWindow_KeyDown;
+		}
+		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
+
+			base.OnNavigatingFrom(e);
+
+			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyDown;
 		}
 
 		private void AddPrototypeSquare(string text) {
@@ -35,27 +55,23 @@ namespace KeepWithIt {
 				new List<UIElement>() {
 						new TextBlock() {
 							Text = text,
-							Foreground = new SolidColorBrush(Colors.Red)
+							Foreground = new SolidColorBrush(Colors.Blue)
 						}
 					}
 			);
 		}
-
 		private int interfaceSquaresCount = 0;
 		private void AddInterfaceSquares() {
 			AddPrototypeSquare("Create");
 			AddPrototypeSquare("Import");
-			interfaceSquaresCount = 2;
-		}
-
-		private void StartButton_Tapped(object sender,TappedRoutedEventArgs e) {
-			//use presented square index to access a more root data class
+			AddPrototypeSquare("About");
+			interfaceSquaresCount = 3;
 		}
 
 		private Grid PresentationSquare {
 			get {
 				var grid = new Grid() {
-					Background = new SolidColorBrush(Color.FromArgb(127,0,0,0)),
+					Background = new SolidColorBrush(Colors.Black)
 				};
 
 				//use presented square index to access a more root data class
@@ -72,6 +88,7 @@ namespace KeepWithIt {
 			}
 			presentedSquare = null;
 			presentedSquareIndex = -1;
+			UnsubscribeBackButton();
 			CentralizeSquares();
 		}
 
@@ -84,7 +101,8 @@ namespace KeepWithIt {
 			presentedSquare = square;
 			PushSquaresLeft();
 			TopGrid.Children.Add(square);
-			Page_LayoutUpdated(null,null);
+			resetPresentationScreen();
+			//Page_LayoutUpdated(null,null);
 		}
 
 		private void SquareTapped(Grid grid) {
@@ -117,15 +135,33 @@ namespace KeepWithIt {
 
 		}
 
+		private void UnsubscribeBackButton() {
+			var currentView = SystemNavigationManager.GetForCurrentView();
+			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+			currentView.BackRequested -= CurrentView_BackRequested;
+		}
+
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 
 			ClearPresentSquare();
 
-			var currentView = SystemNavigationManager.GetForCurrentView();
-			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-			currentView.BackRequested -= CurrentView_BackRequested;
-
 			e.Handled = true;
+		}
+
+		public void AddSquare(Grid grid) {
+			if(squaresGrid.Children.Count % 2 == 0) {
+				grid.HorizontalAlignment = HorizontalAlignment.Right;
+				Grid.SetColumn(grid,1);
+			} else {
+				grid.HorizontalAlignment = HorizontalAlignment.Left;
+				Grid.SetColumn(grid,3);
+			}
+
+			grid.Tapped += (sender,e) => {
+				SquareTapped(sender as Grid);
+			};
+
+			squaresGrid.Children.Add(grid);
 		}
 
 		public void AddSquare(IEnumerable<UIElement> content = null) {
@@ -142,38 +178,24 @@ namespace KeepWithIt {
 				}
 			}
 
-			if(squaresGrid.Children.Count % 2 == 0) {
-				grid.HorizontalAlignment = HorizontalAlignment.Right;
-				Grid.SetColumn(grid,1);
-			} else {
-				grid.HorizontalAlignment = HorizontalAlignment.Left;
-				Grid.SetColumn(grid,3);
-			}
+			AddSquare(grid);
 
-			grid.Tapped += (sender,e) => {
-				SquareTapped(sender as Grid);
-			};
-
-			squaresGrid.Children.Add(grid);
 
 		}
 
 		private bool squaresCentered = true;
-
 		private void PushSquaresLeft() {
 			Column1.Width = new GridLength(1,GridUnitType.Star);
 			Column2.Width = new GridLength(0,GridUnitType.Star);
 			Column3.Width = new GridLength(1,GridUnitType.Star);
 			squaresCentered = false;
 		}
-
 		private void CentralizeSquares() {
 			Column1.Width = new GridLength(0,GridUnitType.Star);
 			Column2.Width = new GridLength(1,GridUnitType.Star);
 			Column3.Width = new GridLength(0,GridUnitType.Star);
 			squaresCentered = true;
 		}
-
 		private void layoutSquares() {
 
 			var squareCount = squaresGrid.Children.Count;
@@ -238,7 +260,6 @@ namespace KeepWithIt {
 			calendar.Margin = new Thickness(0,65,15,15);
 			focusRightSide.Margin = new Thickness(0,0,0,0);
 		}
-
 		private void mobilePresentView() {
 
 			Grid.SetRow(focusRightSide,0);
@@ -253,9 +274,7 @@ namespace KeepWithIt {
 			calendar.Margin = new Thickness(0,65,15,0);
 			focusRightSide.Margin = new Thickness(15,0,0,0);
 		}
-
 		private bool gridAlignmentDefault = true;
-
 		private void Page_LayoutUpdated(object sender,object e) {
 
 			var usingMobileishMode = ActualWidth < ActualHeight;
@@ -311,41 +330,111 @@ namespace KeepWithIt {
 
 		private int selectedIndex = -1;
 		private Grid selectedGrid = null;
-
 		private void updateSelection(int xDelta,int yDelta) {
 			
 		}
 
-		private void StartButton_KeyDown(object sender,KeyRoutedEventArgs e) {
-			switch(e.Key) {
+		private int presentationScreenIndex = -1;
 
-				case VirtualKey.GamepadA:
-				case VirtualKey.Enter:
-					if(selectedGrid != null) {
-						SquareTapped(selectedGrid);
-					}
-					break;
-				case VirtualKey.Up:
-				case VirtualKey.GamepadDPadUp:
-				case VirtualKey.GamepadLeftThumbstickUp:
+		private void resetPresentationScreen() {
+			presentationScreenIndex = -1;
+		}
 
-					break;
-				case VirtualKey.Down:
-				case VirtualKey.GamepadDPadDown:
-				case VirtualKey.GamepadLeftThumbstickDown:
+		private void CoreWindow_KeyDown(CoreWindow sender,KeyEventArgs args) {
+			if(!squaresCentered) {
+				//Set and handle presentationScreenIndex
+				switch(args.VirtualKey) {
+					case VirtualKey.Escape:
+					case VirtualKey.GamepadB:
+						ClearPresentSquare();
+						break;
+					case VirtualKey.GamepadA:
+					case VirtualKey.Enter:
 
-					break;
-				case VirtualKey.Left:
-				case VirtualKey.GamepadDPadLeft:
-				case VirtualKey.GamepadLeftThumbstickLeft:
+						break;
+					case VirtualKey.Up:
+					case VirtualKey.GamepadDPadUp:
+					case VirtualKey.GamepadLeftThumbstickUp:
 
-					break;
-				case VirtualKey.Right:
-				case VirtualKey.GamepadDPadRight:
-				case VirtualKey.GamepadLeftThumbstickRight:
+						break;
+					case VirtualKey.Down:
+					case VirtualKey.GamepadDPadDown:
+					case VirtualKey.GamepadLeftThumbstickDown:
 
-					break;
+						break;
+					case VirtualKey.Left:
+					case VirtualKey.GamepadDPadLeft:
+					case VirtualKey.GamepadLeftThumbstickLeft:
+
+						break;
+					case VirtualKey.Right:
+					case VirtualKey.GamepadDPadRight:
+					case VirtualKey.GamepadLeftThumbstickRight:
+
+						break;
+				}
+			} else {
+				//Set and handle selectedIndex
+				switch(args.VirtualKey) {
+					case VirtualKey.GamepadA:
+					case VirtualKey.Enter:
+						if(selectedGrid != null) {
+							SquareTapped(selectedGrid);
+						}
+						break;
+					case VirtualKey.Up:
+					case VirtualKey.GamepadDPadUp:
+					case VirtualKey.GamepadLeftThumbstickUp:
+
+						break;
+					case VirtualKey.Down:
+					case VirtualKey.GamepadDPadDown:
+					case VirtualKey.GamepadLeftThumbstickDown:
+
+						break;
+					case VirtualKey.Left:
+					case VirtualKey.GamepadDPadLeft:
+					case VirtualKey.GamepadLeftThumbstickLeft:
+
+						break;
+					case VirtualKey.Right:
+					case VirtualKey.GamepadDPadRight:
+					case VirtualKey.GamepadLeftThumbstickRight:
+
+						break;
+				}
 			}
+		}
+
+		private async void DeletionPrompt() {
+
+			MessageDialog messageDialog = new MessageDialog("Are you sure you really want to delete this workout?","THIS IS SO SAD") {
+				DefaultCommandIndex = 0,
+				CancelCommandIndex = 1,
+			};
+
+			messageDialog.Commands.Add(new UICommand("Yes, I am sure",(action) => {
+				//remove presentedSquare's workout from WorkoutManager. Use presentedSquareIndex
+				ClearPresentSquare();
+				ReloadSquares();
+			}));
+
+			messageDialog.Commands.Add(new UICommand("No, that sounds scary"));
+
+			await messageDialog.ShowAsync();
+
+		}
+
+		private void GotoEditor() {
+			//todo
+		}
+
+		private void GotoActualWorkout() {
+			//todo
+		}
+
+		private void StartButton_Tapped(object sender,TappedRoutedEventArgs e) {
+			GotoActualWorkout();
 		}
 	}
 }
