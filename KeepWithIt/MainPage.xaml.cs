@@ -41,7 +41,7 @@ namespace KeepWithIt {
 
 			ReloadSquares();
 
-			Window.Current.CoreWindow.KeyDown +=CoreWindow_KeyDown;
+			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 
@@ -111,10 +111,13 @@ namespace KeepWithIt {
 			if(gridIndex < interfaceSquaresCount) {
 				switch(gridIndex) {
 					case 0:
+						GotoCreation();
 						break;
 					case 1:
+						GotoImport();
 						break;
 					case 2:
+						GotoAbout();
 						break;
 				}
 			} else {
@@ -330,7 +333,57 @@ namespace KeepWithIt {
 		private int selectedIndex = -1;
 		private Grid selectedGrid = null;
 		private void updateSelection(int xDelta,int yDelta) {
-			
+			if(selectedIndex == -1) {
+
+				selectedIndex = 0;
+				selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
+				addSelectionAttributes(selectedGrid);
+
+			} else {
+
+				var squaresCount = squaresGrid.Children.Count;
+
+				if(xDelta != 0) {
+					if(selectedIndex % 2 == 0) {
+						if(selectedIndex + 1 < squaresCount) {
+							selectedIndex++;
+						}
+					} else {
+						selectedIndex--;
+					}
+				}
+
+				if(yDelta > 0) {
+					if(selectedIndex <= squaresCount - 3) {
+						if(squaresCount % 2 != 0) {
+							selectedIndex = squaresCount - 1;
+						} else {
+							selectedIndex += 2;
+						}
+					}
+				} else if(yDelta < 0) {
+					if(selectedIndex >= 2) {
+						selectedIndex -= 2;
+					}
+
+				}
+
+				removeSelectionAttributes(selectedGrid);
+				selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
+				addSelectionAttributes(selectedGrid);
+
+				selectedGrid.StartBringIntoView();
+				//Offset scroller to include margins, eh?
+
+			}
+		}
+
+		private void removeSelectionAttributes(Grid grid) {
+			grid.Background = new SolidColorBrush(Colors.Black);
+		}
+
+		private void addSelectionAttributes(Grid grid) {
+			grid.Background = new SolidColorBrush(Colors.Gray);
 		}
 
 		private void CoreWindow_KeyDown(CoreWindow sender,KeyEventArgs args) {
@@ -357,7 +410,6 @@ namespace KeepWithIt {
 
 				}
 			} else {
-				//Set and handle selectedIndex
 				switch(args.VirtualKey) {
 					case VirtualKey.GamepadA:
 					case VirtualKey.Enter:
@@ -368,22 +420,22 @@ namespace KeepWithIt {
 					case VirtualKey.Up:
 					case VirtualKey.GamepadDPadUp:
 					case VirtualKey.GamepadLeftThumbstickUp:
-
+						updateSelection(0,-1);
 						break;
 					case VirtualKey.Down:
 					case VirtualKey.GamepadDPadDown:
 					case VirtualKey.GamepadLeftThumbstickDown:
-
+						updateSelection(0,1);
 						break;
 					case VirtualKey.Left:
 					case VirtualKey.GamepadDPadLeft:
 					case VirtualKey.GamepadLeftThumbstickLeft:
-
+						updateSelection(-1,0);
 						break;
 					case VirtualKey.Right:
 					case VirtualKey.GamepadDPadRight:
 					case VirtualKey.GamepadLeftThumbstickRight:
-
+						updateSelection(1,0);
 						break;
 				}
 			}
@@ -391,30 +443,50 @@ namespace KeepWithIt {
 
 		private void GotoExport() {
 			if(!squaresCentered) {
-				//todo
+				//use presentedSquareIndex
+				//app navigation
 			}
 		}
 
 		private void GotoEditor() {
 			if(!squaresCentered) {
 				//todo
+				//use presentedSquareIndex
+				//app navigation
 			}
 		}
 
 		private void GotoActualWorkout() {
 			if(!squaresCentered) {
-				//todo
+				//use presentedSquareIndex
+				//app navigation
+			}
+		}
+
+		private void GotoCreation() {
+			if(squaresCentered) {
+				//app navigation
+			}
+		}
+
+		private void GotoAbout() {
+			if(squaresCentered) {
+				//app navigation
+			}
+		}
+
+		private void GotoImport() {
+			if(squaresCentered) {
+				//app navigation
 			}
 		}
 
 		private void ExportButton_Click(object sender,RoutedEventArgs e) {
 			GotoExport();
 		}
-
 		private void EditButton_Click(object sender,RoutedEventArgs e) {
 			GotoEditor();
 		}
-
 		private void StartButton_Click(object sender,RoutedEventArgs e) {
 			GotoActualWorkout();
 		}
