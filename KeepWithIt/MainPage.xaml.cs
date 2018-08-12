@@ -35,6 +35,7 @@ namespace KeepWithIt {
 			AddPrototypeSquare("First square (index 0)");
 			AddPrototypeSquare("Second square (index 1)");
 			AddPrototypeSquare("Third square (index 2)");
+			AddPrototypeSquare("Fourth square (index 3)");
 		}
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
@@ -162,6 +163,8 @@ namespace KeepWithIt {
 			grid.Tapped += (sender,e) => {
 				SquareTapped(sender as Grid);
 			};
+
+			grid.PointerEntered += Grid_PointerEntered;
 
 			squaresGrid.Children.Add(grid);
 		}
@@ -332,6 +335,7 @@ namespace KeepWithIt {
 
 		private int selectedIndex = -1;
 		private Grid selectedGrid = null;
+
 		private void updateSelection(int xDelta,int yDelta) {
 			if(selectedIndex == -1) {
 
@@ -353,13 +357,30 @@ namespace KeepWithIt {
 					}
 				}
 
+				//Add vertical rollover and reverse-rollover?
 				if(yDelta > 0) {
-					if(selectedIndex <= squaresCount - 3) {
-						if(squaresCount % 2 != 0) {
-							selectedIndex = squaresCount - 1;
+					if(selectedIndex >= squaresCount - 3) {
+
+						if(selectedIndex % 2 == 0) {
+							if(selectedIndex + 2 < squaresCount) {
+								selectedIndex+=2;
+							}
 						} else {
-							selectedIndex += 2;
+							if(squaresCount % 2 == 1) {
+								if(selectedIndex + 1 < squaresCount) {
+									selectedIndex++;
+								}
+							} else {
+								if(selectedIndex + 2 < squaresCount) {
+									selectedIndex+=2;
+								}
+							}
 						}
+
+
+
+					} else {
+						selectedIndex += 2;
 					}
 				} else if(yDelta < 0) {
 					if(selectedIndex >= 2) {
@@ -441,6 +462,16 @@ namespace KeepWithIt {
 			}
 		}
 
+		private void Grid_PointerEntered(object sender,PointerRoutedEventArgs e) {
+			var children = squaresGrid.Children;
+			if(selectedIndex != -1) {
+				removeSelectionAttributes(selectedGrid);
+			}
+			selectedGrid = sender as Grid;
+			selectedIndex = children.IndexOf(selectedGrid);
+			addSelectionAttributes(selectedGrid);
+		}
+
 		private void GotoExport() {
 			if(!squaresCentered) {
 				//use presentedSquareIndex
@@ -466,6 +497,7 @@ namespace KeepWithIt {
 		private void GotoCreation() {
 			if(squaresCentered) {
 				//app navigation
+			
 			}
 		}
 
