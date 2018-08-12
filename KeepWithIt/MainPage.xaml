@@ -5,7 +5,7 @@
     xmlns:local="using:KeepWithIt"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" LayoutUpdated="Page_LayoutUpdated" KeyDown="Page_KeyDown">
+    mc:Ignorable="d" LayoutUpdated="Page_LayoutUpdated">
 
 	<Grid x:Name="TopGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -24,8 +24,10 @@
 	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
 		<Grid x:Name="focusRightSide" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="2" Margin="15,0,0,0">
-			<Button x:Name="StartButton" Content="let's get it started in here!" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,15,15,0" FontSize="18" Height="35" Tapped="StartButton_Tapped" IsTabStop="False"/>
-			<CalendarView x:Name="calendar" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="None" NumberOfWeeksInView="3" IsTodayHighlighted="False" Margin="0,65,15,15" CalendarIdentifier="GregorianCalendar"/>
+			<Button x:Name="StartButton" Content="let's get it started in here!" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,15,15,0" FontSize="18" Height="35" Click="StartButton_Click"/>
+			<Button x:Name="EditButton" Content="edit workout" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,55,15,0" FontSize="18" Height="35" Click="EditButton_Click"/>
+			<Button x:Name="ExportButton" Content="export workout" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,95,15,0" FontSize="18" Height="35" Click="ExportButton_Click"/>
+			<CalendarView x:Name="calendar" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="None" NumberOfWeeksInView="3" IsTodayHighlighted="False" Margin="0,145,15,15" CalendarIdentifier="GregorianCalendar" IsTabStop="False" IsEnabled="False"/>
 		</Grid>
 
 

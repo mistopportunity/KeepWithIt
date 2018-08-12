@@ -55,7 +55,8 @@ namespace KeepWithIt {
 				new List<UIElement>() {
 						new TextBlock() {
 							Text = text,
-							Foreground = new SolidColorBrush(Colors.Blue)
+							Foreground = new SolidColorBrush(Colors.White),
+							FontSize = 18f
 						}
 					}
 			);
@@ -101,8 +102,6 @@ namespace KeepWithIt {
 			presentedSquare = square;
 			PushSquaresLeft();
 			TopGrid.Children.Add(square);
-			resetPresentationScreen();
-			//Page_LayoutUpdated(null,null);
 		}
 
 		private void SquareTapped(Grid grid) {
@@ -257,7 +256,7 @@ namespace KeepWithIt {
 			Grid.SetRowSpan(focusRightSide,2);
 			Grid.SetColumn(focusRightSide,2);
 			Grid.SetColumnSpan(focusRightSide,1);
-			calendar.Margin = new Thickness(0,65,15,15);
+			calendar.Margin = new Thickness(0,145,15,15);
 			focusRightSide.Margin = new Thickness(0,0,0,0);
 		}
 		private void mobilePresentView() {
@@ -271,7 +270,7 @@ namespace KeepWithIt {
 			Grid.SetRowSpan(presentedSquare,1);
 			Grid.SetColumn(presentedSquare,0);
 			Grid.SetColumnSpan(presentedSquare,3);
-			calendar.Margin = new Thickness(0,65,15,0);
+			calendar.Margin = new Thickness(0,145,15,0);
 			focusRightSide.Margin = new Thickness(15,0,0,0);
 		}
 		private bool gridAlignmentDefault = true;
@@ -334,44 +333,28 @@ namespace KeepWithIt {
 			
 		}
 
-		private int presentationScreenIndex = -1;
-
-		private void resetPresentationScreen() {
-			presentationScreenIndex = -1;
-		}
-
 		private void CoreWindow_KeyDown(CoreWindow sender,KeyEventArgs args) {
 			if(!squaresCentered) {
-				//Set and handle presentationScreenIndex
 				switch(args.VirtualKey) {
+					case VirtualKey.Back:
+					case VirtualKey.GoBack:
 					case VirtualKey.Escape:
 					case VirtualKey.GamepadB:
 						ClearPresentSquare();
 						break;
-					case VirtualKey.GamepadA:
-					case VirtualKey.Enter:
-
-						break;
-					case VirtualKey.Up:
-					case VirtualKey.GamepadDPadUp:
-					case VirtualKey.GamepadLeftThumbstickUp:
-
-						break;
-					case VirtualKey.Down:
 					case VirtualKey.GamepadDPadDown:
-					case VirtualKey.GamepadLeftThumbstickDown:
-
-						break;
-					case VirtualKey.Left:
-					case VirtualKey.GamepadDPadLeft:
-					case VirtualKey.GamepadLeftThumbstickLeft:
-
-						break;
-					case VirtualKey.Right:
 					case VirtualKey.GamepadDPadRight:
-					case VirtualKey.GamepadLeftThumbstickRight:
-
+					case VirtualKey.Right:
+					case VirtualKey.Down:
+						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
 						break;
+					case VirtualKey.GamepadDPadLeft:
+					case VirtualKey.GamepadDPadUp:
+					case VirtualKey.Left:
+					case VirtualKey.Up:
+						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+						break;
+
 				}
 			} else {
 				//Set and handle selectedIndex
@@ -406,34 +389,33 @@ namespace KeepWithIt {
 			}
 		}
 
-		private async void DeletionPrompt() {
-
-			MessageDialog messageDialog = new MessageDialog("Are you sure you really want to delete this workout?","THIS IS SO SAD") {
-				DefaultCommandIndex = 0,
-				CancelCommandIndex = 1,
-			};
-
-			messageDialog.Commands.Add(new UICommand("Yes, I am sure",(action) => {
-				//remove presentedSquare's workout from WorkoutManager. Use presentedSquareIndex
-				ClearPresentSquare();
-				ReloadSquares();
-			}));
-
-			messageDialog.Commands.Add(new UICommand("No, that sounds scary"));
-
-			await messageDialog.ShowAsync();
-
+		private void GotoExport() {
+			if(!squaresCentered) {
+				//todo
+			}
 		}
 
 		private void GotoEditor() {
-			//todo
+			if(!squaresCentered) {
+				//todo
+			}
 		}
 
 		private void GotoActualWorkout() {
-			//todo
+			if(!squaresCentered) {
+				//todo
+			}
 		}
 
-		private void StartButton_Tapped(object sender,TappedRoutedEventArgs e) {
+		private void ExportButton_Click(object sender,RoutedEventArgs e) {
+			GotoExport();
+		}
+
+		private void EditButton_Click(object sender,RoutedEventArgs e) {
+			GotoEditor();
+		}
+
+		private void StartButton_Click(object sender,RoutedEventArgs e) {
 			GotoActualWorkout();
 		}
 	}
