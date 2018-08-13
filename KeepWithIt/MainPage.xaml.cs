@@ -556,7 +556,6 @@ namespace KeepWithIt {
 			if(squaresCentered) {
 				//Todo: Import page
 				//app navigation
-				ReloadSquares();
 			}
 		}
 
