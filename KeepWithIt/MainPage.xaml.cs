@@ -26,16 +26,23 @@ namespace KeepWithIt {
 		}
 
 		private void ReloadSquares() {
+
+			if(selectedIndex != -1) {
+				removeSelectionAttributes(selectedGrid);
+				selectedGrid = null;
+				lastSelectedIndex = 0;
+				selectedIndex = 1;
+			}
+
 			squaresGrid.Children.Clear();
 
 			AddInterfaceSquares();
 
-			//Populate squaresGrid with WorkoutManager.Workouts
+			foreach(var workout in WorkoutManager.Workouts) {
+				var workoutGrid = workout.GetGrid();
+				AddSquare(workoutGrid);
+			}
 
-			AddPrototypeSquare("First square (index 0)");
-			AddPrototypeSquare("Second square (index 1)");
-			AddPrototypeSquare("Third square (index 2)");
-			AddPrototypeSquare("Fourth square (index 3)");
 		}
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
@@ -72,16 +79,8 @@ namespace KeepWithIt {
 			interfaceSquaresCount = 3;
 		}
 
-		private Grid PresentationSquare {
-			get {
-				var grid = new Grid() {
-					Background = new SolidColorBrush(Colors.Black)
-				};
-
-				//use presented square index to access a more root data class
-
-				return grid;
-			}
+		private Grid GetPresentationSquare() {
+			return WorkoutManager.Workouts[presentedSquareIndex].GetPresentationGrid();
 		}
 
 		private Grid presentedSquare = null;
@@ -126,9 +125,12 @@ namespace KeepWithIt {
 			} else {
 
 				presentedSquareIndex = gridIndex - interfaceSquaresCount;
-				var presentationSquare = PresentationSquare;
+				var presentationSquare = GetPresentationSquare();
 
-				//use presentedSquareIndex to populate and depopulate calendar
+				foreach(var date in WorkoutManager.Workouts[presentedSquareIndex].Dates) {
+					//Todo: populate and depopulate calendar
+				}
+
 
 				PresentSquare(presentationSquare);
 
@@ -150,7 +152,6 @@ namespace KeepWithIt {
 			ClearPresentSquare();
 			e.Handled = true;
 		}
-
 		public void AddSquare(Grid grid) {
 			if(squaresGrid.Children.Count % 2 == 0) {
 				grid.HorizontalAlignment = HorizontalAlignment.Right;
@@ -160,13 +161,17 @@ namespace KeepWithIt {
 				Grid.SetColumn(grid,3);
 			}
 
-			grid.Tapped += (sender,e) => {
-				SquareTapped(sender as Grid);
-			};
+			grid.Tapped +=Grid_Tapped;
 
 			grid.PointerEntered += Grid_PointerEntered;
 
+			grid.PointerExited +=Grid_PointerExited;
+
 			squaresGrid.Children.Add(grid);
+		}
+
+		private void Grid_Tapped(object sender,TappedRoutedEventArgs e) {
+			SquareTapped(sender as Grid);
 		}
 
 		public void AddSquare(IEnumerable<UIElement> content = null) {
@@ -334,18 +339,18 @@ namespace KeepWithIt {
 		}
 
 		private int selectedIndex = -1;
+		private int lastSelectedIndex = 0;
 		private Grid selectedGrid = null;
 
 		private void updateSelection(int xDelta,int yDelta) {
 			if(selectedIndex == -1) {
-
-				selectedIndex = 0;
+				selectedIndex = lastSelectedIndex;
 				selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
 				addSelectionAttributes(selectedGrid);
 
 			} else {
 
-				//rework transversal logical to be usable with one button, but allow for current flexibility to save presses
+				//Todo: rework transversal logical to be usable with one button, but allow for current flexibility to save on interactions
 
 				var squaresCount = squaresGrid.Children.Count;
 
@@ -389,17 +394,22 @@ namespace KeepWithIt {
 				addSelectionAttributes(selectedGrid);
 
 				selectedGrid.StartBringIntoView();
-				//Offset scroller to include margins, eh?
+
+				lastSelectedIndex = selectedIndex;
 
 			}
 		}
 
 		private void removeSelectionAttributes(Grid grid) {
-			grid.Background = new SolidColorBrush(Colors.Black);
+
+			grid.BorderThickness = new Thickness(0,0,0,0);
+
 		}
 
 		private void addSelectionAttributes(Grid grid) {
-			grid.Background = new SolidColorBrush(Colors.Gray);
+
+			grid.BorderThickness = new Thickness(-6,-6,-6,-6); //Oh God, the irony.
+
 		}
 
 		private void CoreWindow_KeyDown(CoreWindow sender,KeyEventArgs args) {
@@ -485,6 +495,14 @@ namespace KeepWithIt {
 
 		}
 
+		private void Grid_PointerExited(object sender,PointerRoutedEventArgs e) {
+			if(selectedIndex != -1) {
+				removeSelectionAttributes(selectedGrid);
+				selectedGrid = null;
+				selectedIndex = -1;
+			}
+		}
+
 		private void Grid_PointerEntered(object sender,PointerRoutedEventArgs e) {
 			var children = squaresGrid.Children;
 			if(selectedIndex != -1) {
@@ -492,6 +510,7 @@ namespace KeepWithIt {
 			}
 			selectedGrid = sender as Grid;
 			selectedIndex = children.IndexOf(selectedGrid);
+			lastSelectedIndex = selectedIndex;
 			addSelectionAttributes(selectedGrid);
 		}
 
@@ -504,7 +523,7 @@ namespace KeepWithIt {
 
 		private void GotoEditor() {
 			if(!squaresCentered) {
-				//todo
+				//Todo: Exporting page
 				//use presentedSquareIndex
 				//app navigation
 			}
@@ -512,6 +531,7 @@ namespace KeepWithIt {
 
 		private void GotoActualWorkout() {
 			if(!squaresCentered) {
+				//Todo: Workout page
 				//use presentedSquareIndex
 				//app navigation
 			}
@@ -519,6 +539,7 @@ namespace KeepWithIt {
 
 		private void GotoCreation() {
 			if(squaresCentered) {
+				//Todo: Creation page
 				//app navigation
 			
 			}
@@ -526,13 +547,16 @@ namespace KeepWithIt {
 
 		private void GotoAbout() {
 			if(squaresCentered) {
+				//Todo: About page
 				//app navigation
 			}
 		}
 
 		private void GotoImport() {
 			if(squaresCentered) {
+				//Todo: Import page
 				//app navigation
+				ReloadSquares();
 			}
 		}
 
@@ -545,7 +569,7 @@ namespace KeepWithIt {
 					CancelCommandIndex = 1,
 				};
 				messageDialog.Commands.Add(new UICommand("Yes. Leave me alone!",(command) => {
-					//actually delete the damn thing
+					WorkoutManager.DeleteWorkout(presentedSquareIndex);
 					ReloadSquares();
 					ClearPresentSquare();
 				}));
@@ -553,7 +577,6 @@ namespace KeepWithIt {
 				await messageDialog.ShowAsync();
 			}
 		}
-
 		private void ExportButton_Click(object sender,RoutedEventArgs e) {
 			GotoExport();
 		}
