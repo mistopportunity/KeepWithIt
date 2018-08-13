@@ -100,6 +100,9 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Workout.cs" />
+    <Compile Include="WorkoutEditor.xaml.cs">
+      <DependentUpon>WorkoutEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WorkoutManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -109,7 +112,11 @@
     <None Include="KeepWithIt_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\download.svg" />
     <Content Include="Assets\Kitten.png" />
+    <Content Include="Assets\plus.svg" />
+    <Content Include="Assets\question.svg" />
+    <Content Include="Attributions and credits.txt" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -127,6 +134,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WorkoutEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

@@ -73,14 +73,21 @@ namespace KeepWithIt {
 			Grid.SetColumnSpan(titleGrid,9);
 			Grid.SetRowSpan(titleGrid,1);
 			titleGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
-			titleGrid.VerticalAlignment = VerticalAlignment.Stretch;
-			titleGrid.Background = new SolidColorBrush(Colors.Black);
+			titleGrid.VerticalAlignment = VerticalAlignment.Top;
+			titleGrid.Background = new AcrylicBrush() {
+				BackgroundSource = AcrylicBackgroundSource.Backdrop,
+				TintColor = Colors.Black,
+				FallbackColor = Colors.Black,
+				TintOpacity = 0.5
+			};
 
 			TextBlock titleBlock = new TextBlock();
+			titleBlock.VerticalAlignment = VerticalAlignment.Top;
 			titleBlock.HorizontalAlignment = HorizontalAlignment.Stretch;
-			titleBlock.HorizontalTextAlignment = TextAlignment.Left;
-			titleBlock.VerticalAlignment = VerticalAlignment.Stretch;
+			titleBlock.TextAlignment = TextAlignment.Center;
+			titleBlock.TextWrapping = TextWrapping.WrapWholeWords;
 
+			titleBlock.Padding = new Thickness(2.5,2.5,2.5,2.5);
 			titleBlock.FontSize = 18f;
 			titleBlock.Text = Name;
 			titleBlock.Foreground = new SolidColorBrush(Colors.White);

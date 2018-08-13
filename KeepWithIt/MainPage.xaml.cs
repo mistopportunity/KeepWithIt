@@ -14,12 +14,15 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.System;
 using Windows.UI.Popups;
 
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
+
+		private const double focusSizeDivider = 70;
 
 		public MainPage() {
 			this.InitializeComponent();
@@ -30,9 +33,9 @@ namespace KeepWithIt {
 			if(selectedIndex != -1) {
 				removeSelectionAttributes(selectedGrid);
 				selectedGrid = null;
-				lastSelectedIndex = 0;
-				selectedIndex = 1;
+				selectedIndex = -1;
 			}
+			lastSelectedIndex = 0;
 
 			squaresGrid.Children.Clear();
 
@@ -60,22 +63,68 @@ namespace KeepWithIt {
 			Window.Current.CoreWindow.KeyUp -= CoreWindow_KeyUp;
 		}
 
-		private void AddPrototypeSquare(string text) {
-			AddSquare(
-				new List<UIElement>() {
-						new TextBlock() {
-							Text = text,
-							Foreground = new SolidColorBrush(Colors.White),
-							FontSize = 18f
-						}
-					}
-			);
+		private void CreateInterfaceSquare(string text,string imagePath) {
+			Uri uri = new Uri(imagePath,UriKind.RelativeOrAbsolute);
+			SvgImageSource imageSource = new SvgImageSource(uri);
+
+			Grid grid = new Grid();
+
+			grid.ColumnDefinitions.Add(new ColumnDefinition() {
+				Width = new GridLength(1,GridUnitType.Star)
+			});
+			grid.ColumnDefinitions.Add(new ColumnDefinition() {
+				Width = new GridLength(3,GridUnitType.Star)
+			});
+			grid.ColumnDefinitions.Add(new ColumnDefinition() {
+				Width = new GridLength(1,GridUnitType.Star)
+			});
+
+			grid.RowDefinitions.Add(new RowDefinition() {
+				Height = new GridLength(4,GridUnitType.Star)
+			});
+			grid.RowDefinitions.Add(new RowDefinition() {
+				Height = new GridLength(1,GridUnitType.Star)
+			});
+
+
+			var image = new Image() {
+				HorizontalAlignment = HorizontalAlignment.Stretch,
+				VerticalAlignment = VerticalAlignment.Stretch,
+				Source = imageSource,
+				Stretch = Stretch.Uniform,
+			};
+
+			var textBlock = new TextBlock() {
+				Text = text,
+				HorizontalAlignment = HorizontalAlignment.Stretch,
+				VerticalAlignment = VerticalAlignment.Center,
+				FontSize = 20,
+				TextAlignment = TextAlignment.Center,
+				//What the fuck is the difference????
+				HorizontalTextAlignment = TextAlignment.Center
+			};
+
+			grid.Children.Add(image);
+			grid.Children.Add(textBlock);
+
+			Grid.SetRow(textBlock,2);
+			Grid.SetColumnSpan(textBlock,3);
+			Grid.SetColumn(image,1);
+
+			grid.Background = new SolidColorBrush(Colors.Transparent);
+
+			AddSquare(grid);
 		}
 		private int interfaceSquaresCount = 0;
 		private void AddInterfaceSquares() {
-			AddPrototypeSquare("Create");
-			AddPrototypeSquare("Import");
-			AddPrototypeSquare("About");
+
+			CreateInterfaceSquare("Create","ms-appx:///Assets/plus.svg");
+
+			CreateInterfaceSquare("Import","ms-appx:///Assets/download.svg");
+
+			CreateInterfaceSquare("About","ms-appx:///Assets/question.svg");
+
+
 			interfaceSquaresCount = 3;
 		}
 
@@ -172,25 +221,6 @@ namespace KeepWithIt {
 
 		private void Grid_Tapped(object sender,TappedRoutedEventArgs e) {
 			SquareTapped(sender as Grid);
-		}
-
-		public void AddSquare(IEnumerable<UIElement> content = null) {
-
-			var grid = new Grid() {
-				Background = new SolidColorBrush(Colors.Black)
-			};
-
-			var gridChildren = grid.Children;
-
-			if(content != null) {
-				foreach(var element in content) {
-					gridChildren.Add(element);
-				}
-			}
-
-			AddSquare(grid);
-
-
 		}
 
 		private bool squaresCentered = true;
@@ -303,6 +333,7 @@ namespace KeepWithIt {
 					resetGridMode();
 					gridAlignmentDefault = true;
 				}
+				updateSelectedGrid();
 			} else {
 
 				double leftSize;
@@ -406,9 +437,15 @@ namespace KeepWithIt {
 
 		}
 
-		private void addSelectionAttributes(Grid grid) {
+		private void updateSelectedGrid() {
+			if(selectedGrid != null) {
+				addSelectionAttributes(selectedGrid);
+			}
+		}
 
-			grid.BorderThickness = new Thickness(-6,-6,-6,-6); //Oh God, the irony.
+		private void addSelectionAttributes(Grid grid) {
+			var thiccness = -(grid.ActualWidth / focusSizeDivider);
+			grid.BorderThickness = new Thickness(thiccness); //Oh God, the irony.
 
 		}
 
@@ -537,7 +574,7 @@ namespace KeepWithIt {
 			}
 		}
 
-		private void GotoCreation() {
+		private void GotoCreation()  {
 			if(squaresCentered) {
 				//Todo: Creation page
 				//app navigation
@@ -562,7 +599,7 @@ namespace KeepWithIt {
 		private async void DeletionPrompt() {
 			if(!squaresCentered) {
 				MessageDialog messageDialog = new MessageDialog(
-					"Are you sure you want to delete this? There's an old adage that goes \"once you do this you can't undo this\"",
+					"Are you sure you want to delete this? There's an old adage that goes \"once you do this you can't undo it\"",
 					"THIS IS SO SAD") {
 					DefaultCommandIndex = 0,
 					CancelCommandIndex = 1,
