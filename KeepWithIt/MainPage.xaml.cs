@@ -210,17 +210,24 @@ namespace KeepWithIt {
 				Grid.SetColumn(grid,3);
 			}
 
-			grid.Tapped +=Grid_Tapped;
+			grid.Tapped += Grid_Tapped;
+			grid.PointerReleased +=Grid_PointerReleased;
 
-			grid.PointerEntered += Grid_PointerEntered;
-
-			grid.PointerExited +=Grid_PointerExited;
+			grid.PointerPressed += pointerBasedGridSelect;
+			grid.PointerEntered += pointerBasedGridSelect;
+			grid.PointerExited += Grid_PointerExited;
 
 			squaresGrid.Children.Add(grid);
 		}
 
+		private void Grid_PointerReleased(object sender,PointerRoutedEventArgs e) {
+			SquareTapped(sender as Grid);
+			e.Handled = true;
+		}
+
 		private void Grid_Tapped(object sender,TappedRoutedEventArgs e) {
 			SquareTapped(sender as Grid);
+			e.Handled = true;
 		}
 
 		private bool squaresCentered = true;
@@ -540,7 +547,7 @@ namespace KeepWithIt {
 			}
 		}
 
-		private void Grid_PointerEntered(object sender,PointerRoutedEventArgs e) {
+		private void pointerBasedGridSelect(object sender,PointerRoutedEventArgs e) {
 			var children = squaresGrid.Children;
 			if(selectedIndex != -1) {
 				removeSelectionAttributes(selectedGrid);
@@ -550,6 +557,7 @@ namespace KeepWithIt {
 			lastSelectedIndex = selectedIndex;
 			addSelectionAttributes(selectedGrid);
 		}
+
 
 		private void GotoExport() {
 			if(!squaresCentered) {
