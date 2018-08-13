@@ -43,12 +43,14 @@ namespace KeepWithIt {
 			ReloadSquares();
 
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
+			Window.Current.CoreWindow.KeyUp += CoreWindow_KeyUp;
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 
 			base.OnNavigatingFrom(e);
 
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyDown;
+			Window.Current.CoreWindow.KeyUp -= CoreWindow_KeyUp;
 		}
 
 		private void AddPrototypeSquare(string text) {
@@ -145,9 +147,7 @@ namespace KeepWithIt {
 		}
 
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
-
 			ClearPresentSquare();
-
 			e.Handled = true;
 		}
 
@@ -345,6 +345,8 @@ namespace KeepWithIt {
 
 			} else {
 
+				//rework transversal logical to be usable with one button, but allow for current flexibility to save presses
+
 				var squaresCount = squaresGrid.Children.Count;
 
 				if(xDelta != 0) {
@@ -365,14 +367,8 @@ namespace KeepWithIt {
 								selectedIndex+=2;
 							}
 						} else {
-							if(squaresCount % 2 == 1) {
-								if(selectedIndex + 1 < squaresCount) {
-									selectedIndex++;
-								}
-							} else {
-								if(selectedIndex + 2 < squaresCount) {
-									selectedIndex+=2;
-								}
+							if(squaresCount % 2 != 1 && selectedIndex + 2 < squaresCount) {
+								selectedIndex+=2;
 							}
 						}
 
@@ -417,16 +413,12 @@ namespace KeepWithIt {
 						break;
 					case VirtualKey.GamepadDPadDown:
 					case VirtualKey.GamepadDPadRight:
-					case VirtualKey.GamepadLeftThumbstickRight:
-					case VirtualKey.GamepadLeftThumbstickDown:
 					case VirtualKey.Right:
 					case VirtualKey.Down:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
 						break;
 					case VirtualKey.GamepadDPadLeft:
 					case VirtualKey.GamepadDPadUp:
-					case VirtualKey.GamepadLeftThumbstickUp:
-					case VirtualKey.GamepadLeftThumbstickLeft:
 					case VirtualKey.Left:
 					case VirtualKey.Up:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
@@ -443,26 +435,54 @@ namespace KeepWithIt {
 						break;
 					case VirtualKey.Up:
 					case VirtualKey.GamepadDPadUp:
-					case VirtualKey.GamepadLeftThumbstickUp:
 						updateSelection(0,-1);
 						break;
 					case VirtualKey.Down:
 					case VirtualKey.GamepadDPadDown:
-					case VirtualKey.GamepadLeftThumbstickDown:
 						updateSelection(0,1);
 						break;
 					case VirtualKey.Left:
 					case VirtualKey.GamepadDPadLeft:
-					case VirtualKey.GamepadLeftThumbstickLeft:
 						updateSelection(-1,0);
 						break;
 					case VirtualKey.Right:
 					case VirtualKey.GamepadDPadRight:
+						updateSelection(1,0);
+						break;
+				}
+			}
+		}
+
+		private void CoreWindow_KeyUp(CoreWindow sender,KeyEventArgs args) {
+			if(!squaresCentered) {
+				switch(args.VirtualKey) {
+					case VirtualKey.GamepadLeftThumbstickRight:
+					case VirtualKey.GamepadLeftThumbstickDown:
+						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+						break;
+					case VirtualKey.GamepadLeftThumbstickUp:
+					case VirtualKey.GamepadLeftThumbstickLeft:
+						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+						break;
+
+				}
+			} else {
+				switch(args.VirtualKey) {
+					case VirtualKey.GamepadLeftThumbstickUp:
+						updateSelection(0,-1);
+						break;
+					case VirtualKey.GamepadLeftThumbstickDown:
+						updateSelection(0,1);
+						break;
+					case VirtualKey.GamepadLeftThumbstickLeft:
+						updateSelection(-1,0);
+						break;
 					case VirtualKey.GamepadLeftThumbstickRight:
 						updateSelection(1,0);
 						break;
 				}
 			}
+
 		}
 
 		private void Grid_PointerEntered(object sender,PointerRoutedEventArgs e) {
