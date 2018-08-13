@@ -71,7 +71,7 @@ namespace KeepWithIt {
 
 			var titleGrid = new Grid();
 			Grid.SetColumnSpan(titleGrid,9);
-			Grid.SetRowSpan(titleGrid,1);
+			Grid.SetRowSpan(titleGrid,9);
 			titleGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
 			titleGrid.VerticalAlignment = VerticalAlignment.Top;
 			titleGrid.Background = new AcrylicBrush() {
@@ -85,7 +85,7 @@ namespace KeepWithIt {
 			titleBlock.VerticalAlignment = VerticalAlignment.Top;
 			titleBlock.HorizontalAlignment = HorizontalAlignment.Stretch;
 			titleBlock.TextAlignment = TextAlignment.Center;
-			titleBlock.TextWrapping = TextWrapping.WrapWholeWords;
+			titleBlock.TextWrapping = TextWrapping.Wrap;
 
 			titleBlock.Padding = new Thickness(2.5,2.5,2.5,2.5);
 			titleBlock.FontSize = 18f;
