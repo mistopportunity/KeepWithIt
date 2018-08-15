@@ -54,14 +54,14 @@ namespace KeepWithIt {
 			ReloadSquares();
 
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
-			Window.Current.CoreWindow.KeyUp += CoreWindow_KeyUp;
+
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 
 			base.OnNavigatingFrom(e);
 
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyDown;
-			Window.Current.CoreWindow.KeyUp -= CoreWindow_KeyUp;
+
 		}
 
 		private void CreateInterfaceSquare(string text,string imagePath) {
@@ -137,6 +137,13 @@ namespace KeepWithIt {
 
 		private Grid presentedSquare = null;
 
+		private void setButtonsEnabled(bool enabled) {
+			StartButton.IsEnabled = enabled;
+			EditButton.IsEnabled = enabled;
+			DeleteButton.IsEnabled = enabled;
+			ExportButton.IsEnabled = enabled;
+		}
+
 		public void ClearPresentSquare() {
 			if(presentedSquare != null) {
 				TopGrid.Children.Remove(presentedSquare);
@@ -144,7 +151,12 @@ namespace KeepWithIt {
 			presentedSquare = null;
 			presentedSquareIndex = -1;
 			UnsubscribeBackButton();
+
+			setButtonsEnabled(false);
+
 			CentralizeSquares();
+
+			ElementSoundPlayer.Play(ElementSoundKind.MovePrevious);
 		}
 
 		private int presentedSquareIndex = -1;
@@ -153,9 +165,14 @@ namespace KeepWithIt {
 			if(presentedSquare != null) {
 				TopGrid.Children.Remove(presentedSquare);
 			}
+
+			setButtonsEnabled(true);
+
 			presentedSquare = square;
 			PushSquaresLeft();
 			TopGrid.Children.Add(square);
+
+			ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 		}
 
 		private void SquareTapped(Grid grid) {
@@ -383,8 +400,10 @@ namespace KeepWithIt {
 				selectedIndex = lastSelectedIndex;
 				selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
 				addSelectionAttributes(selectedGrid);
-
+				ElementSoundPlayer.Play(ElementSoundKind.Focus);
 			} else {
+
+				var startIndex = selectedIndex;
 
 				var squaresCount = squaresGrid.Children.Count;
 				if(xDelta > 0) {
@@ -411,9 +430,6 @@ namespace KeepWithIt {
 								selectedIndex+=2;
 							}
 						}
-
-
-
 					} else {
 						selectedIndex += 2;
 					}
@@ -423,15 +439,14 @@ namespace KeepWithIt {
 					}
 
 				}
-
-				removeSelectionAttributes(selectedGrid);
-				selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
-				addSelectionAttributes(selectedGrid);
-
-				selectedGrid.StartBringIntoView();
-
-				lastSelectedIndex = selectedIndex;
-
+				if(selectedIndex != startIndex) {
+					removeSelectionAttributes(selectedGrid);
+					selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
+					addSelectionAttributes(selectedGrid);
+					selectedGrid.StartBringIntoView();
+					lastSelectedIndex = selectedIndex;
+					ElementSoundPlayer.Play(ElementSoundKind.Focus);
+				}
 			}
 		}
 
@@ -467,12 +482,14 @@ namespace KeepWithIt {
 					case VirtualKey.Right:
 					case VirtualKey.Down:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+						ElementSoundPlayer.Play(ElementSoundKind.Focus);
 						break;
 					case VirtualKey.GamepadDPadLeft:
 					case VirtualKey.GamepadDPadUp:
 					case VirtualKey.Left:
 					case VirtualKey.Up:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+						ElementSoundPlayer.Play(ElementSoundKind.Focus);
 						break;
 
 				}
@@ -504,38 +521,6 @@ namespace KeepWithIt {
 			}
 		}
 
-		private void CoreWindow_KeyUp(CoreWindow sender,KeyEventArgs args) {
-			if(!squaresCentered) {
-				switch(args.VirtualKey) {
-					case VirtualKey.GamepadLeftThumbstickRight:
-					case VirtualKey.GamepadLeftThumbstickDown:
-						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
-						break;
-					case VirtualKey.GamepadLeftThumbstickUp:
-					case VirtualKey.GamepadLeftThumbstickLeft:
-						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
-						break;
-
-				}
-			} else {
-				switch(args.VirtualKey) {
-					case VirtualKey.GamepadLeftThumbstickUp:
-						updateSelection(0,-1);
-						break;
-					case VirtualKey.GamepadLeftThumbstickDown:
-						updateSelection(0,1);
-						break;
-					case VirtualKey.GamepadLeftThumbstickLeft:
-						updateSelection(-1,0);
-						break;
-					case VirtualKey.GamepadLeftThumbstickRight:
-						updateSelection(1,0);
-						break;
-				}
-			}
-
-		}
-
 		private void Grid_PointerExited(object sender,PointerRoutedEventArgs e) {
 			if(selectedIndex != -1) {
 				removeSelectionAttributes(selectedGrid);
@@ -545,21 +530,26 @@ namespace KeepWithIt {
 		}
 
 		private void pointerBasedGridSelect(object sender,PointerRoutedEventArgs e) {
-			var children = squaresGrid.Children;
+			var senderGrid = sender as Grid;
+			if(senderGrid == selectedGrid) {
+				return;
+			}
 			if(selectedIndex != -1) {
 				removeSelectionAttributes(selectedGrid);
 			}
-			selectedGrid = sender as Grid;
-			selectedIndex = children.IndexOf(selectedGrid);
+			selectedGrid = senderGrid;
+			selectedIndex = squaresGrid.Children.IndexOf(selectedGrid);
 			lastSelectedIndex = selectedIndex;
 			addSelectionAttributes(selectedGrid);
+			ElementSoundPlayer.Play(ElementSoundKind.Focus);
 		}
 
 
 		private void GotoExport() {
 			if(!squaresCentered) {
 				//use presentedSquareIndex
-				//app navigation
+				//use a dialog
+				ElementSoundPlayer.Play(ElementSoundKind.Show);
 			}
 		}
 
@@ -568,6 +558,7 @@ namespace KeepWithIt {
 				//Todo: Exporting page
 				//use presentedSquareIndex
 				//app navigation
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
 
@@ -576,6 +567,7 @@ namespace KeepWithIt {
 				//Todo: Workout page
 				//use presentedSquareIndex
 				//app navigation
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
 
@@ -583,7 +575,8 @@ namespace KeepWithIt {
 			if(squaresCentered) {
 				//Todo: Creation page
 				//app navigation
-			
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+
 			}
 		}
 
@@ -591,6 +584,7 @@ namespace KeepWithIt {
 			if(squaresCentered) {
 				//Todo: About page
 				//app navigation
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
 
@@ -598,11 +592,17 @@ namespace KeepWithIt {
 			if(squaresCentered) {
 				//Todo: Import page
 				//app navigation
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
 
+		private bool deleting = false;
 		private async void DeletionPrompt() {
+			if(deleting)
+				return;
 			if(!squaresCentered) {
+				deleting = true;
+				setButtonsEnabled(false);
 				MessageDialog messageDialog = new MessageDialog(
 					"Are you sure you want to delete this? There's an old adage that goes \"once you do this you can't undo it\"",
 					"THIS IS SO SAD") {
@@ -613,8 +613,14 @@ namespace KeepWithIt {
 					WorkoutManager.DeleteWorkout(presentedSquareIndex);
 					ReloadSquares();
 					ClearPresentSquare();
+					deleting = false;
 				}));
-				messageDialog.Commands.Add(new UICommand("No! Please, Daddy don't delete it!"));
+				messageDialog.Commands.Add(new UICommand("No! Please, Daddy don't delete it!",(command) => {
+					deleting = false;
+					setButtonsEnabled(true);
+					FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+				}));
+				ElementSoundPlayer.Play(ElementSoundKind.Show);
 				await messageDialog.ShowAsync();
 			}
 		}

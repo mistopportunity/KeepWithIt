@@ -23,6 +23,8 @@ namespace KeepWithIt {
 			this.InitializeComponent();
 			this.Suspending += OnSuspending;
 
+			ElementSoundPlayer.State = ElementSoundPlayerState.On;
+
 			WorkoutManager.LoadWorkouts();
 
 		}

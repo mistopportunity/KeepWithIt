@@ -46,7 +46,7 @@ namespace KeepWithIt {
 		internal Grid GetGrid() {
 			var grid = generate81SquareGrid();
 
-			grid.Background = new SolidColorBrush(Colors.Black);
+			grid.Background = Application.Current.Resources["SystemBaseHighColor"] as SolidColorBrush;
 
 			if(Segments.Count > 0) {
 				for(var i = 0;i<9;i++) {
