@@ -77,8 +77,8 @@ namespace KeepWithIt {
 			titleGrid.Background = new AcrylicBrush() {
 				BackgroundSource = AcrylicBackgroundSource.Backdrop,
 				TintColor = Colors.Black,
-				FallbackColor = Colors.Black,
-				TintOpacity = 0.5
+				FallbackColor = Color.FromArgb(180,0,0,0),
+				TintOpacity = 0.25
 			};
 
 			TextBlock titleBlock = new TextBlock();

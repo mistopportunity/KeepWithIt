@@ -105,6 +105,8 @@ namespace KeepWithIt {
 				HorizontalTextAlignment = TextAlignment.Center
 			};
 
+			textBlock.Foreground = new SolidColorBrush(Colors.Black);
+
 			grid.Children.Add(image);
 			grid.Children.Add(textBlock);
 
@@ -112,7 +114,7 @@ namespace KeepWithIt {
 			Grid.SetColumnSpan(textBlock,3);
 			Grid.SetColumn(image,1);
 
-			grid.Background = new SolidColorBrush(Colors.Transparent);
+			grid.Background = new SolidColorBrush(Colors.White);
 
 			AddSquare(grid);
 		}
@@ -384,16 +386,15 @@ namespace KeepWithIt {
 
 			} else {
 
-				//Todo: rework transversal logical to be usable with one button, but allow for current flexibility to save on interactions
-
 				var squaresCount = squaresGrid.Children.Count;
-
-				if(xDelta != 0) {
+				if(xDelta > 0) {
 					if(selectedIndex % 2 == 0) {
 						if(selectedIndex + 1 < squaresCount) {
 							selectedIndex++;
 						}
-					} else {
+					}
+				} else if(xDelta < 0) {
+					if(selectedIndex % 2 == 1) {
 						selectedIndex--;
 					}
 				}
