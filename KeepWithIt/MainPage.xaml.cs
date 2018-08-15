@@ -22,7 +22,8 @@ using Windows.UI.Popups;
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
 
-		private const double focusSizeDivider = 70;
+		private const double focusSizeDivider = 50;
+		private double iconSizeMultiplier = 2;
 
 		public MainPage() {
 			this.InitializeComponent();
@@ -73,7 +74,7 @@ namespace KeepWithIt {
 				Width = new GridLength(1,GridUnitType.Star)
 			});
 			grid.ColumnDefinitions.Add(new ColumnDefinition() {
-				Width = new GridLength(3,GridUnitType.Star)
+				Width = new GridLength(iconSizeMultiplier,GridUnitType.Star)
 			});
 			grid.ColumnDefinitions.Add(new ColumnDefinition() {
 				Width = new GridLength(1,GridUnitType.Star)
@@ -211,18 +212,13 @@ namespace KeepWithIt {
 			}
 
 			grid.Tapped += Grid_Tapped;
-			grid.PointerReleased +=Grid_PointerReleased;
 
 			grid.PointerPressed += pointerBasedGridSelect;
 			grid.PointerEntered += pointerBasedGridSelect;
+
 			grid.PointerExited += Grid_PointerExited;
 
 			squaresGrid.Children.Add(grid);
-		}
-
-		private void Grid_PointerReleased(object sender,PointerRoutedEventArgs e) {
-			SquareTapped(sender as Grid);
-			e.Handled = true;
 		}
 
 		private void Grid_Tapped(object sender,TappedRoutedEventArgs e) {
