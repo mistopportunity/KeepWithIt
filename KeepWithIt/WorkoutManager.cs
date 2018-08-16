@@ -8,10 +8,7 @@ using Windows.Storage;
 
 namespace KeepWithIt {
 	internal static class WorkoutManager {
-
-
 		internal static readonly List<Workout> Workouts = new List<Workout>();
-
 		internal static void DeleteWorkout(int workoutIndex) {
 			Workouts.RemoveAt(workoutIndex);
 			SaveWorkouts();
@@ -20,13 +17,6 @@ namespace KeepWithIt {
 		internal static void AddWorkout(Workout workout) {
 			Workouts.Add(workout);
 		}
-
-		internal static bool WorkoutsLoaded {
-			get {
-				return Workouts != null;
-			}
-		}
-
 		internal async static Task<bool> AddWorkout(IStorageItem file) {
 			//Todo: Process IStorageItem
 			Workouts.Add(new Workout() {
@@ -36,12 +26,13 @@ namespace KeepWithIt {
 		}
 
 		internal async static void ExportWorkout(StorageFile file,Workout workout) {
+			//Todo: properly write the file
 			await FileIO.WriteTextAsync(file,file.Name);
 		}
 
-		internal static void LoadWorkouts() {
+		internal async static void LoadWorkouts() {
 
-			//Populate list from wherever the Hell
+			//Todo load workouts
 
 #if DEBUG
 			if(Workouts.Count == 0)
@@ -49,7 +40,8 @@ namespace KeepWithIt {
 #endif
 		}
 
-		internal static void SaveWorkouts() {
+		internal async static void SaveWorkouts() {
+			//Todo save workouts
 			// ' it's "saved" '
 		}
 

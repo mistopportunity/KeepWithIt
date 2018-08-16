@@ -84,6 +84,7 @@ namespace KeepWithIt {
 
 		private void OnSuspending(object sender,SuspendingEventArgs e) {
 			var deferral = e.SuspendingOperation.GetDeferral();
+			WorkoutManager.SaveWorkouts();
 			deferral.Complete();
 		}
 	}
