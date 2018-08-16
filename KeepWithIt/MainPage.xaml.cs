@@ -7,7 +7,9 @@ using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.Storage.Pickers;
 using Windows.UI.Core;
+using Windows.Storage.Provider;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -18,6 +20,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.System;
 using Windows.UI.Popups;
+using Windows.Storage;
 
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
@@ -52,6 +55,10 @@ namespace KeepWithIt {
 			base.OnNavigatedTo(e);
 
 			ReloadSquares();
+
+			if(e.Parameter is Workout) {
+				PresentSquare(squaresGrid.Children[WorkoutManager.Workouts.IndexOf(e.Parameter as Workout) + interfaceSquaresCount] as Grid);
+			}
 
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
@@ -559,12 +566,32 @@ namespace KeepWithIt {
 			ElementSoundPlayer.Play(ElementSoundKind.Focus);
 		}
 
-		private void GotoExport() {
+		private async void GotoExport() {
 			if(!squaresCentered) {
-				//Todo: Exporting page
-				//use presentedSquareIndex
-				//use a dialog
+				var savePicker = new FileSavePicker();
+				savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+				savePicker.FileTypeChoices.Add("Keep with it Workout File",new List<string>() {".kwiw"});
+				savePicker.SuggestedFileName = WorkoutManager.Workouts[presentedSquareIndex].Name;
 				ElementSoundPlayer.Play(ElementSoundKind.Show);
+				StorageFile file = await savePicker.PickSaveFileAsync();
+				if(file != null) {
+
+					CachedFileManager.DeferUpdates(file);
+
+					WorkoutManager.ExportWorkout(file,WorkoutManager.Workouts[presentedSquareIndex]);
+
+					var status = await CachedFileManager.CompleteUpdatesAsync(file);
+					if(status != FileUpdateStatus.Complete) {
+						ElementSoundPlayer.Play(ElementSoundKind.Show);
+						MessageDialog messageDialog = new MessageDialog("This file couldn't be saved! SAD SAD SAD SAADDDDD SAD") {
+							DefaultCommandIndex = 0,
+							CancelCommandIndex = 0
+						};
+						messageDialog.Commands.Add(new UICommand("Okay :("));
+						await messageDialog.ShowAsync();
+					}
+				}
+				ElementSoundPlayer.Play(ElementSoundKind.Hide);
 			}
 		}
 
@@ -576,16 +603,14 @@ namespace KeepWithIt {
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
-
 		private void GotoActualWorkout() {
 			if(!squaresCentered) {
-				//Todo: Workout page
-				//use presentedSquareIndex
-				//app navigation
+				var currentSquare = presentedSquareIndex;
+				ClearPresentSquare(false);
+				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
-
 		private void GotoCreation()  {
 			if(squaresCentered) {
 				var currentSquare = presentedSquareIndex;
@@ -595,20 +620,37 @@ namespace KeepWithIt {
 
 			}
 		}
-
 		private void GotoAbout() {
 			if(squaresCentered) {
-				//Todo: About page
-				//app navigation
+				Frame.Navigate(typeof(AboutPage));
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
-
-		private void GotoImport() {
+		private async void GotoImport() {
 			if(squaresCentered) {
-				//Todo: Import page
-				//app navigation
-				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+
+				var picker = new FileOpenPicker();
+				picker.ViewMode = PickerViewMode.Thumbnail;
+				picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+				picker.FileTypeFilter.Add(".kwiw");
+
+				ElementSoundPlayer.Play(ElementSoundKind.Show);
+				var file = await picker.PickSingleFileAsync();
+				if(file != null) {
+					var fileResult = await WorkoutManager.AddWorkout(file);
+					if(fileResult == false) {
+						ElementSoundPlayer.Play(ElementSoundKind.Show);
+						MessageDialog messageDialog = new MessageDialog("This file couldn't be saved! SAD SAD SAD SAADDDDD SAD") {
+							DefaultCommandIndex = 0,
+							CancelCommandIndex = 0
+						};
+						messageDialog.Commands.Add(new UICommand("Okay :("));
+						await messageDialog.ShowAsync();
+					} else {
+						ReloadSquares();
+					}
+				}
+				ElementSoundPlayer.Play(ElementSoundKind.Hide);
 			}
 		}
 

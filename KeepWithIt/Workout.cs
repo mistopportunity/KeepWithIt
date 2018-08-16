@@ -9,6 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace KeepWithIt {
 
@@ -93,11 +94,16 @@ namespace KeepWithIt {
 
 	internal sealed class Workout {
 
+		internal Workout() {
+			Segments = new ObservableCollection<WorkoutSegment>();
+		
+		}
+
 		internal string Name {
 			get;set;
 		}
 
-		internal readonly List<WorkoutSegment> Segments = new List<WorkoutSegment>();
+		internal readonly ObservableCollection<WorkoutSegment> Segments;
 
 		internal readonly List<DateTime> Dates = new List<DateTime>();
 

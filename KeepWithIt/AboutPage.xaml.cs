@@ -20,9 +20,9 @@ namespace KeepWithIt
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class BlankPage : Page
+    public sealed partial class AboutPage : Page
     {
-        public BlankPage()
+        public AboutPage()
         {
             this.InitializeComponent();
         }

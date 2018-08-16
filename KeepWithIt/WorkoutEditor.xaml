@@ -31,6 +31,6 @@
 			</ListView.ItemTemplate>
 		</ListView>
 		<TextBox x:Name="nameBox" Grid.Column="1" VerticalAlignment="Top" Margin="10,10,10,0" HorizontalAlignment="Stretch" FontSize="18" TextChanged="nameBox_TextChanged" Height="36" MaxLength="32" TabIndex="0"/>
-		<Button x:Name="addButton" Content="add segment" Grid.Column="1" Height="36" VerticalAlignment="Top" Margin="10,55,10,0" FontSize="18" HorizontalAlignment="Stretch" TabIndex="1"/>
+		<Button x:Name="addButton" Content="add segment" Grid.Column="1" Height="36" VerticalAlignment="Top" Margin="10,55,10,0" FontSize="18" HorizontalAlignment="Stretch" TabIndex="1" Click="addButton_Click"/>
 	</Grid>
 </Page>

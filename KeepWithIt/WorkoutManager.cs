@@ -4,15 +4,17 @@ using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace KeepWithIt {
 	internal static class WorkoutManager {
 
 
-		internal static List<Workout> Workouts;
+		internal static readonly List<Workout> Workouts = new List<Workout>();
 
 		internal static void DeleteWorkout(int workoutIndex) {
 			Workouts.RemoveAt(workoutIndex);
+			SaveWorkouts();
 		}
 
 		internal static void AddWorkout(Workout workout) {
@@ -24,17 +26,31 @@ namespace KeepWithIt {
 				return Workouts != null;
 			}
 		}
+
+		internal async static Task<bool> AddWorkout(IStorageItem file) {
+			//Todo: Process IStorageItem
+			Workouts.Add(new Workout() {
+				Name = file.Name.Split(".").SkipLast(1).Aggregate((x,y) => $"{x}{y}")
+			});
+			return true;
+		}
+
+		internal async static void ExportWorkout(StorageFile file,Workout workout) {
+			await FileIO.WriteTextAsync(file,file.Name);
+		}
+
 		internal static void LoadWorkouts() {
-
-			Workouts = new List<Workout>();
-
-#if DEBUG
-			LoadPrototypeWorkouts();
-			return;
-#endif
 
 			//Populate list from wherever the Hell
 
+#if DEBUG
+			if(Workouts.Count == 0)
+			LoadPrototypeWorkouts();
+#endif
+		}
+
+		internal static void SaveWorkouts() {
+			// ' it's "saved" '
 		}
 
 		private static void LoadPrototypeWorkouts() {

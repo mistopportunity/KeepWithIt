@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -74,6 +75,9 @@ namespace KeepWithIt {
 					workout.Name = processedNameBox;
 				}
 			}
+
+
+			WorkoutManager.SaveWorkouts();
 
 		}
 
@@ -220,6 +224,12 @@ namespace KeepWithIt {
 			var item = e.ClickedItem as WorkoutSegment;
 			item.Name = "Motherfucker you clicked me!";
 			item.PreviewImage = null;
+		}
+
+		private void addButton_Click(object sender,RoutedEventArgs e) {
+			workout.Segments.Add(new WorkoutSegment() {
+				Name = "Debug segment - user"
+			});
 		}
 	}
 }
