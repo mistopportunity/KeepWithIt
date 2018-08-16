@@ -470,7 +470,7 @@ namespace KeepWithIt {
 		}
 
 		private void addSelectionAttributes(Grid grid) {
-			var thiccness = -(grid.ActualWidth / focusSizeDivider);
+			var thiccness = Math.Floor(-(grid.ActualWidth / focusSizeDivider));
 			grid.BorderThickness = new Thickness(thiccness); //Oh God, the irony.
 
 		}
@@ -478,8 +478,6 @@ namespace KeepWithIt {
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
 			if(!squaresCentered) {
 				switch(args.VirtualKey) {
-					case VirtualKey.Back:
-					case VirtualKey.GoBack:
 					case VirtualKey.Escape:
 					case VirtualKey.GamepadB:
 					case VirtualKey.NavigationCancel:
@@ -572,13 +570,9 @@ namespace KeepWithIt {
 
 		private void GotoEditor() {
 			if(!squaresCentered) {
-
-				//use presentedSquareIndex
-				//app navigation
 				var currentSquare = presentedSquareIndex;
 				ClearPresentSquare(false);
 				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
-
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
@@ -594,8 +588,9 @@ namespace KeepWithIt {
 
 		private void GotoCreation()  {
 			if(squaresCentered) {
-				//Todo: Creation page
-				//app navigation
+				var currentSquare = presentedSquareIndex;
+				ClearPresentSquare(false);
+				Frame.Navigate(typeof(WorkoutEditor));
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 
 			}
