@@ -18,6 +18,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace KeepWithIt {
 
+	//Todo: Implement a segment editor
+
 	public sealed partial class WorkoutEditor:Page {
 		public WorkoutEditor() {
 			this.InitializeComponent();
@@ -198,12 +200,12 @@ namespace KeepWithIt {
 		}
 
 		private void Page_LayoutUpdated(object sender,object e) {
-			if(ActualWidth > ActualHeight) {
-				var gridLength = new GridLength(1,GridUnitType.Star);
+			if(ActualWidth < ActualHeight) {
+				var gridLength = new GridLength(0,GridUnitType.Star);
 				Column1.Width = gridLength;
 				Column3.Width = gridLength;
 			} else {
-				var gridLength = new GridLength(0,GridUnitType.Star);
+				var gridLength = new GridLength(1,GridUnitType.Star);
 				Column1.Width = gridLength;
 				Column3.Width = gridLength;
 			}

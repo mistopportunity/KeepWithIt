@@ -188,7 +188,6 @@ namespace KeepWithIt {
 		}
 
 		internal Grid GetPresentationGrid() {
-			//Todo: Not piggy back off of the other preview grid like a little bitch
 			return GetGrid();
 		}
 

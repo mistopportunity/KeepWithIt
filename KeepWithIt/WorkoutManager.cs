@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace KeepWithIt {
+
+	//Todo: Remove prototype workouts
+
 	internal static class WorkoutManager {
 		internal static readonly List<Workout> Workouts = new List<Workout>();
 		internal static void DeleteWorkout(int workoutIndex) {
@@ -55,7 +58,6 @@ namespace KeepWithIt {
 				Name = "Debug workout 1",
 			};
 			workout1.Dates.Add(DateTime.Today - TimeSpan.FromDays(54));
-
 
 			workout1.Segments.Add(new WorkoutSegment() {
 				PreviewImage = debugImage,
