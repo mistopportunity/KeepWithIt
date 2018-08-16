@@ -377,6 +377,7 @@ namespace KeepWithIt {
 					gridAlignmentDefault = true;
 				}
 				updateSelectedGrid();
+
 			} else {
 
 				double leftSize;
@@ -463,10 +464,16 @@ namespace KeepWithIt {
 					removeSelectionAttributes(selectedGrid);
 					selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
 					addSelectionAttributes(selectedGrid);
-					selectedGrid.StartBringIntoView();
+					UpdateScroll();
 					lastSelectedIndex = selectedIndex;
 					ElementSoundPlayer.Play(ElementSoundKind.Focus);
 				}
+			}
+		}
+
+		private void UpdateScroll() {
+			if(selectedGrid != null) {
+				squaresScroller.ChangeView(null,selectedGrid.ActualWidth * (selectedIndex / 2),null);
 			}
 		}
 
