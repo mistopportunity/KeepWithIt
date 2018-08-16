@@ -8,11 +8,6 @@
     mc:Ignorable="d">
 
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition x:Name="Column1" Width="1*"></ColumnDefinition>
-			<ColumnDefinition x:Name="Column2" Width="3*"></ColumnDefinition>
-			<ColumnDefinition x:Name="Column3" Width="1*"></ColumnDefinition>
-		</Grid.ColumnDefinitions>
 
 	</Grid>
 </Page>

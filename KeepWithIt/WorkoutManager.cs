@@ -52,6 +52,18 @@ namespace KeepWithIt {
 
 			AddWorkout(workout1);
 
+			AddWorkout(new Workout() {
+				Name = "Debug workout 2"
+			});
+
+			AddWorkout(new Workout() {
+				Name = "Debug workout 3"
+			});
+
+			AddWorkout(new Workout() {
+				Name = "Debug workout 4"
+			});
+
 		}
 
 	}

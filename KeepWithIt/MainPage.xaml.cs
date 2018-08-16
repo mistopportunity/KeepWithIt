@@ -53,14 +53,14 @@ namespace KeepWithIt {
 
 			ReloadSquares();
 
-			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
+			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 
 			base.OnNavigatingFrom(e);
 
-			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyDown;
+			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 
 		}
 
@@ -138,13 +138,14 @@ namespace KeepWithIt {
 		private Grid presentedSquare = null;
 
 		private void setButtonsEnabled(bool enabled) {
+
 			StartButton.IsEnabled = enabled;
 			EditButton.IsEnabled = enabled;
 			DeleteButton.IsEnabled = enabled;
 			ExportButton.IsEnabled = enabled;
 		}
 
-		public void ClearPresentSquare() {
+		public void ClearPresentSquare(bool playSound = true) {
 			if(presentedSquare != null) {
 				TopGrid.Children.Remove(presentedSquare);
 			}
@@ -156,7 +157,10 @@ namespace KeepWithIt {
 
 			CentralizeSquares();
 
-			ElementSoundPlayer.Play(ElementSoundKind.MovePrevious);
+			if(playSound) {
+				ElementSoundPlayer.Play(ElementSoundKind.MovePrevious);
+			}
+
 		}
 
 		private int presentedSquareIndex = -1;
@@ -202,6 +206,11 @@ namespace KeepWithIt {
 
 
 				PresentSquare(presentationSquare);
+
+				if(WorkoutManager.Workouts[presentedSquareIndex].Segments.Count < 1) {
+					StartButton.IsEnabled = false;
+					ExportButton.IsEnabled = false;
+				}
 
 				var currentView = SystemNavigationManager.GetForCurrentView();
 				currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -377,7 +386,6 @@ namespace KeepWithIt {
 
 				}
 
-
 				double actualActualWidth;
 				if(leftSize > rightSize) {
 					actualActualWidth = rightSize - (leftSize * 0.05);
@@ -468,24 +476,29 @@ namespace KeepWithIt {
 
 		}
 
-		private void CoreWindow_KeyDown(CoreWindow sender,KeyEventArgs args) {
+		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
 			if(!squaresCentered) {
 				switch(args.VirtualKey) {
 					case VirtualKey.Back:
 					case VirtualKey.GoBack:
 					case VirtualKey.Escape:
 					case VirtualKey.GamepadB:
+					case VirtualKey.NavigationCancel:
 						ClearPresentSquare();
 						break;
 					case VirtualKey.GamepadDPadDown:
 					case VirtualKey.GamepadDPadRight:
 					case VirtualKey.Right:
 					case VirtualKey.Down:
+					case VirtualKey.NavigationDown:
+					case VirtualKey.NavigationRight:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
 						ElementSoundPlayer.Play(ElementSoundKind.Focus);
 						break;
 					case VirtualKey.GamepadDPadLeft:
 					case VirtualKey.GamepadDPadUp:
+					case VirtualKey.NavigationLeft:
+					case VirtualKey.NavigationUp:
 					case VirtualKey.Left:
 					case VirtualKey.Up:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
@@ -497,24 +510,29 @@ namespace KeepWithIt {
 				switch(args.VirtualKey) {
 					case VirtualKey.GamepadA:
 					case VirtualKey.Enter:
+					case VirtualKey.NavigationAccept:
 						if(selectedGrid != null) {
 							SquareTapped(selectedGrid);
 						}
 						break;
 					case VirtualKey.Up:
 					case VirtualKey.GamepadDPadUp:
+					case VirtualKey.NavigationUp:
 						updateSelection(0,-1);
 						break;
 					case VirtualKey.Down:
 					case VirtualKey.GamepadDPadDown:
+					case VirtualKey.NavigationDown:
 						updateSelection(0,1);
 						break;
 					case VirtualKey.Left:
 					case VirtualKey.GamepadDPadLeft:
+					case VirtualKey.NavigationLeft:
 						updateSelection(-1,0);
 						break;
 					case VirtualKey.Right:
 					case VirtualKey.GamepadDPadRight:
+					case VirtualKey.NavigationRight:
 						updateSelection(1,0);
 						break;
 				}
@@ -544,9 +562,9 @@ namespace KeepWithIt {
 			ElementSoundPlayer.Play(ElementSoundKind.Focus);
 		}
 
-
 		private void GotoExport() {
 			if(!squaresCentered) {
+				//Todo: Exporting page
 				//use presentedSquareIndex
 				//use a dialog
 				ElementSoundPlayer.Play(ElementSoundKind.Show);
@@ -555,9 +573,13 @@ namespace KeepWithIt {
 
 		private void GotoEditor() {
 			if(!squaresCentered) {
-				//Todo: Exporting page
+
 				//use presentedSquareIndex
 				//app navigation
+				var currentSquare = presentedSquareIndex;
+				ClearPresentSquare(false);
+				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
+
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
@@ -619,6 +641,7 @@ namespace KeepWithIt {
 					deleting = false;
 					setButtonsEnabled(true);
 					FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+					ElementSoundPlayer.Play(ElementSoundKind.Hide);
 				}));
 				ElementSoundPlayer.Play(ElementSoundKind.Show);
 				await messageDialog.ShowAsync();

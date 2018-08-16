@@ -48,26 +48,39 @@ namespace KeepWithIt {
 
 			grid.Background = Application.Current.Resources["SystemBaseHighColor"] as SolidColorBrush;
 
-			if(Segments.Count > 0) {
-				for(var i = 0;i<9;i++) {
+			var checker1Color = new SolidColorBrush(Color.FromArgb(127,165,165,165));
+			var checker2Color = new SolidColorBrush(Color.FromArgb(127,76,76,76));
 
-					int row = i / 3; // 0 - 2
-					int column = i % 3;// 0 - 2
 
+			for(var i = 0;i<9;i++) {
+
+				int row = i / 3; // 0 - 2
+				int column = i % 3;// 0 - 2
+
+				Grid imageGrid = new Grid();
+
+				if(Segments.Count > 0) {
 					Image image = new Image();
-
 					image.Source = Segments[i % Segments.Count].PreviewImage;
 					image.Stretch = Stretch.Fill;
-					grid.Children.Add(image);
-
-					Grid.SetColumn(image,column * 3); //0, 3, 5
-					Grid.SetColumnSpan(image,3);
-					Grid.SetRow(image,row * 3); //0, 3, 5
-					Grid.SetRowSpan(image,3);
-
-
+					imageGrid.Children.Add(image);
 				}
+
+				if(i % 2 == 0) {
+					imageGrid.Background = checker1Color;
+				} else {
+					imageGrid.Background = checker2Color;
+				}
+				grid.Children.Add(imageGrid);
+
+				Grid.SetColumn(imageGrid,column * 3); //0, 3, 5
+				Grid.SetColumnSpan(imageGrid,3);
+				Grid.SetRow(imageGrid,row * 3); //0, 3, 5
+				Grid.SetRowSpan(imageGrid,3);
+
+
 			}
+
 
 			var titleGrid = new Grid();
 			Grid.SetColumnSpan(titleGrid,9);
