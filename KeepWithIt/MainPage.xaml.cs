@@ -224,17 +224,17 @@ namespace KeepWithIt {
 				presentedSquareIndex = gridIndex - interfaceSquaresCount;
 				var presentationSquare = GetPresentationSquare();
 
+				calendar.SelectedDates.Clear();
+
 				foreach(var date in WorkoutManager.Workouts[presentedSquareIndex].Dates) {
-					//Todo: populate and depopulate calendar
+					calendar.SelectedDates.Add(date);
 				}
 
+				calendar.SetDisplayDate(DateTime.Today - TimeSpan.FromDays(14));
 
 				PresentSquare(presentationSquare);
 
-
 			}
-
-
 		}
 
 		private void UnsubscribeBackButton() {

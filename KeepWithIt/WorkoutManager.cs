@@ -52,8 +52,11 @@ namespace KeepWithIt {
 			var debugImage = new BitmapImage(uri);
 
 			var workout1 = new Workout() {
-				Name = "Debug workout 1"
+				Name = "Debug workout 1",
 			};
+			workout1.Dates.Add(DateTime.Today - TimeSpan.FromDays(54));
+
+
 			workout1.Segments.Add(new WorkoutSegment() {
 				PreviewImage = debugImage,
 				Name = "Segment prototyping",
