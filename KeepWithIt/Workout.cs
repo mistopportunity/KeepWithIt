@@ -36,8 +36,52 @@ namespace KeepWithIt {
 			}
 		}
 
+		private int reps = -1;
 		private int seconds = -1;
-		private int repetitions = -1;
+
+		internal int Reps {
+			get {
+				return reps;
+			}
+			set {
+				reps = value;
+				OnPropertyChanged("ModeDescription");
+			}
+		}
+
+		internal int Seconds {
+			get {
+				return seconds;
+			}
+			set {
+				seconds = value;
+				OnPropertyChanged("ModeDescription");
+			}
+		}
+
+		private string secondsString() {
+			return $"{seconds} second{((seconds != 1 ? "s" : ""))}";
+		}
+		private string repsString() {
+			return $"{reps} rep{(reps != 1 ? "s" : "")}";
+		}
+
+		internal string ModeDescription {
+			get {
+				var useReps = reps > 0;
+				var useSeconds = seconds > 0;
+				if(!useReps && !useSeconds) {
+					return "just do it";
+				}
+				if(useReps && useSeconds) {
+					return $"{secondsString()}\n{repsString()}";
+				} else if(useReps) {
+					return repsString();
+				} else {
+					return secondsString();
+				}
+			}
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

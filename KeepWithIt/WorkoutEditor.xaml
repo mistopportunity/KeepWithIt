@@ -24,7 +24,8 @@
 						<Grid Background="{ThemeResource SystemAccentColor}">
 							<Image Source="{x:Bind PreviewImage,Mode=OneWay}" Width="80" Height="80"/>
 						</Grid>
-						<TextBlock Text="{x:Bind Name,Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,10,10,10" FontSize="20"/>
+						<TextBlock Text="{x:Bind Name,Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="20" Margin="20,10,10,10" FontWeight="Bold"/>
+						<TextBlock Text="{x:Bind ModeDescription,Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="20" Margin="0,10,10,10"/>
 					</StackPanel>
 				</DataTemplate>
 			</ListView.ItemTemplate>
