@@ -57,12 +57,12 @@ namespace KeepWithIt {
 			ReloadSquares();
 
 			if(e.Parameter is Workout) {
-				var workout = e.Parameter as Workout;
-				presentedSquareIndex = WorkoutManager.Workouts.IndexOf(workout);
-				PresentSquare(workout.GetPresentationGrid());
-				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+				PostImportSelect(e.Parameter as Workout);
+			} else if(e.Parameter is UselessPotato) {
+				var workout = WorkoutManager.Workouts.Last();
+				selectedIndex = (WorkoutManager.Workouts.Count - 1) + interfaceSquaresCount;
+				selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
 			}
-
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
 		}
@@ -72,6 +72,11 @@ namespace KeepWithIt {
 
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 
+		}
+
+
+		private void Page_Loaded(object sender,RoutedEventArgs e) {
+			UpdateScroll();
 		}
 
 		private void CreateInterfaceSquare(string text,string imagePath) {
@@ -183,7 +188,7 @@ namespace KeepWithIt {
 
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-			currentView.BackRequested +=CurrentView_BackRequested;
+			currentView.BackRequested += CurrentView_BackRequested;
 
 			if(presentedSquare != null) {
 				TopGrid.Children.Remove(presentedSquare);
@@ -239,6 +244,9 @@ namespace KeepWithIt {
 		}
 
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
+			if(exporting) {
+				return;
+			}
 			ClearPresentSquare();
 			e.Handled = true;
 		}
@@ -579,19 +587,23 @@ namespace KeepWithIt {
 			ElementSoundPlayer.Play(ElementSoundKind.Focus);
 		}
 
+		private bool exporting = false;
 		private async void GotoExport() {
-			if(!squaresCentered) {
+			if(!squaresCentered && !exporting) {
+				setButtonsEnabled(false);
+				exporting = true;
 				var savePicker = new FileSavePicker();
 				savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 				savePicker.FileTypeChoices.Add("Keep with it Workout File",new List<string>() {".kwiw"});
 				savePicker.SuggestedFileName = WorkoutManager.Workouts[presentedSquareIndex].Name;
 				ElementSoundPlayer.Play(ElementSoundKind.Show);
+				var exportWorkout = WorkoutManager.Workouts[presentedSquareIndex];
 				StorageFile file = await savePicker.PickSaveFileAsync();
 				if(file != null) {
 
 					CachedFileManager.DeferUpdates(file);
 
-					WorkoutManager.ExportWorkout(file,WorkoutManager.Workouts[presentedSquareIndex]);
+					WorkoutManager.ExportWorkout(file,exportWorkout);
 
 					var status = await CachedFileManager.CompleteUpdatesAsync(file);
 					if(status != FileUpdateStatus.Complete) {
@@ -605,11 +617,13 @@ namespace KeepWithIt {
 					}
 				}
 				ElementSoundPlayer.Play(ElementSoundKind.Hide);
+				setButtonsEnabled(true);
+				exporting = false;
 			}
 		}
 
 		private void GotoEditor() {
-			if(!squaresCentered) {
+			if(!squaresCentered && !importing) {
 				var currentSquare = presentedSquareIndex;
 				ClearPresentSquare(false);
 				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
@@ -617,7 +631,7 @@ namespace KeepWithIt {
 			}
 		}
 		private void GotoActualWorkout() {
-			if(!squaresCentered) {
+			if(!squaresCentered && !importing) {
 				var currentSquare = presentedSquareIndex;
 				ClearPresentSquare(false);
 				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
@@ -625,7 +639,7 @@ namespace KeepWithIt {
 			}
 		}
 		private void GotoCreation()  {
-			if(squaresCentered) {
+			if(squaresCentered && !importing) {
 				var currentSquare = presentedSquareIndex;
 				ClearPresentSquare(false);
 				Frame.Navigate(typeof(WorkoutEditor));
@@ -634,19 +648,19 @@ namespace KeepWithIt {
 			}
 		}
 		private void GotoAbout() {
-			if(squaresCentered) {
+			if(squaresCentered && !importing) {
 				Frame.Navigate(typeof(AboutPage));
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
+		private bool importing = false;
 		private async void GotoImport() {
-			if(squaresCentered) {
-
+			if(squaresCentered && !importing) {
+				importing = true;
 				var picker = new FileOpenPicker();
 				picker.ViewMode = PickerViewMode.Thumbnail;
 				picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 				picker.FileTypeFilter.Add(".kwiw");
-
 				ElementSoundPlayer.Play(ElementSoundKind.Show);
 				var file = await picker.PickSingleFileAsync();
 				if(file != null) {
@@ -661,10 +675,21 @@ namespace KeepWithIt {
 						await messageDialog.ShowAsync();
 					} else {
 						ReloadSquares();
+						PostImportSelect(WorkoutManager.Workouts.Last());
 					}
 				}
 				ElementSoundPlayer.Play(ElementSoundKind.Hide);
+				importing = false;
 			}
+		}
+
+		private void PostImportSelect(Workout workout) {
+			presentedSquareIndex = WorkoutManager.Workouts.IndexOf(workout);
+			selectedIndex = presentedSquareIndex + interfaceSquaresCount;
+			selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
+			UpdateScroll();
+			PresentSquare(workout.GetPresentationGrid());
+			ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 		}
 
 		private bool deleting = false;

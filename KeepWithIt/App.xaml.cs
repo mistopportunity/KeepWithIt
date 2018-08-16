@@ -50,7 +50,7 @@ namespace KeepWithIt {
 				foreach(var file in args.Files) {
 					await WorkoutManager.AddWorkout(file);
 				}
-				rootFrame.Navigate(typeof(MainPage));
+				rootFrame.Navigate(typeof(MainPage),new UselessPotato());
 			}
 			Window.Current.Activate();
 		}
