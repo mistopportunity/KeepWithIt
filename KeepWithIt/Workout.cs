@@ -8,26 +8,52 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using System.ComponentModel;
 
 namespace KeepWithIt {
-	internal sealed class Workout {
 
-		internal sealed class Segment {
+	internal class WorkoutSegment:INotifyPropertyChanged {
 
-			internal BitmapImage PreviewImage {
-				get;set;
+		private BitmapImage previewImage;
+		internal BitmapImage PreviewImage {
+			get {
+				return previewImage;
 			}
-
-			private int seconds = -1;
-			private int repetitions = -1;
-
+			set {
+				previewImage = value;
+				OnPropertyChanged("PreviewImage");
+			}
 		}
+
+		private string name;
+		internal string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+				OnPropertyChanged("Name");
+			}
+		}
+
+		private int seconds = -1;
+		private int repetitions = -1;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnPropertyChanged(string name) {
+			PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(name));
+		}
+	}
+
+
+	internal sealed class Workout {
 
 		internal string Name {
 			get;set;
 		}
 
-		internal readonly List<Segment> Segments = new List<Segment>();
+		internal readonly List<WorkoutSegment> Segments = new List<WorkoutSegment>();
 
 		internal readonly List<DateTime> Dates = new List<DateTime>();
 
@@ -48,8 +74,8 @@ namespace KeepWithIt {
 
 			grid.Background = Application.Current.Resources["SystemBaseHighColor"] as SolidColorBrush;
 
-			var checker1Color = new SolidColorBrush(Color.FromArgb(127,165,165,165));
-			var checker2Color = new SolidColorBrush(Color.FromArgb(127,76,76,76));
+			var checker2Color = new SolidColorBrush(Color.FromArgb(180,165,165,165));
+			var checker1Color = new SolidColorBrush(Color.FromArgb(180,76,76,76));
 
 
 			for(var i = 0;i<9;i++) {
@@ -100,7 +126,6 @@ namespace KeepWithIt {
 			titleBlock.TextAlignment = TextAlignment.Center;
 			titleBlock.TextWrapping = TextWrapping.Wrap;
 
-			titleBlock.Padding = new Thickness(2.5,2.5,2.5,2.5);
 			titleBlock.FontSize = 18f;
 			titleBlock.Text = Name;
 			titleBlock.Foreground = new SolidColorBrush(Colors.White);

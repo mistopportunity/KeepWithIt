@@ -22,13 +22,28 @@ namespace KeepWithIt {
 			this.InitializeComponent();
 		}
 
+		private Workout workout;
+
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
+			if(e.Parameter != null && e.Parameter is Workout) {
+				workout = e.Parameter as Workout;
+			} else {
+				//create new workout with the workoutmanager
+				
+			}
+
+			listBox.ItemsSource = workout.Segments;
+			nameBox.Text = workout.Name;
+
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 			currentView.BackRequested += CurrentView_BackRequested;
+
+
+
 		}
 
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
@@ -42,6 +57,9 @@ namespace KeepWithIt {
 		bool inSubEditor = false;
 
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
+			if(FocusManager.GetFocusedElement() == nameBox) {
+				return;
+			}
 			if(inSubEditor) {
 
 			} else {
@@ -89,5 +107,26 @@ namespace KeepWithIt {
 			}
 		}
 
+		private void Page_LayoutUpdated(object sender,object e) {
+			if(ActualWidth > ActualHeight) {
+				var gridLength = new GridLength(1,GridUnitType.Star);
+				Column1.Width = gridLength;
+				Column3.Width = gridLength;
+			} else {
+				var gridLength = new GridLength(0,GridUnitType.Star);
+				Column1.Width = gridLength;
+				Column3.Width = gridLength;
+			}
+		}
+
+		private void nameBox_TextChanged(object sender,TextChangedEventArgs e) {
+
+		}
+
+		private void listView_ItemClick(object sender,ItemClickEventArgs e) {
+			var item = e.ClickedItem as WorkoutSegment;
+			item.Name = "Motherfucker you clicked me!";
+			item.PreviewImage = null;
+		}
 	}
 }

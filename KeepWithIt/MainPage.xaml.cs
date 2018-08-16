@@ -97,6 +97,7 @@ namespace KeepWithIt {
 
 			var textBlock = new TextBlock() {
 				Text = text,
+				Foreground = new SolidColorBrush(Colors.Black),
 				HorizontalAlignment = HorizontalAlignment.Stretch,
 				VerticalAlignment = VerticalAlignment.Center,
 				FontSize = 20,
@@ -104,8 +105,6 @@ namespace KeepWithIt {
 				//What the fuck is the difference????
 				HorizontalTextAlignment = TextAlignment.Center
 			};
-
-			textBlock.Foreground = new SolidColorBrush(Colors.Black);
 
 			grid.Children.Add(image);
 			grid.Children.Add(textBlock);

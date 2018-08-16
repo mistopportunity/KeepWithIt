@@ -46,8 +46,21 @@ namespace KeepWithIt {
 			var workout1 = new Workout() {
 				Name = "Debug workout 1"
 			};
-			workout1.Segments.Add(new Workout.Segment() {
-				PreviewImage = debugImage
+			workout1.Segments.Add(new WorkoutSegment() {
+				PreviewImage = debugImage,
+				Name = "Segment prototyping"
+			});
+			workout1.Segments.Add(new WorkoutSegment() {
+				PreviewImage = debugImage,
+				Name = "Segment prototyping"
+			});
+			workout1.Segments.Add(new WorkoutSegment() {
+				PreviewImage = debugImage,
+				Name = "Segment prototyping"
+			});
+			workout1.Segments.Add(new WorkoutSegment() {
+				PreviewImage = debugImage,
+				Name = "Segment prototyping"
 			});
 
 			AddWorkout(workout1);
