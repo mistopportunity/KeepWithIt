@@ -31,9 +31,6 @@ namespace KeepWithIt {
 		}
 
 		protected async override void OnFileActivated(FileActivatedEventArgs args) {
-			// TODO: Handle file activation
-			// The number of files received is args.Files.Size
-			// The name of the first file is args.Files[0].Name
 			Frame rootFrame = Window.Current.Content as Frame;
 			if(rootFrame == null) {
 				rootFrame = new Frame();
@@ -44,7 +41,8 @@ namespace KeepWithIt {
 			if(args.Files.Count == 1) {
 				var success = await WorkoutManager.AddWorkout(args.Files[0]);
 				if(success) {
-					rootFrame.Navigate(typeof(MainPage),WorkoutManager.Workouts.Last());
+					var workout = WorkoutManager.Workouts.Last();
+					rootFrame.Navigate(typeof(MainPage),workout);
 				} else {
 					rootFrame.Navigate(typeof(MainPage));
 				}

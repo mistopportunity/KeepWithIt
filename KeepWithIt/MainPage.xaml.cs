@@ -57,7 +57,10 @@ namespace KeepWithIt {
 			ReloadSquares();
 
 			if(e.Parameter is Workout) {
-				PresentSquare(squaresGrid.Children[WorkoutManager.Workouts.IndexOf(e.Parameter as Workout) + interfaceSquaresCount] as Grid);
+				var workout = e.Parameter as Workout;
+				presentedSquareIndex = WorkoutManager.Workouts.IndexOf(workout);
+				PresentSquare(workout.GetPresentationGrid());
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
@@ -172,6 +175,16 @@ namespace KeepWithIt {
 		private int presentedSquareIndex = -1;
 
 		public void PresentSquare(Grid square) {
+
+			if(WorkoutManager.Workouts[presentedSquareIndex].Segments.Count < 1) {
+				StartButton.IsEnabled = false;
+				ExportButton.IsEnabled = false;
+			}
+
+			var currentView = SystemNavigationManager.GetForCurrentView();
+			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+			currentView.BackRequested +=CurrentView_BackRequested;
+
 			if(presentedSquare != null) {
 				TopGrid.Children.Remove(presentedSquare);
 			}
@@ -213,14 +226,7 @@ namespace KeepWithIt {
 
 				PresentSquare(presentationSquare);
 
-				if(WorkoutManager.Workouts[presentedSquareIndex].Segments.Count < 1) {
-					StartButton.IsEnabled = false;
-					ExportButton.IsEnabled = false;
-				}
 
-				var currentView = SystemNavigationManager.GetForCurrentView();
-				currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-				currentView.BackRequested +=CurrentView_BackRequested;
 			}
 
 
