@@ -9,26 +9,34 @@
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Viewbox>
 			<Border BorderThickness="2">
-				<Grid Width="80" Height="88" Background="#333E3E3E">
+				<Grid Width="80" Height="88" Background="#593E3E3E">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="8"></RowDefinition>
 						<RowDefinition></RowDefinition>
 					</Grid.RowDefinitions>
-					<Border BorderBrush="White" BorderThickness="0,0,0,0.4" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,0">
-						<TextBlock x:Name="titleBlock" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="3.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" Foreground="White" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+					<Border BorderThickness="0,0,0,0.4" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,0" BorderBrush="White">
+						<TextBlock x:Name="titleBlock" Text="notice - PROTOTYPE" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="3.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Foreground="White"/>
 					</Border>
 
-					<Grid Height="40" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1">
-						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+					<Grid Height="40" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Visibility="Visible">
+						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled" Visibility="Visible"/>
+						<Rectangle Fill="#B2000000" Visibility="Visible" />
 					</Grid>
 					<Grid Height="40" Width="40" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1">
 						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
 					</Grid>
 					<Grid Height="40" Width="20" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1">
 						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+						<Rectangle Fill="#B21D1D1D" />
 					</Grid>
 					<Button Foreground="White" Content="&lt;" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" IsEnabled="False"/>
 					<Button Foreground="White" Content="&gt;" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1"/>
+					<ProgressBar HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" Visibility="Collapsed" />
+					<Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1" Width="60" Height="40">
+						<Viewbox>
+							<Grid Width="300" Height="200"/>
+						</Viewbox>
+					</Grid>
 				</Grid>
 			</Border>
 		</Viewbox>

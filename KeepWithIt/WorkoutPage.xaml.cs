@@ -41,6 +41,14 @@ namespace KeepWithIt {
 
 		}
 
+		private void hideButton() {
+		}
+		private void showTimer() {
+		}
+
+		private void toggleButton() {
+		}
+
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 			base.OnNavigatingFrom(e);
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
@@ -60,6 +68,10 @@ namespace KeepWithIt {
 		}
 
 		private void Page_LayoutUpdated(object sender,object e) {
+
+		}
+
+		private void ToggleSwitch_Toggled(object sender,RoutedEventArgs e) {
 
 		}
 	}
