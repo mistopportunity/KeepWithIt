@@ -30,6 +30,8 @@ namespace KeepWithIt {
 
 			currentWorkout = e.Parameter as Workout;
 
+			titleBlock.Text = currentWorkout.Name;
+
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 			currentView.BackRequested += CurrentView_BackRequested;
@@ -49,8 +51,12 @@ namespace KeepWithIt {
 
 		}
 
+		private bool completedWorkout = false;
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
-			//throw new NotImplementedException();
+			if(completedWorkout) {
+				currentWorkout.AddDate(DateTime.Today);
+			}
+			Frame.GoBack();
 		}
 
 		private void Page_LayoutUpdated(object sender,object e) {

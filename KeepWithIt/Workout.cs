@@ -41,7 +41,6 @@ namespace KeepWithIt {
 		private int seconds = -1;
 
 		internal bool DoubleSided { get; set; } = false;
-		internal string Instruccs { get; set; }
 
 		internal int Reps {
 			get {
@@ -109,6 +108,33 @@ namespace KeepWithIt {
 		internal readonly ObservableCollection<WorkoutSegment> Segments;
 
 		internal readonly List<DateTime> Dates = new List<DateTime>();
+
+		internal void AddDate(DateTime dateTime) {
+
+			var day = dateTime.Day;
+			var month = dateTime.Month;
+			var year = dateTime.Year;
+
+			bool dateAlreadyExists = true;
+
+			var pastDate = Dates.Last();
+			if(year > pastDate.Year) {
+				dateAlreadyExists = false;
+			}
+
+			if(month > pastDate.Month) {
+				dateAlreadyExists = false;
+			}
+
+			if(day > dateTime.Day) {
+				dateAlreadyExists = false;
+
+			}
+
+			if(!dateAlreadyExists) {
+				Dates.Add(dateTime);
+			}
+		}
 
 		private Grid generate81SquareGrid() {
 			Grid grid = new Grid();
@@ -193,8 +219,5 @@ namespace KeepWithIt {
 		internal Grid GetPresentationGrid() {
 			return GetGrid();
 		}
-
-
-
 	}
 }

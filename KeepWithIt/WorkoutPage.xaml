@@ -9,12 +9,15 @@
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Viewbox>
 			<Border BorderThickness="2">
-				<Grid Width="80" Height="88" Background="#CC0E0E0E">
+				<Grid Width="80" Height="88" Background="#333E3E3E">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="8"></RowDefinition>
 						<RowDefinition></RowDefinition>
 					</Grid.RowDefinitions>
-					<TextBlock TextAlignment="Center" Text="La la la - that's all I can say" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="3.5" TextDecorations="Underline" ScrollViewer.VerticalScrollBarVisibility="Disabled" Foreground="White"/>
+					<Border BorderBrush="White" BorderThickness="0,0,0,0.4" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,0">
+						<TextBlock x:Name="titleBlock" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="3.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" Foreground="White" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+					</Border>
+
 					<Grid Height="40" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1">
 						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
 					</Grid>
@@ -24,8 +27,8 @@
 					<Grid Height="40" Width="20" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1">
 						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
 					</Grid>
-					<Button Content="&lt;" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="15" FontSize="10" Padding="0,0,0,3" Grid.Row="1" Foreground="White"/>
-					<Button Content="&gt;" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="15" FontSize="10" Padding="0,0,0,3" Grid.Row="1" Foreground="White"/>
+					<Button Foreground="White" Content="&lt;" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" IsEnabled="False"/>
+					<Button Foreground="White" Content="&gt;" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1"/>
 				</Grid>
 			</Border>
 		</Viewbox>
