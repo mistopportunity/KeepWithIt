@@ -634,7 +634,7 @@ namespace KeepWithIt {
 			if(!squaresCentered && !importing) {
 				var currentSquare = presentedSquareIndex;
 				ClearPresentSquare(false);
-				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
+				Frame.Navigate(typeof(WorkoutPage),WorkoutManager.Workouts[currentSquare]);
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}

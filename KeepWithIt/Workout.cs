@@ -40,6 +40,9 @@ namespace KeepWithIt {
 		private int reps = -1;
 		private int seconds = -1;
 
+		internal bool DoubleSided { get; set; } = false;
+		internal string Instruccs { get; set; }
+
 		internal int Reps {
 			get {
 				return reps;

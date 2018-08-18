@@ -50,6 +50,9 @@ namespace KeepWithIt {
 			}
 			nameBox.PlaceholderText = workoutDefaultName;
 
+			nameBox.SelectionStart = nameBox.MaxLength-1;
+			nameBox.SelectionLength = 0;
+
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 			currentView.BackRequested += CurrentView_BackRequested;
@@ -142,7 +145,7 @@ namespace KeepWithIt {
 
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
 			if(inSubEditor) {
-
+				//Todo... subeditor
 			} else {
 				switch(args.VirtualKey) {
 					case VirtualKey.Escape:
@@ -196,6 +199,8 @@ namespace KeepWithIt {
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 			if(!inSubEditor) {
 				Frame.GoBack();
+			} else {
+				//Todo... subeditor
 			}
 		}
 
@@ -232,6 +237,7 @@ namespace KeepWithIt {
 			workout.Segments.Add(new WorkoutSegment() {
 				Name = "Debug segment - user"
 			});
+			//open the segment
 		}
 	}
 }
