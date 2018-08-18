@@ -20,14 +20,22 @@
 
 					<Grid Height="40" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Visibility="Visible">
 						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled" Visibility="Visible"/>
-						<Rectangle Fill="#B2000000" Visibility="Visible" />
+						<Rectangle Visibility="Visible" >
+							<Rectangle.Fill>
+								<SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}"></SolidColorBrush>
+							</Rectangle.Fill>
+						</Rectangle>
 					</Grid>
 					<Grid Height="40" Width="40" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1">
 						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
 					</Grid>
 					<Grid Height="40" Width="20" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1">
 						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
-						<Rectangle Fill="#B21D1D1D" />
+						<Rectangle Visibility="Visible" >
+							<Rectangle.Fill>
+								<SolidColorBrush Color="{ThemeResource SystemAltMediumLowColor}"></SolidColorBrush>
+							</Rectangle.Fill>
+						</Rectangle>
 					</Grid>
 					<Button Foreground="White" Content="&lt;" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" IsEnabled="False"/>
 					<Button Foreground="White" Content="&gt;" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1"/>
