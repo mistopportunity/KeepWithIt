@@ -50,7 +50,7 @@ namespace KeepWithIt {
 		}
 
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 
 		private void Page_LayoutUpdated(object sender,object e) {
