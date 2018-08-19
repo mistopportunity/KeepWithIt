@@ -674,8 +674,11 @@ namespace KeepWithIt {
 				StorageFile file = await savePicker.PickSaveFileAsync();
 				if(file != null) {
 					CachedFileManager.DeferUpdates(file);
-					WorkoutManager.ExportWorkout(file,exportWorkout);
-					var status = await CachedFileManager.CompleteUpdatesAsync(file);
+					var exportPassed = await WorkoutManager.ExportWorkout(file,exportWorkout);
+					var status = FileUpdateStatus.Incomplete;
+					if(exportPassed) {
+						status = await CachedFileManager.CompleteUpdatesAsync(file);
+					}
 					if(status != FileUpdateStatus.Complete) {
 						ElementSoundPlayer.Play(ElementSoundKind.Show);
 						MessageDialog messageDialog = new MessageDialog("Workout couldn't be exported! SAD SAD SAD SAADDDDD SAD") {
