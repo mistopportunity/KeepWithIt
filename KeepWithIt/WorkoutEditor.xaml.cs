@@ -99,7 +99,7 @@ namespace KeepWithIt {
 					FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
 					ElementSoundPlayer.Play(ElementSoundKind.Focus);
 				}
-			} else if(focusedItem == null) {
+			} else if(focusedItem == null || focusedItem is ScrollViewer) {
 				nameBox.Focus(FocusState.Programmatic);
 				ElementSoundPlayer.Play(ElementSoundKind.Focus);
 			} else {
@@ -126,7 +126,7 @@ namespace KeepWithIt {
 			} else if(focusedItem == addButton) {
 				nameBox.Focus(FocusState.Programmatic);
 				ElementSoundPlayer.Play(ElementSoundKind.Focus);
-			} else if(focusedItem == null) {
+			} else if(focusedItem == null || focusedItem is ScrollViewer) {
 				nameBox.Focus(FocusState.Programmatic);
 				ElementSoundPlayer.Play(ElementSoundKind.Focus);
 			} else {

@@ -149,6 +149,9 @@ namespace KeepWithIt {
 				remainingSeconds = -1;
 				totalSeconds = 0;
 				rightButton.IsEnabled = true;
+				if(FocusManager.GetFocusedElement() == null) {
+					rightButton.Focus(FocusState.Programmatic);
+				}
 				addCompletionTimeIfApplicable();
 			} else {
 				progressBar.IsIndeterminate = false;
@@ -157,8 +160,14 @@ namespace KeepWithIt {
 				progressBar.Maximum = totalSeconds;
 				progressBar.Value = 0;
 				rightButton.IsEnabled = false;
-				if(!startButton.IsEnabled && !isTimerPasued) {
-					timer.Start();
+				if(!startButton.IsEnabled) {
+					if(isTimerPasued) {
+						if(FocusManager.GetFocusedElement() == null) {
+							pauseButton.Focus(FocusState.Programmatic);
+						}
+					} else {
+						timer.Start();
+					}
 				}
 			}
 			UpdateSecondsLabel();
@@ -183,6 +192,7 @@ namespace KeepWithIt {
 
 		private void timerFinished() {
 			rightButton.IsEnabled = true;
+			rightButton.Focus(FocusState.Programmatic);
 			timer.Stop();
 			addCompletionTimeIfApplicable();
 		}
@@ -202,14 +212,14 @@ namespace KeepWithIt {
 		}
 
 		private int remainingSeconds = 0;
-		private int totalSeconds = -1;
+		private int totalSeconds = 0;
 		private bool isTimerPasued = false;
 		private void UpdateSecondsLabel() {
 			if(isTimerPasued) {
 				if(remainingSeconds > 0) {
 					pauseButton.Content = "timer pasued";
 				} else {
-					if(totalSeconds != -1) {
+					if(totalSeconds != 0) {
 						pauseButton.Content = "timer finished - paused";
 					} else {
 						pauseButton.Content = "no timer - paused";
@@ -217,7 +227,7 @@ namespace KeepWithIt {
 
 				}
 			} else {
-				if(totalSeconds == -1) {
+				if(totalSeconds == 0) {
 					pauseButton.Content = "no timer";
 				} else {
 					if(remainingSeconds > 0) {
@@ -243,15 +253,18 @@ namespace KeepWithIt {
 		private void defaultFocus() {
 			if(startButton.IsEnabled) {
 				startButton.Focus(FocusState.Programmatic);
-				FocusManager.TryMoveFocus(FocusNavigationDirection.None);
 			} else {
-				pauseButton.Focus(FocusState.Programmatic);
+				if(rightButton.IsEnabled) {
+					rightButton.Focus(FocusState.Programmatic);
+				} else {
+					pauseButton.Focus(FocusState.Programmatic);
+				}
 			}
 		}
 
 		private void focusUp() {
 			var focusedElement = FocusManager.GetFocusedElement();
-			if(focusedElement == null) {
+			if(focusedElement == null || focusedElement == startButton) {
 				defaultFocus();
 			}
 			if(focusedElement == pauseButton) {
@@ -261,12 +274,11 @@ namespace KeepWithIt {
 			} else if(focusedElement == rightButton) {
 				pauseButton.Focus(FocusState.Programmatic);
 			}
-			//focus up
 
 		}
 		private void focusDown() {
 			var focusedElement = FocusManager.GetFocusedElement();
-			if(focusedElement == null) {
+			if(focusedElement == null || focusedElement == startButton) {
 				defaultFocus();
 			}
 			if(focusedElement == pauseButton) {
@@ -274,9 +286,8 @@ namespace KeepWithIt {
 					rightButton.Focus(FocusState.Programmatic);
 				}
 			} else if(focusedElement == leftButton) {
-				pauseButton.Focus(FocusState.Programmatic);
+				pauseButton.Focus(FocusState.Keyboard);
 			}
-			//focus down
 		}
 
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
