@@ -6,8 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" LayoutUpdated="Page_LayoutUpdated">
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition x:Name="Column1" Width="1*"></ColumnDefinition>
 			<ColumnDefinition x:Name="Column2" Width="1*"></ColumnDefinition>

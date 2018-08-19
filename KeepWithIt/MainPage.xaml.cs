@@ -739,16 +739,16 @@ namespace KeepWithIt {
 				await messageDialog.ShowAsync();
 			}
 		}
-		private void ExportButton_Click(object sender,RoutedEventArgs e) {
+		private void ExportButton_Tapped(object sender,RoutedEventArgs e) {
 			GotoExport();
 		}
-		private void EditButton_Click(object sender,RoutedEventArgs e) {
+		private void EditButton_Tapped(object sender,RoutedEventArgs e) {
 			GotoEditor();
 		}
-		private void StartButton_Click(object sender,RoutedEventArgs e) {
+		private void StartButton_Tapped(object sender,RoutedEventArgs e) {
 			GotoActualWorkout();
 		}
-		private void DeleteButton_Click(object sender,RoutedEventArgs e) {
+		private void DeleteButton_Tapped(object sender,RoutedEventArgs e) {
 			DeletionPrompt();
 		}
 	}
