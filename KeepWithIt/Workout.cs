@@ -119,6 +119,11 @@ namespace KeepWithIt {
 
 		internal void AddDate(DateTime dateTime) {
 
+			if(Dates.Count < 1) {
+				Dates.Add(dateTime);
+				return;
+			}
+
 			var day = dateTime.Day;
 			var month = dateTime.Month;
 			var year = dateTime.Year;

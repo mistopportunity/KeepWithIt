@@ -119,6 +119,8 @@
     <None Include="KeepWithIt_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\CheckerPattern.png" />
+    <Content Include="Assets\Default.png" />
     <Content Include="Assets\download.svg" />
     <Content Include="Assets\Kitten.png" />
     <Content Include="Assets\plus.svg" />

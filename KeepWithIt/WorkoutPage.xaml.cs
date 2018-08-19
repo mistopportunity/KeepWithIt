@@ -11,7 +11,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 //Todo: audio on this page because I had to write it without headphones because my computer is across the fucking room
 
@@ -24,6 +26,9 @@ namespace KeepWithIt {
 			timer.Interval = new TimeSpan(0,0,1);
 		}
 
+		private static readonly BitmapImage missingPictureIcon = new BitmapImage(new Uri("ms-appx:///Assets/Default.png",UriKind.RelativeOrAbsolute));
+		private static readonly BitmapImage checkerPattern = new BitmapImage(new Uri("ms-appx:///Assets/CheckerPattern.png",UriKind.RelativeOrAbsolute));
+
 		private Workout currentWorkout;
 
 		private int segmentIndex = 0;
@@ -32,11 +37,11 @@ namespace KeepWithIt {
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
 			currentWorkout = e.Parameter as Workout;
-			titleBlock.Text = currentWorkout.Name;
 
 			changeSegment(segmentIndex);
 
 			startButton.Visibility = Visibility.Visible;
+
 
 			segmentTitleBlock.Visibility = Visibility.Collapsed;
 			repInfoBlock.Visibility = Visibility.Collapsed;
@@ -97,22 +102,45 @@ namespace KeepWithIt {
 		private DispatcherTimer timer;
 		private void changeSegment(int index) {
 
+			titleBlock.Text = $"{index+1}/{currentWorkout.Segments.Count} {currentWorkout.Name}";
+
 			var segment = currentWorkout.Segments[index];
 
 			if(index == 0) {
-				leftImage.Source = null;
+				leftImage.Source = checkerPattern;
+				leftOverlay.Visibility = Visibility.Collapsed;
 				leftButton.IsEnabled = false;
 			} else {
-				leftImage.Source = currentWorkout.Segments[index-1].PreviewImage;
+				leftOverlay.Visibility = Visibility.Visible;
+				var leftSource = currentWorkout.Segments[index-1].PreviewImage;
+				if(leftSource != null) {
+					leftImage.Source = leftSource;
+				} else {
+					leftImage.Source = missingPictureIcon;
+				}
+
 				leftButton.IsEnabled = true;
 			}
 
-			middleImage.Source = segment.PreviewImage;
+			var middleSource = segment.PreviewImage;
+			if(middleSource != null) {
+				middleImage.Source = middleSource;
+			} else {
+				middleImage.Source = missingPictureIcon;
+			}
+
 
 			if(currentWorkout.Segments.Count > index + 1) {
-				rightImage.Source = currentWorkout.Segments[index + 1].PreviewImage;
+				var rightSource = currentWorkout.Segments[index + 1].PreviewImage;
+				if(rightSource != null) {
+					rightImage.Source = rightSource;
+				} else {
+					rightImage.Source = missingPictureIcon;
+				}
+				rightOverlay.Visibility = Visibility.Visible;
 			} else {
-				//set finish line image to rightImage
+				rightOverlay.Visibility = Visibility.Collapsed;
+				rightImage.Source = checkerPattern;
 			}
 			repInfoBlock.Text = segment.GetRepDescription();
 			segmentTitleBlock.Text = segment.Name;
