@@ -51,7 +51,7 @@ namespace KeepWithIt {
 
 			for(int i = 0;i<difference;i++) {
 
-				AddSquare(WorkoutManager.Workouts[originalCount + i - 1].GetGrid());
+				AddSquare(WorkoutManager.Workouts[originalCount + i].GetGrid());
 
 			}
 
