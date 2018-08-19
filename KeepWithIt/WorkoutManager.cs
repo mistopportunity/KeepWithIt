@@ -18,8 +18,25 @@ namespace KeepWithIt {
 			SaveWorkouts();
 		}
 
+		internal static BitmapImage GetBitMapFromFile(StorageFile file) {
+			//Todo - BitmapImage GetBitMapFromFile(StorageFile file)
+			return null;
+		}
+
+		private static BitmapImage ProcessIncomingBitmap(BitmapImage bitmap) {
+			//Todo - BitmapImage ProcessIncomingBitmap(BitmapImage bitmap)
+			return null;
+		}
+
 		internal static void AddWorkout(Workout workout) {
 			Workouts.Add(workout);
+		}
+
+		internal static string ProcessWorkoutName(string name) {
+
+		}
+
+		internal static string ProcessSegmentName(string name) {
 		}
 
 		private static string GetWorkoutStringData(Workout workout) {

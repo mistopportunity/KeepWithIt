@@ -32,7 +32,7 @@ namespace KeepWithIt {
 				return name;
 			}
 			set {
-				name = value;
+				name = WorkoutManager.ProcessSegmentName(value);
 				OnPropertyChanged("Name");
 			}
 		}
@@ -109,8 +109,14 @@ namespace KeepWithIt {
 		
 		}
 
+		private string name;
 		internal string Name {
-			get;set;
+			get {
+				return name;
+			}
+			set {
+				name = WorkoutManager.ProcessWorkoutName(name);
+			}
 		}
 
 		internal readonly ObservableCollection<WorkoutSegment> Segments;

@@ -102,6 +102,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SegmentEditor.xaml.cs">
+      <DependentUpon>SegmentEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UselessPotato.cs" />
     <Compile Include="Workout.cs" />
     <Compile Include="WorkoutEditor.xaml.cs">
@@ -147,6 +150,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SegmentEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WorkoutEditor.xaml">
       <SubType>Designer</SubType>
