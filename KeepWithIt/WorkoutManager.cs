@@ -118,17 +118,25 @@ namespace KeepWithIt {
 				filesNamesList.Add(int.Parse(file.Name),file);
 			}
 
-			for(int i = 0;i<Workouts.Count;i++) {
+			if(Workouts.Count != 0) {
+				for(int i = 0;i<Workouts.Count;i++) {
 
-				filesNamesList.Remove(i);
+					filesNamesList.Remove(i);
 
-				var workout = Workouts[i];
-				var file = await localFolder.CreateFileAsync(i.ToString(),CreationCollisionOption.ReplaceExisting);
+					var workout = Workouts[i];
+					var file = await localFolder.CreateFileAsync(i.ToString(),CreationCollisionOption.ReplaceExisting);
 
-				await ExportWorkout(file,workout);
-				//if the export fails, the original saved file will be maintained - UNLESS it no longer exists in -> List<Workout> Workouts
+					var passed = await ExportWorkout(file,workout);
 
+					//remove this to not override working files that may be deleted because the new components are broken
+					if(!passed) {
+						await file.DeleteAsync();
+					}
+
+				}
 			}
+
+
 
 			//deleting overflowing files if the new saved data is smaller than the previous
 			foreach(var remainingFile in filesNamesList) {
