@@ -19,6 +19,9 @@ using Windows.UI.Xaml.Navigation;
 namespace KeepWithIt {
 	sealed partial class App:Application {
 
+		internal Workout AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = null;
+		internal bool WasThatComplicatedNavigationalMessFromANewWorkout = false;
+
 		public App() {
 
 			this.InitializeComponent();

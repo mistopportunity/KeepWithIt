@@ -22,6 +22,8 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.Storage;
 
+//Todo change clicks to taps for buttons
+
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
 
@@ -53,16 +55,27 @@ namespace KeepWithIt {
 		}
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
-
-			ReloadSquares();
-
-			if(e.Parameter is Workout) {
-				PostImportSelect(e.Parameter as Workout);
-			} else if(e.Parameter is UselessPotato) {
-				var workout = WorkoutManager.Workouts.Last();
-				selectedIndex = (WorkoutManager.Workouts.Count - 1) + interfaceSquaresCount;
-				selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
+			var app = ((App)Application.Current);
+			if(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals != null) {
+				if(app.WasThatComplicatedNavigationalMessFromANewWorkout) {
+					ReloadSquares();
+				}
+				PostImportSelect(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals);
+				app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = null;
+				app.WasThatComplicatedNavigationalMessFromANewWorkout = false;
+				userIsAwayFromThisPlace = false;
+			} else {
+				ReloadSquares();
+				if(e.Parameter is Workout) {
+					PostImportSelect(e.Parameter as Workout);
+				} else if(e.Parameter is UselessPotato) {
+					var workout = WorkoutManager.Workouts.Last();
+					selectedIndex = (WorkoutManager.Workouts.Count - 1) + interfaceSquaresCount;
+					selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
+				}
 			}
+
+
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
 		}
@@ -180,12 +193,6 @@ namespace KeepWithIt {
 		private int presentedSquareIndex = -1;
 
 		public void PresentSquare(Grid square) {
-
-			if(WorkoutManager.Workouts[presentedSquareIndex].Segments.Count < 1) {
-				StartButton.IsEnabled = false;
-				ExportButton.IsEnabled = false;
-			}
-
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 			currentView.BackRequested += CurrentView_BackRequested;
@@ -195,6 +202,11 @@ namespace KeepWithIt {
 			}
 
 			setButtonsEnabled(true);
+
+			if(WorkoutManager.Workouts[presentedSquareIndex].Segments.Count < 1) {
+				StartButton.IsEnabled = false;
+				ExportButton.IsEnabled = false;
+			}
 
 			presentedSquare = square;
 			PushSquaresLeft();
@@ -367,6 +379,10 @@ namespace KeepWithIt {
 		}
 		private bool gridAlignmentDefault = true;
 		private void Page_LayoutUpdated(object sender,object e) {
+
+			if(userIsAwayFromThisPlace) {
+				return;
+			}
 
 			var usingMobileishMode = ActualWidth < ActualHeight;
 
@@ -622,10 +638,12 @@ namespace KeepWithIt {
 			}
 		}
 
+		private bool userIsAwayFromThisPlace = false;
+
 		private void GotoEditor() {
 			if(!squaresCentered && !importing) {
 				var currentSquare = presentedSquareIndex;
-				ClearPresentSquare(false);
+				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
@@ -633,7 +651,7 @@ namespace KeepWithIt {
 		private void GotoActualWorkout() {
 			if(!squaresCentered && !importing) {
 				var currentSquare = presentedSquareIndex;
-				ClearPresentSquare(false);
+				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutPage),WorkoutManager.Workouts[currentSquare]);
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
@@ -641,7 +659,7 @@ namespace KeepWithIt {
 		private void GotoCreation()  {
 			if(squaresCentered && !importing) {
 				var currentSquare = presentedSquareIndex;
-				ClearPresentSquare(false);
+				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutEditor));
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 

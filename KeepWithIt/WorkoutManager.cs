@@ -61,38 +61,30 @@ namespace KeepWithIt {
 
 			workout1.Segments.Add(new WorkoutSegment() {
 				PreviewImage = debugImage,
-				Name = "Segment prototyping",
+				Name = "Segment 1 - reps, secs",
 				Reps = 5,
-				Seconds = 20,
+				Seconds = 2,
 			});
 			workout1.Segments.Add(new WorkoutSegment() {
 				PreviewImage = debugImage,
-				Name = "Segment prototyping",
-				Reps = 5
+				Name = "Segment 2 - no reps, secs",
+				Reps = 0,
+				Seconds = 2,
 			});
 			workout1.Segments.Add(new WorkoutSegment() {
 				PreviewImage = debugImage,
-				Name = "Segment prototyping",
-				Seconds = 60
+				Name = "Segment 3 - reps, no secs",
+				Reps = 69,
+				Seconds = 0,
 			});
 			workout1.Segments.Add(new WorkoutSegment() {
 				PreviewImage = debugImage,
-				Name = "Segment prototyping"
+				Name = "Segment 4 - no reps, no secs",
+				Reps = 0,
+				Seconds = 0,
 			});
 
 			AddWorkout(workout1);
-
-			AddWorkout(new Workout() {
-				Name = "Debug workout 2"
-			});
-
-			AddWorkout(new Workout() {
-				Name = "Debug workout 3"
-			});
-
-			AddWorkout(new Workout() {
-				Name = "Debug workout 4"
-			});
 
 		}
 

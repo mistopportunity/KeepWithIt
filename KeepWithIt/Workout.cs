@@ -69,6 +69,14 @@ namespace KeepWithIt {
 			return $"{reps} rep{(reps != 1 ? "s" : "")}";
 		}
 
+		internal string GetRepDescription() {
+			if(reps < 1) {
+				return "no rep count";
+			} else {
+				return $"{repsString()}{(DoubleSided ? $", both sides" : string.Empty)}";
+			}
+		}
+
 		internal string ModeDescription {
 			get {
 				var useReps = reps > 0;

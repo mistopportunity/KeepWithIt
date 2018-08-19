@@ -32,14 +32,13 @@ namespace KeepWithIt {
 			base.OnNavigatedTo(e);
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
-
-
 			if(e.Parameter != null && e.Parameter is Workout) {
 				workout = e.Parameter as Workout;
 				nameBox.Text = workout.Name;
 			} else {
 				workout = new Workout();
 				WorkoutManager.AddWorkout(workout);
+				((App)Application.Current).WasThatComplicatedNavigationalMessFromANewWorkout = true;
 			}
 
 			workoutDefaultName = $"Workout {WorkoutManager.Workouts.IndexOf(workout)+1}";
@@ -85,11 +84,8 @@ namespace KeepWithIt {
 			WorkoutManager.SaveWorkouts();
 
 		}
-
 		bool inSubEditor = false;
-
 		private int listViewIndex = 1;
-
 		private void focusDown() {
 			var focusedItem = FocusManager.GetFocusedElement();
 			if(focusedItem == nameBox) {
@@ -158,7 +154,7 @@ namespace KeepWithIt {
 								return;
 							}
 						}
-						Frame.GoBack();
+						GoBackAndNibbaRigSomeShit();
 						break;
 					case VirtualKey.GamepadA:
 					case VirtualKey.Enter:
@@ -195,12 +191,16 @@ namespace KeepWithIt {
 			}
 		}
 
+		private void GoBackAndNibbaRigSomeShit() {
+			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = workout;
+			Frame.GoBack();
+		}
 
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 			if(!inSubEditor) {
-				Frame.GoBack();
+				GoBackAndNibbaRigSomeShit();
 			} else {
-				//Todo... subeditor
+				//Todo... subeditor - make sure to include character limit for segment names
 			}
 		}
 
@@ -218,7 +218,6 @@ namespace KeepWithIt {
 
 		private string processedNameBox = null;
 		private void nameBox_TextChanged(object sender,TextChangedEventArgs e) {
-
 			if(string.IsNullOrWhiteSpace(nameBox.Text)) {
 				processedNameBox = string.Empty;
 				nameBox.Text = string.Empty;
@@ -229,8 +228,7 @@ namespace KeepWithIt {
 
 		private void listView_ItemClick(object sender,ItemClickEventArgs e) {
 			var item = e.ClickedItem as WorkoutSegment;
-			item.Name = "Motherfucker you clicked me!";
-			item.PreviewImage = null;
+			//open the segment
 		}
 
 		private void addButton_Click(object sender,RoutedEventArgs e) {

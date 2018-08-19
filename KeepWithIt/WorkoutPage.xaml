@@ -19,7 +19,7 @@
 					</Border>
 
 					<Grid Height="40" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Visibility="Visible">
-						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled" Visibility="Visible"/>
+						<Image x:Name="leftImage" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled" Visibility="Visible"/>
 						<Rectangle Visibility="Visible" >
 							<Rectangle.Fill>
 								<SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}"></SolidColorBrush>
@@ -27,22 +27,27 @@
 						</Rectangle>
 					</Grid>
 					<Grid Height="40" Width="40" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1">
-						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+						<Image x:Name="middleImage" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
 					</Grid>
 					<Grid Height="40" Width="20" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1">
-						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+						<Image x:Name="rightImage" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Assets/Kitten.png" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
 						<Rectangle Visibility="Visible" >
 							<Rectangle.Fill>
 								<SolidColorBrush Color="{ThemeResource SystemAltMediumLowColor}"></SolidColorBrush>
 							</Rectangle.Fill>
 						</Rectangle>
 					</Grid>
-					<Button Foreground="White" Content="&lt;" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" IsEnabled="False"/>
-					<Button Foreground="White" Content="&gt;" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1"/>
-					<ProgressBar HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" Visibility="Collapsed" />
+					<Button x:Name="leftButton" Foreground="White" Content="&lt;" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" IsEnabled="False" Tapped="leftButton_Tapped"/>
+					<Button x:Name="rightButton" Foreground="White" Content="&gt;" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="40" Width="10" FontSize="10" Padding="0,0,0,3" Grid.Row="1" Tapped="rightButton_Tapped" IsEnabled="False"/>
 					<Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1" Width="60" Height="40">
 						<Viewbox>
-							<Grid Width="300" Height="200"/>
+							<Grid Width="300" Height="200">
+								<Button x:Name="startButton" Content="Start Workout" HorizontalAlignment="Center" Height="37" Foreground="White" Padding="20,4,20,4" Visibility="Collapsed"/>
+								<TextBlock x:Name="segmentTitleBlock" HorizontalAlignment="Center" Margin="40,15,40,0" VerticalAlignment="Top" Foreground="White" TextWrapping="WrapWholeWords" TextDecorations="Underline" Text="This is a thing woo yeah" />
+								<TextBlock x:Name="repInfoBlock" Text="30 reps, both sides" HorizontalAlignment="Center" Margin="0,0,0,44" VerticalAlignment="Center" Foreground="White" TextWrapping="NoWrap" FontSize="24" />
+								<Button x:Name="pauseButton" Content="30 seconds left" HorizontalAlignment="Left" Height="30" Foreground="White" Padding="20,4,20,4" Margin="15,0,0,45" VerticalAlignment="Bottom" FontSize="12" IsTabStop="False" Tapped="pauseButton_Tapped" ManipulationMode="None" FontFamily="Calibri"/>
+								<ProgressBar x:Name="progressBar" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" FontSize="15" Margin="15,0,15,15" Height="30" Value="24" Foreground="White" Background="Black" IsHitTestVisible="False" IsEnabled="False" Width="270"/>
+							</Grid>
 						</Viewbox>
 					</Grid>
 				</Grid>
