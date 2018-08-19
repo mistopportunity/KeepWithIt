@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.Storage;
+using System.Threading.Tasks;
 
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
@@ -263,6 +264,9 @@ namespace KeepWithIt {
 		}
 
 		private void SquareTapped(Grid grid) {
+
+			if(importing)
+				return;
 
 			var gridIndex = squaresGrid.Children.IndexOf(grid);
 
@@ -674,7 +678,7 @@ namespace KeepWithIt {
 					var status = await CachedFileManager.CompleteUpdatesAsync(file);
 					if(status != FileUpdateStatus.Complete) {
 						ElementSoundPlayer.Play(ElementSoundKind.Show);
-						MessageDialog messageDialog = new MessageDialog("This file couldn't be saved! SAD SAD SAD SAADDDDD SAD") {
+						MessageDialog messageDialog = new MessageDialog("Workout couldn't be exported! SAD SAD SAD SAADDDDD SAD") {
 							DefaultCommandIndex = 0,
 							CancelCommandIndex = 0
 						};
@@ -735,7 +739,7 @@ namespace KeepWithIt {
 					var fileResult = await WorkoutManager.AddWorkout(file);
 					if(fileResult == false) {
 						ElementSoundPlayer.Play(ElementSoundKind.Show);
-						MessageDialog messageDialog = new MessageDialog("This file couldn't be saved! SAD SAD SAD SAADDDDD SAD") {
+						MessageDialog messageDialog = new MessageDialog("Workout couldn't be imported! SAD SAD SAD SAADDDDD SAD") {
 							DefaultCommandIndex = 0,
 							CancelCommandIndex = 0
 						};
