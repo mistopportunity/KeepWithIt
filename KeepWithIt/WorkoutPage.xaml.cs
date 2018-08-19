@@ -249,9 +249,5 @@ namespace KeepWithIt {
 			currentView.BackRequested -= CurrentView_BackRequested;
 
 		}
-
-		private void Page_LayoutUpdated(object sender,object e) {
-
-		}
 	}
 }

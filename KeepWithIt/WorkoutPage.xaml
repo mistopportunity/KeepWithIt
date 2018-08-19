@@ -5,7 +5,7 @@
     xmlns:local="using:KeepWithIt"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" LayoutUpdated="Page_LayoutUpdated">
+    mc:Ignorable="d">
 	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Viewbox>
 			<Border BorderThickness="2">
@@ -19,7 +19,7 @@
 					</Border>
 
 					<Grid Height="40" Width="20" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Visibility="Visible">
-						<Image x:Name="leftImage" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled" Visibility="Visible" Source="Assets/Kitten.png"/>
+						<Image x:Name="leftImage" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" ScrollViewer.VerticalScrollBarVisibility="Disabled" Visibility="Visible"/>
 						<Rectangle x:Name="leftOverlay" Visibility="Visible" >
 							<Rectangle.Fill>
 								<SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}"></SolidColorBrush>
