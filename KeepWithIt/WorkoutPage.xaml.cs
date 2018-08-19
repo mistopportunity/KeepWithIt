@@ -15,6 +15,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.System;
 //Todo: audio on this page because I had to write it without headphones because my computer is across the fucking room
 
 namespace KeepWithIt {
@@ -48,17 +49,8 @@ namespace KeepWithIt {
 			progressBar.Visibility = Visibility.Collapsed;
 			pauseButton.Visibility = Visibility.Collapsed;
 
-			startButton.Focus(FocusState.Programmatic);
-			startButton.FocusDisengaged += (sender,handler) => {
-				if(startButton.IsEnabled) {
-					startButton.Focus(FocusState.Programmatic);
-				}
-			};
-			startButton.Tapped += (sender,handler) => {
-				startButton.IsEnabled = false;
-				startButton.Visibility = Visibility.Collapsed;
-				handler.Handled = true;
-				StartWorkout();
+			startButton.Click += (sender,handler) => {
+				startButtonClicked();
 			};
 
 
@@ -78,7 +70,13 @@ namespace KeepWithIt {
 			}
 		}
 
-		private void leftButton_Tapped(object sender,TappedRoutedEventArgs e) {
+		private void startButtonClicked() {
+			startButton.IsEnabled = false;
+			startButton.Visibility = Visibility.Collapsed;
+			StartWorkout();
+		}
+
+		private void leftButton_Click(object sender,RoutedEventArgs e) {
 			changeSegment(--segmentIndex);
 		}
 
@@ -88,7 +86,7 @@ namespace KeepWithIt {
 			Frame.GoBack();
 		}
 
-		private void rightButton_Tapped(object sender,TappedRoutedEventArgs e) {
+		private void rightButton_Click(object sender,RoutedEventArgs e) {
 			if(++segmentIndex == currentWorkout.Segments.Count) {
 				//congratulate the user in some way?
 				ExitWorkout();
@@ -189,7 +187,7 @@ namespace KeepWithIt {
 			addCompletionTimeIfApplicable();
 		}
 
-		private void pauseButton_Tapped(object sender,TappedRoutedEventArgs e) {
+		private void pauseButton_Click(object sender,RoutedEventArgs e) {
 			isTimerPasued = !isTimerPasued;
 			if(totalSeconds != -1) {
 				if(isTimerPasued) {
@@ -236,8 +234,84 @@ namespace KeepWithIt {
 			ExitWorkout();
 		}
 
+		private void FocusTappedOrClickedOrWhateverTheHell() {
+			if(!startButton.IsEnabled) {
+
+			}
+		}
+
+		private void defaultFocus() {
+			if(startButton.IsEnabled) {
+				startButton.Focus(FocusState.Programmatic);
+				FocusManager.TryMoveFocus(FocusNavigationDirection.None);
+			} else {
+				pauseButton.Focus(FocusState.Programmatic);
+			}
+		}
+
+		private void focusUp() {
+			var focusedElement = FocusManager.GetFocusedElement();
+			if(focusedElement == null) {
+				defaultFocus();
+			}
+			if(focusedElement == pauseButton) {
+				if(leftButton.IsEnabled) {
+					leftButton.Focus(FocusState.Programmatic);
+				}
+			} else if(focusedElement == rightButton) {
+				pauseButton.Focus(FocusState.Programmatic);
+			}
+			//focus up
+
+		}
+		private void focusDown() {
+			var focusedElement = FocusManager.GetFocusedElement();
+			if(focusedElement == null) {
+				defaultFocus();
+			}
+			if(focusedElement == pauseButton) {
+				if(rightButton.IsEnabled) {
+					rightButton.Focus(FocusState.Programmatic);
+				}
+			} else if(focusedElement == leftButton) {
+				pauseButton.Focus(FocusState.Programmatic);
+			}
+			//focus down
+		}
+
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
-			//Todo - controller and keyboard navigation
+			switch(args.VirtualKey) {
+				case VirtualKey.Escape:
+				case VirtualKey.GamepadB:
+				case VirtualKey.NavigationCancel:
+					ExitWorkout();
+					break;
+				case VirtualKey.GamepadA:
+				case VirtualKey.Enter:
+				case VirtualKey.NavigationAccept:
+					FocusTappedOrClickedOrWhateverTheHell();
+					break;
+				case VirtualKey.Up:
+				case VirtualKey.GamepadDPadUp:
+				case VirtualKey.NavigationUp:
+					focusUp();
+					break;
+				case VirtualKey.Down:
+				case VirtualKey.GamepadDPadDown:
+				case VirtualKey.NavigationDown:
+					focusDown();
+					break;
+				case VirtualKey.Left:
+				case VirtualKey.GamepadDPadLeft:
+				case VirtualKey.NavigationLeft:
+					focusUp();
+					break;
+				case VirtualKey.Right:
+				case VirtualKey.GamepadDPadRight:
+				case VirtualKey.NavigationRight:
+					focusDown();
+					break;
+			}
 		}
 
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {

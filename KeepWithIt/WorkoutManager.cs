@@ -47,7 +47,11 @@ namespace KeepWithIt {
 
 				using(var dataReader = new DataReader(inputStream)) {
 
-					var buffer = dataReader.ReadBuffer((uint)size);
+					var length = (uint)size;
+
+					await dataReader.LoadAsync(length);
+
+					var buffer = dataReader.ReadBuffer(length);
 					var text = CryptographicBuffer.ConvertBinaryToString(
 						BinaryStringEncoding.Utf8,
 						buffer
@@ -106,14 +110,29 @@ namespace KeepWithIt {
 		internal async static void SaveWorkouts() {
 
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+			var filesList = await localFolder.GetFilesAsync();
+
+			//preparing for overflow file deletion
+			var filesNamesList = new Dictionary<int,StorageFile>();
+			foreach(var file in filesList) {
+				filesNamesList.Add(int.Parse(file.Name),file);
+			}
 
 			for(int i = 0;i<Workouts.Count;i++) {
+
+				filesNamesList.Remove(i);
 
 				var workout = Workouts[i];
 				var file = await localFolder.CreateFileAsync(i.ToString(),CreationCollisionOption.ReplaceExisting);
 
 				await ExportWorkout(file,workout);
+				//if the export fails, the original saved file will be maintained - UNLESS it no longer exists in -> List<Workout> Workouts
 
+			}
+
+			//deleting overflowing files if the new saved data is smaller than the previous
+			foreach(var remainingFile in filesNamesList) {
+				await remainingFile.Value.DeleteAsync();
 			}
 
 		}

@@ -36,7 +36,11 @@ namespace KeepWithIt {
 		protected async override void OnFileActivated(FileActivatedEventArgs args) {
 			Frame rootFrame = Window.Current.Content as Frame;
 			if(rootFrame == null) {
-				setRootFrame(rootFrame);
+
+				rootFrame = new Frame();
+				rootFrame.NavigationFailed += OnNavigationFailed;
+				Window.Current.Content = rootFrame;
+
 			}
 
 			if(args.Files.Count == 1) {
@@ -56,18 +60,14 @@ namespace KeepWithIt {
 			Window.Current.Activate();
 		}
 
-		private void setRootFrame(Frame frame) {
-			frame = new Frame();
-			frame.NavigationFailed += OnNavigationFailed;
-			Window.Current.Content = frame;
-		}
-
 		protected override void OnLaunched(LaunchActivatedEventArgs e) {
 			Frame rootFrame = Window.Current.Content as Frame;
 
 			if(rootFrame == null) {
 
-				setRootFrame(rootFrame);
+				rootFrame = new Frame();
+				rootFrame.NavigationFailed += OnNavigationFailed;
+				Window.Current.Content = rootFrame;
 
 			}
 

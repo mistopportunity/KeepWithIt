@@ -776,8 +776,7 @@ namespace KeepWithIt {
 				deleting = true;
 				setButtonsEnabled(false);
 				MessageDialog messageDialog = new MessageDialog(
-					"Are you sure you want to delete this? There's an old adage that goes \"once you do this you can't undo it\"",
-					"THIS IS SO SAD") {
+					"Are you sure you want to delete this? There's an old adage that goes \"once you do this you can't undo it\"") {
 					DefaultCommandIndex = 0,
 					CancelCommandIndex = 1,
 				};
@@ -797,16 +796,16 @@ namespace KeepWithIt {
 				await messageDialog.ShowAsync();
 			}
 		}
-		private void ExportButton_Tapped(object sender,RoutedEventArgs e) {
+		private void ExportButton_Click(object sender,RoutedEventArgs e) {
 			GotoExport();
 		}
-		private void EditButton_Tapped(object sender,RoutedEventArgs e) {
+		private void EditButton_Click(object sender,RoutedEventArgs e) {
 			GotoEditor();
 		}
-		private void StartButton_Tapped(object sender,RoutedEventArgs e) {
+		private void StartButton_Click(object sender,RoutedEventArgs e) {
 			GotoActualWorkout();
 		}
-		private void DeleteButton_Tapped(object sender,RoutedEventArgs e) {
+		private void DeleteButton_Click(object sender,RoutedEventArgs e) {
 			DeletionPrompt();
 		}
 	}
