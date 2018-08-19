@@ -233,7 +233,10 @@ namespace KeepWithIt {
 
 		private void addButton_Tapped(object sender,RoutedEventArgs e) {
 			workout.Segments.Add(new WorkoutSegment() {
-				Name = "Debug segment - user"
+				Name = "Debug segment - user",
+				Reps = 5,
+				DoubleSided = true,
+				Seconds = 3,
 			});
 			//open the segment
 		}

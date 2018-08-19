@@ -22,8 +22,6 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.Storage;
 
-//Todo change clicks to taps for buttons
-
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
 
@@ -34,38 +32,78 @@ namespace KeepWithIt {
 			this.InitializeComponent();
 		}
 
-		private void ReloadSquares() {
-
-			if(selectedIndex != -1) {
-				removeSelectionAttributes(selectedGrid);
-				selectedGrid = null;
-				selectedIndex = -1;
-			}
-			lastSelectedIndex = 0;
-
-			squaresGrid.Children.Clear();
-
+		private bool loadedSquaresForTheFirstDamnTime = false;
+		private void LoadSquaresForTheFirstDamnTime() {
+			loadedSquaresForTheFirstDamnTime = true;
 			AddInterfaceSquares();
-
 			foreach(var workout in WorkoutManager.Workouts) {
 				var workoutGrid = workout.GetGrid();
 				AddSquare(workoutGrid);
 			}
+		}
+
+		private void UpdateSquaresSinceNewOnesWereAdded() {
+			//compare the current number of squaresGrid children against WorkoutEditor's workouts list count
+			var originalCount = squaresGrid.Children.Count - interfaceSquaresCount;
+			var newCount = WorkoutManager.Workouts.Count;
+
+			var difference = newCount - originalCount;
+
+			for(int i = 0;i<difference;i++) {
+
+				AddSquare(WorkoutManager.Workouts[originalCount + i - 1].GetGrid());
+
+			}
 
 		}
+
+		private void AddedANewDamnWorkoutToTheMix(Workout workout) {
+			AddSquare(workout.GetGrid());
+		}
+
+		private void DeleteAWorkoutRestInPeace(int workoutIndex) {
+			var squaresGridIndex = workoutIndex + interfaceSquaresCount;
+			if(selectedIndex == squaresGridIndex) {
+				selectedIndex = squaresGridIndex - 1;
+				selectedGrid = null;
+				lastSelectedIndex = 0;
+			}
+			squaresGrid.Children.RemoveAt(squaresGridIndex);
+
+			for(int i = squaresGridIndex;i<squaresGrid.Children.Count;i++) {
+				UpdateSquareLayout(squaresGrid.Children[i] as Grid,i);
+			}
+
+
+		}
+
+		private void UpdateASpecificSquare(int workoutIndex) {
+			var workout = WorkoutManager.Workouts[workoutIndex];
+			var squaresGridIndex = workoutIndex + interfaceSquaresCount;
+
+			squaresGrid.Children.RemoveAt(squaresGridIndex);
+			AddSquare(workout.GetGrid(),squaresGridIndex);
+
+		}
+
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
 			var app = ((App)Application.Current);
 			if(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals != null) {
 				if(app.WasThatComplicatedNavigationalMessFromANewWorkout) {
-					ReloadSquares();
+					AddedANewDamnWorkoutToTheMix(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals);
 				}
 				PostImportSelect(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals);
+				UpdateASpecificSquare(presentedSquareIndex);
 				app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = null;
 				app.WasThatComplicatedNavigationalMessFromANewWorkout = false;
 				userIsAwayFromThisPlace = false;
 			} else {
-				ReloadSquares();
+				if(!loadedSquaresForTheFirstDamnTime) {
+					LoadSquaresForTheFirstDamnTime();
+				} else {
+					UpdateSquaresSinceNewOnesWereAdded();
+				}
 				if(e.Parameter is Workout) {
 					PostImportSelect(e.Parameter as Workout);
 				} else if(e.Parameter is UselessPotato) {
@@ -170,6 +208,7 @@ namespace KeepWithIt {
 			EditButton.IsEnabled = enabled;
 			DeleteButton.IsEnabled = enabled;
 			ExportButton.IsEnabled = enabled;
+
 		}
 
 		public void ClearPresentSquare(bool playSound = true) {
@@ -196,6 +235,14 @@ namespace KeepWithIt {
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 			currentView.BackRequested += CurrentView_BackRequested;
+
+			calendar.SelectedDates.Clear();
+
+			foreach(var date in WorkoutManager.Workouts[presentedSquareIndex].Dates) {
+				calendar.SelectedDates.Add(date);
+			}
+
+			calendar.SetDisplayDate(DateTime.Today - TimeSpan.FromDays(14));
 
 			if(presentedSquare != null) {
 				TopGrid.Children.Remove(presentedSquare);
@@ -232,17 +279,9 @@ namespace KeepWithIt {
 						break;
 				}
 			} else {
-
 				presentedSquareIndex = gridIndex - interfaceSquaresCount;
+
 				var presentationSquare = GetPresentationSquare();
-
-				calendar.SelectedDates.Clear();
-
-				foreach(var date in WorkoutManager.Workouts[presentedSquareIndex].Dates) {
-					calendar.SelectedDates.Add(date);
-				}
-
-				calendar.SetDisplayDate(DateTime.Today - TimeSpan.FromDays(14));
 
 				PresentSquare(presentationSquare);
 
@@ -262,14 +301,24 @@ namespace KeepWithIt {
 			ClearPresentSquare();
 			e.Handled = true;
 		}
-		public void AddSquare(Grid grid) {
-			if(squaresGrid.Children.Count % 2 == 0) {
+
+		private void UpdateSquareLayout(Grid grid,int? index = null) {
+			int whereAreWeDoingThisShitAt;
+			if(index == null) {
+				whereAreWeDoingThisShitAt = squaresGrid.Children.Count;
+			} else {
+				whereAreWeDoingThisShitAt = index.Value;
+			}
+			if(whereAreWeDoingThisShitAt % 2 == 0) {
 				grid.HorizontalAlignment = HorizontalAlignment.Right;
 				Grid.SetColumn(grid,1);
 			} else {
 				grid.HorizontalAlignment = HorizontalAlignment.Left;
 				Grid.SetColumn(grid,3);
 			}
+		}
+		private void AddSquare(Grid grid,int? index = null) {
+			UpdateSquareLayout(grid,index);
 
 			grid.Tapped += Grid_Tapped;
 
@@ -278,7 +327,11 @@ namespace KeepWithIt {
 
 			grid.PointerExited += Grid_PointerExited;
 
-			squaresGrid.Children.Add(grid);
+			if(index == null) {
+				squaresGrid.Children.Add(grid);
+			} else {
+				squaresGrid.Children.Insert(index.Value,grid);
+			}
 		}
 
 		private void Grid_Tapped(object sender,TappedRoutedEventArgs e) {
@@ -606,21 +659,18 @@ namespace KeepWithIt {
 		private bool exporting = false;
 		private async void GotoExport() {
 			if(!squaresCentered && !exporting) {
-				setButtonsEnabled(false);
 				exporting = true;
+				var exportWorkout = WorkoutManager.Workouts[presentedSquareIndex];
+				setButtonsEnabled(false);
 				var savePicker = new FileSavePicker();
 				savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 				savePicker.FileTypeChoices.Add("Keep with it Workout File",new List<string>() {".kwiw"});
 				savePicker.SuggestedFileName = WorkoutManager.Workouts[presentedSquareIndex].Name;
 				ElementSoundPlayer.Play(ElementSoundKind.Show);
-				var exportWorkout = WorkoutManager.Workouts[presentedSquareIndex];
 				StorageFile file = await savePicker.PickSaveFileAsync();
 				if(file != null) {
-
 					CachedFileManager.DeferUpdates(file);
-
 					WorkoutManager.ExportWorkout(file,exportWorkout);
-
 					var status = await CachedFileManager.CompleteUpdatesAsync(file);
 					if(status != FileUpdateStatus.Complete) {
 						ElementSoundPlayer.Play(ElementSoundKind.Show);
@@ -692,8 +742,9 @@ namespace KeepWithIt {
 						messageDialog.Commands.Add(new UICommand("Okay :("));
 						await messageDialog.ShowAsync();
 					} else {
-						ReloadSquares();
-						PostImportSelect(WorkoutManager.Workouts.Last());
+						var newWorkout = WorkoutManager.Workouts.Last();
+						AddedANewDamnWorkoutToTheMix(newWorkout);
+						PostImportSelect(newWorkout);
 					}
 				}
 				ElementSoundPlayer.Play(ElementSoundKind.Hide);
@@ -725,7 +776,7 @@ namespace KeepWithIt {
 				};
 				messageDialog.Commands.Add(new UICommand("Yes. Leave me alone!",(command) => {
 					WorkoutManager.DeleteWorkout(presentedSquareIndex);
-					ReloadSquares();
+					DeleteAWorkoutRestInPeace(presentedSquareIndex);
 					ClearPresentSquare();
 					deleting = false;
 				}));
