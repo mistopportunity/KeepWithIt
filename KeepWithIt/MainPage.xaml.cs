@@ -98,7 +98,6 @@ namespace KeepWithIt {
 				UpdateASpecificSquare(presentedSquareIndex);
 				app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = null;
 				app.WasThatComplicatedNavigationalMessFromANewWorkout = false;
-				userIsAwayFromThisPlace = false;
 			} else {
 				if(!loadedSquaresForTheFirstDamnTime) {
 					LoadSquaresForTheFirstDamnTime();
@@ -114,7 +113,7 @@ namespace KeepWithIt {
 				}
 			}
 
-
+			userIsAwayFromThisPlace = false;
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
 		}

@@ -31,8 +31,6 @@ namespace KeepWithIt {
 
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
-			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
-
 			if(!loaded) {
 				if(e.Parameter != null && e.Parameter is Workout) {
 					workout = e.Parameter as Workout;
@@ -56,7 +54,7 @@ namespace KeepWithIt {
 				nameBox.SelectionLength = 0;
 				loaded = true;
 			}
-
+			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
