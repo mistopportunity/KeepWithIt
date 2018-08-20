@@ -71,24 +71,96 @@ namespace KeepWithIt {
 					BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
 
 					softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-					ProcessIncomingBitmap(softwareBitmap);
+
+					softwareBitmap = await ProcessIncomingBitmap(softwareBitmap);
 				}
-				return softwareBitmap.ProcessIncomingBitmap();
+
+				return softwareBitmap;
 			} catch {
 				return null;
 			}
 		}
 
-		private static SoftwareBitmap ProcessIncomingBitmap(this SoftwareBitmap bitmap) {
-			if(bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 ||
-				bitmap.BitmapAlphaMode == BitmapAlphaMode.Straight) {
-				bitmap = SoftwareBitmap.Convert(
-					bitmap,
+		private const int MaxImageDimension = 1024;
+
+		private async static Task<SoftwareBitmap> ProcessIncomingBitmap(SoftwareBitmap bitmap) {
+			uint newWidth;
+			uint newHeight;
+			if(bitmap.PixelWidth > MaxImageDimension) {
+				newWidth = MaxImageDimension;
+				newHeight = (uint)Math.Floor(
+					(MaxImageDimension / (double)bitmap.PixelWidth) * bitmap.PixelHeight
+				);
+			} else if(bitmap.PixelHeight > MaxImageDimension) {
+				newHeight = MaxImageDimension;
+				newWidth = (uint)Math.Floor(
+					(MaxImageDimension / (double)bitmap.PixelHeight) * bitmap.PixelWidth
+				);
+			} else {
+				if(bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 ||
+					bitmap.BitmapAlphaMode == BitmapAlphaMode.Straight) {
+					bitmap = SoftwareBitmap.Convert(
+						bitmap,
+						BitmapPixelFormat.Bgra8,
+						BitmapAlphaMode.Premultiplied
+					);
+				}
+				return bitmap;
+			}
+
+			var bitmapTransform = new BitmapTransform() {
+				ScaledWidth = newWidth,
+				ScaledHeight = newHeight,
+				InterpolationMode = BitmapInterpolationMode.Fant
+			};
+
+
+			using(var randomAccessStream = new InMemoryRandomAccessStream()) {
+				var encoder = await BitmapEncoder.CreateAsync(
+					BitmapEncoder.JpegEncoderId,
+					randomAccessStream
+				);
+				encoder.SetSoftwareBitmap(bitmap);
+
+				try {
+					await encoder.FlushAsync();
+				} catch {
+					return null;
+				}
+
+
+				var decoder = await BitmapDecoder.CreateAsync(randomAccessStream);
+
+
+				var pixelData = await decoder.GetPixelDataAsync(
 					BitmapPixelFormat.Bgra8,
+					BitmapAlphaMode.Premultiplied,
+					bitmapTransform,ExifOrientationMode.IgnoreExifOrientation,
+					ColorManagementMode.DoNotColorManage
+				);
+
+				var pixels = pixelData.DetachPixelData();
+
+				var writeableBitmap = new WriteableBitmap(
+					(int)decoder.PixelWidth,
+					(int)decoder.PixelHeight
+				);
+
+				await writeableBitmap.SetSourceAsync(randomAccessStream);
+				var newBitmap = SoftwareBitmap.CreateCopyFromBuffer(
+					writeableBitmap.PixelBuffer,
+					BitmapPixelFormat.Bgra8,
+					(int)newWidth,
+					(int)newHeight,
 					BitmapAlphaMode.Premultiplied
 				);
+
+				return newBitmap;
+
 			}
-			return bitmap;
+
+
+
 		}
 
 
