@@ -48,6 +48,7 @@ namespace KeepWithIt {
 
 				if(workout.Name == null) {
 					nameBox.Text = workoutDefaultName;
+					workout.Name = workoutDefaultName;
 				}
 				nameBox.PlaceholderText = workoutDefaultName;
 

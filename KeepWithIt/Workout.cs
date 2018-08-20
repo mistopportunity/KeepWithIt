@@ -124,7 +124,7 @@ namespace KeepWithIt {
 				return name;
 			}
 			set {
-				name = WorkoutManager.ProcessWorkoutName(name);
+				name = WorkoutManager.ProcessWorkoutName(value);
 			}
 		}
 
@@ -133,34 +133,25 @@ namespace KeepWithIt {
 		internal readonly List<DateTime> Dates = new List<DateTime>();
 
 		internal void AddDate(DateTime dateTime) {
-
 			if(Dates.Count < 1) {
 				Dates.Add(dateTime);
 				return;
 			}
-
 			var day = dateTime.Day;
 			var month = dateTime.Month;
 			var year = dateTime.Year;
-
-			bool dateAlreadyExists = true;
-
 			var pastDate = Dates.Last();
 			if(year > pastDate.Year) {
-				dateAlreadyExists = false;
-			}
-
-			if(month > pastDate.Month) {
-				dateAlreadyExists = false;
-			}
-
-			if(day > dateTime.Day) {
-				dateAlreadyExists = false;
-
-			}
-
-			if(!dateAlreadyExists) {
 				Dates.Add(dateTime);
+				return;
+			}
+			if(month > pastDate.Month) {
+				Dates.Add(dateTime);
+				return;
+			}
+			if(day > dateTime.Day) {
+				Dates.Add(dateTime);
+				return;
 			}
 		}
 
@@ -185,6 +176,7 @@ namespace KeepWithIt {
 			var checker1Color = new SolidColorBrush(Color.FromArgb(180,76,76,76));
 
 
+
 			for(var i = 0;i<9;i++) {
 
 				int row = i / 3; // 0 - 2
@@ -194,7 +186,13 @@ namespace KeepWithIt {
 
 				if(Segments.Count > 0) {
 					Image image = new Image();
-					image.Source = Segments[i % Segments.Count].UsableImage;
+					var segment = Segments[i % Segments.Count];
+					segment.PropertyChanged += (sender,e) => {
+						if(e.PropertyName == "UsableImage") {
+							image.Source = segment.UsableImage;
+						}
+					};
+					image.Source = segment.UsableImage;
 					image.Stretch = Stretch.Fill;
 					imageGrid.Children.Add(image);
 				}

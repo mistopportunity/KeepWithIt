@@ -65,12 +65,19 @@ namespace KeepWithIt {
 
 		internal async static Task<SoftwareBitmap> GetBitMapFromFile(StorageFile file) {
 			SoftwareBitmap softwareBitmap;
-			using(var stream = await file.OpenAsync(FileAccessMode.Read)) {
-				BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
-				softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-				ProcessIncomingBitmap(softwareBitmap);
+			try {
+				using(var stream = await file.OpenAsync(FileAccessMode.Read)) {
+					BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+
+					softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+					ProcessIncomingBitmap(softwareBitmap);
+				}
+				return softwareBitmap.ProcessIncomingBitmap();
+			} catch(Exception exception) {
+				var x = exception.Message;
+				;
+				return null;
 			}
-			return softwareBitmap.ProcessIncomingBitmap();
 		}
 
 		private static SoftwareBitmap ProcessIncomingBitmap(this SoftwareBitmap bitmap) {
@@ -91,10 +98,14 @@ namespace KeepWithIt {
 		}
 
 		internal static string ProcessWorkoutName(string name) {
+			if(name == null)
+				return null;
 			return name.Replace(Environment.NewLine," ");
 		}
 
 		internal static string ProcessSegmentName(string name) {
+			if(name == null)
+				return null;
 			return name.Replace(Environment.NewLine," ");
 		}
 
