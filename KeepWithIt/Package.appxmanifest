@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="4c9d0693-7748-451a-bbaf-e2ba82a561d9" Publisher="CN=jedisammy4" Version="1.0.0.0" />
+  <Identity Name="4c9d0693-7748-451a-bbaf-e2ba82a561d9" Publisher="CN=jedisammy4" Version="0.1.1.0" />
   <mp:PhoneIdentity PhoneProductId="4c9d0693-7748-451a-bbaf-e2ba82a561d9" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>KeepWithIt</DisplayName>
+    <DisplayName>Keep with it</DisplayName>
     <PublisherDisplayName>jedisammy4</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="KeepWithIt.App">
-      <uap:VisualElements DisplayName="Keep with it" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Manage your workouts fluidly with a slightly intuitive, cross-platform interface" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Keep with it" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Manage your workouts fluidly with a slightly intuitive, cross-platform/cross-input interface" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="Keep with it" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
@@ -25,7 +25,6 @@
           <uap:FileTypeAssociation Name="keepwithitworkout">
             <uap:DisplayName>Keep with it Workout File</uap:DisplayName>
             <uap:InfoTip>A workout file for Keep With It</uap:InfoTip>
-            <uap:EditFlags OpenIsSafe="true" />
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="application/kwiw">.kwiw</uap:FileType>
             </uap:SupportedFileTypes>
@@ -37,5 +36,6 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <uap:Capability Name="removableStorage" />
+    <uap:Capability Name="picturesLibrary" />
   </Capabilities>
 </Package>
