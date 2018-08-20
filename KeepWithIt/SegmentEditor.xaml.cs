@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Imaging;
 using Windows.Storage.Pickers;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -48,7 +49,13 @@ namespace KeepWithIt {
 				return;
 			}
 			setPictureLabelText("loading new image");
-			var softwareBitmap = await WorkoutManager.GetBitMapFromFile(file);
+			SoftwareBitmap softwareBitmap;
+			try {
+				softwareBitmap = await WorkoutManager.GetBitMapFromFile(file);
+			} catch {
+				softwareBitmap = null;
+			}
+
 			if(softwareBitmap != null) {
 				setPictureLabelText("processing new image");
 				segment.PropertyChanged += Segment_PropertyChanged;

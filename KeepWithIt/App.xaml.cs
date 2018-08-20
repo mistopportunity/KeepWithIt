@@ -28,7 +28,7 @@ namespace KeepWithIt {
 			this.InitializeComponent();
 			this.Suspending += OnSuspending;
 
-			WorkoutManager.LoadWorkouts();
+
 			ElementSoundPlayer.State = ElementSoundPlayerState.On;
 
 		}
@@ -37,7 +37,7 @@ namespace KeepWithIt {
 			Frame rootFrame = Window.Current.Content as Frame;
 			var thisIsANewFrame = rootFrame == null;
 			if(thisIsANewFrame) {
-
+				await WorkoutManager.LoadWorkouts();
 				rootFrame = new Frame();
 				rootFrame.NavigationFailed += OnNavigationFailed;
 				Window.Current.Content = rootFrame;
@@ -66,11 +66,11 @@ namespace KeepWithIt {
 			Window.Current.Activate();
 		}
 
-		protected override void OnLaunched(LaunchActivatedEventArgs e) {
+		protected async override void OnLaunched(LaunchActivatedEventArgs e) {
 			Frame rootFrame = Window.Current.Content as Frame;
 
 			if(rootFrame == null) {
-
+				await WorkoutManager.LoadWorkouts();
 				rootFrame = new Frame();
 				rootFrame.NavigationFailed += OnNavigationFailed;
 				Window.Current.Content = rootFrame;
@@ -92,9 +92,9 @@ namespace KeepWithIt {
 			throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
 		}
 
-		private void OnSuspending(object sender,SuspendingEventArgs e) {
+		private async void OnSuspending(object sender,SuspendingEventArgs e) {
 			var deferral = e.SuspendingOperation.GetDeferral();
-			WorkoutManager.SaveWorkouts();
+			await WorkoutManager.SaveWorkouts();
 			deferral.Complete();
 		}
 	}

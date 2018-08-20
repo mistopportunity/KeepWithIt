@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.System;
+using Windows.UI.Popups;
 //Todo: audio on this page because I had to write it without headphones because my computer is across the fucking room
 
 namespace KeepWithIt {
@@ -86,10 +87,17 @@ namespace KeepWithIt {
 			Frame.GoBack();
 		}
 
-		private void rightButton_Click(object sender,RoutedEventArgs e) {
+		private async void rightButton_Click(object sender,RoutedEventArgs e) {
 			if(++segmentIndex == currentWorkout.Segments.Count) {
-				//congratulate the user in some way?
 				ExitWorkout();
+				ElementSoundPlayer.Play(ElementSoundKind.Show);
+				MessageDialog messageDialog = new MessageDialog("Workout completed! Congratulations. Day added to the workout calendar.") {
+					DefaultCommandIndex = 0,
+					CancelCommandIndex = 0
+				};
+				messageDialog.Commands.Add(new UICommand("Yay! I share your enthusiasm!"));
+				await messageDialog.ShowAsync();
+				ElementSoundPlayer.Play(ElementSoundKind.Hide);
 			} else {
 				changeSegment(segmentIndex);
 			}
