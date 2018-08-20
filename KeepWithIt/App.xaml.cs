@@ -45,22 +45,24 @@ namespace KeepWithIt {
 			}
 
 			if(args.Files.Count == 1) {
-				var success = await WorkoutManager.AddWorkout(args.Files[0] as StorageFile);
-				if(thisIsANewFrame) {
+				var success = false;
+				try {
+					success = await WorkoutManager.AddWorkout(args.Files[0] as StorageFile);
+				} catch { }
+
 					if(success) {
 						var workout = WorkoutManager.Workouts.Last();
 						rootFrame.Navigate(typeof(MainPage),workout);
 					} else {
 						rootFrame.Navigate(typeof(MainPage));
 					}
-				}
+				
 			} else {
 				foreach(var file in args.Files) {
 					await WorkoutManager.AddWorkout(file as StorageFile);
 				}
-				if(thisIsANewFrame) {
-					rootFrame.Navigate(typeof(MainPage),new UselessPotato());
-				}
+				rootFrame.Navigate(typeof(MainPage),new UselessPotato());
+
 			}
 
 			Window.Current.Activate();

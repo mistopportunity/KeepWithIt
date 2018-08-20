@@ -109,8 +109,7 @@ namespace KeepWithIt {
 					PostImportSelect(e.Parameter as Workout,true);
 				} else if(e.Parameter is UselessPotato) {
 					var workout = WorkoutManager.Workouts.Last();
-					selectedIndex = (WorkoutManager.Workouts.Count - 1) + interfaceSquaresCount;
-					selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
+					PostImportSelect(workout,true);
 				}
 			}
 

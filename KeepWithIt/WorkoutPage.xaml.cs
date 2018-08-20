@@ -23,9 +23,6 @@ namespace KeepWithIt {
 	public sealed partial class WorkoutPage:Page {
 		public WorkoutPage() {
 			this.InitializeComponent();
-			timer = new DispatcherTimer();
-			timer.Tick += Timer_Tick;
-			timer.Interval = new TimeSpan(0,0,1);
 		}
 
 		private static readonly BitmapImage missingPictureIcon = new BitmapImage(new Uri("ms-appx:///Assets/Default.png",UriKind.RelativeOrAbsolute));
@@ -54,6 +51,10 @@ namespace KeepWithIt {
 				startButtonClicked();
 			};
 
+
+			timer = new DispatcherTimer();
+			timer.Tick += Timer_Tick;
+			timer.Interval = new TimeSpan(0,0,1);
 
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -85,8 +86,6 @@ namespace KeepWithIt {
 		private void ExitWorkout() {
 			//ask the user if they are sure they want to do this? - only if workoutCompleted is false
 			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = currentWorkout;
-			timer.Stop();
-			timer = null;
 			Frame.GoBack();
 		}
 
@@ -357,6 +356,9 @@ namespace KeepWithIt {
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 			base.OnNavigatingFrom(e);
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
+
+			timer.Stop();
+			timer = null;
 
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
