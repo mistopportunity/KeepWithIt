@@ -193,7 +193,11 @@ namespace KeepWithIt {
 						}
 					};
 					image.Source = segment.UsableImage;
-					image.Stretch = Stretch.Fill;
+					image.Stretch = Stretch.UniformToFill;
+
+					image.HorizontalAlignment = HorizontalAlignment.Center;
+					image.VerticalAlignment = VerticalAlignment.Center;
+
 					imageGrid.Children.Add(image);
 				}
 

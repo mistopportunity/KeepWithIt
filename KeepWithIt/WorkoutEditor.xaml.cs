@@ -29,6 +29,8 @@ namespace KeepWithIt {
 
 		private bool loaded = false;
 
+		internal static WorkoutSegment PendingDeletion = null;
+
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
 			if(!loaded) {
@@ -53,6 +55,12 @@ namespace KeepWithIt {
 				nameBox.SelectionStart = nameBox.MaxLength-1;
 				nameBox.SelectionLength = 0;
 				loaded = true;
+			} else if(PendingDeletion != null) {
+
+				workout.Segments.Remove(PendingDeletion);
+
+				PendingDeletion = null;
+
 			}
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 

@@ -83,6 +83,7 @@ namespace KeepWithIt {
 			var squaresGridIndex = workoutIndex + interfaceSquaresCount;
 
 			squaresGrid.Children.RemoveAt(squaresGridIndex);
+
 			AddSquare(workout.GetGrid(),squaresGridIndex);
 
 		}

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-//Todo: Make the segment editor - we saved the best for last... woot
+//Todo: audio on this page too because of the same reason
 
 namespace KeepWithIt {
 	public sealed partial class SegmentEditor:Page {
@@ -24,12 +24,13 @@ namespace KeepWithIt {
 		public SegmentEditor() {
 			this.InitializeComponent();
 		}
-
+		private bool stillOnThePage = true;
 		private bool openingOrProcessingImage = false;
 		private async void OpenImagePrompt() {
-			if(openingOrProcessingImage) {
+			if(openingOrProcessingImage || imageLoading) {
 				return;
 			}
+			setPictureLabelText("selecting image");
 			openingOrProcessingImage = true;
 			FileOpenPicker fileOpenPicker = new FileOpenPicker();
 			fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
@@ -40,37 +41,103 @@ namespace KeepWithIt {
 			ElementSoundPlayer.Play(ElementSoundKind.Show);
 			var file = await fileOpenPicker.PickSingleFileAsync();
 			if(file == null) {
+				if(stillOnThePage) {
+					UpdatePicture();
+					openingOrProcessingImage = false;
+				}
 				return;
 			}
+			setPictureLabelText("loading new image");
 			var softwareBitmap = await WorkoutManager.GetBitMapFromFile(file);
 			if(softwareBitmap != null) {
+				setPictureLabelText("processing new image");
+				segment.PropertyChanged += Segment_PropertyChanged;
 				segment.SetImage(softwareBitmap);
+				imageLoading = true;
 			} else {
 				ElementSoundPlayer.Play(ElementSoundKind.Show);
-				MessageDialog messageDialog = new MessageDialog("Error opening image. You know what sucks?") {
+				MessageDialog messageDialog = new MessageDialog("Error opening new image. You know what sucks?") {
 					DefaultCommandIndex = 0,
 					CancelCommandIndex = 0
 				};
-				messageDialog.Commands.Add(new UICommand("Well, that sucks"));
+				messageDialog.Commands.Add(new UICommand("Well, this sucks?"));
 				await messageDialog.ShowAsync();
 			}
 			ElementSoundPlayer.Play(ElementSoundKind.Hide);
-			openingOrProcessingImage = false;
+			if(stillOnThePage) {
+				openingOrProcessingImage = false;
+				UpdatePicture();
+			}
+		}
+
+		private void setPictureLabelText(string text) {
+			pictureLabel.Text = text.PadRight(24,' ') + "😁";
+		}
+
+		private bool imageLoading = false;
+		private void Segment_PropertyChanged(object sender,System.ComponentModel.PropertyChangedEventArgs e) {
+			if(e.PropertyName == "UsableImage") {
+				segment.PropertyChanged -= Segment_PropertyChanged;
+				imageLoading = false;
+				UpdatePicture();
+			}
 		}
 
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
+			stillOnThePage = true;
+
 			segment = e.Parameter as WorkoutSegment;
+
+			nameBox.PlaceholderText = segment.Name;
+
+			reps = segment.Reps;
+			seconds = segment.Reps;
+
+			doubleSidedToggle.IsChecked = segment.DoubleSided;
+
+			UpdatePicture();
+
+			UpdateRepsLabel();
+			UpdateSecondsLabel();
+
 
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 			currentView.BackRequested += CurrentView_BackRequested;
 		}
 
+		private void UpdatePicture() {
+			if(openingOrProcessingImage || imageLoading) {
+				return;
+			}
+			if(segment.GetImage() == null) {
+				setPictureLabelText("No image selected");
+				backImage.Visibility = Visibility.Visible;
+			} else {
+				setPictureLabelText("Image seleceted");
+				backImage.Visibility = Visibility.Collapsed;
+				frontImage.Source = segment.UsableImage;
+			}
+		}
+
 		private void GoBack() {
-			//Todo: Push changes onto the segment object
+			if(!string.IsNullOrWhiteSpace(nameBox.Text)) {
+				segment.Name = nameBox.Text;
+			}
+
+			if(doubleSidedToggle.IsChecked.HasValue) {
+				segment.DoubleSided = doubleSidedToggle.IsChecked.Value;
+			} else {
+				segment.DoubleSided = false;
+			}
+
+			segment.Reps = reps;
+			segment.Seconds = seconds;
+
+			stillOnThePage = false;
 			Frame.GoBack();
 		}
 
@@ -79,7 +146,7 @@ namespace KeepWithIt {
 		}
 
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
-			//Todo: Handle key presses
+			//Todo: Handle key presses for controller and keyboard only support
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 			base.OnNavigatingFrom(e);
@@ -87,6 +154,81 @@ namespace KeepWithIt {
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 			currentView.BackRequested -= CurrentView_BackRequested;
+		}
+
+		private void Page_LayoutUpdated(object sender,object e) {
+			if(ActualWidth < ActualHeight) {
+				var gridLength = new GridLength(0,GridUnitType.Star);
+				Column1.Width = gridLength;
+				Column3.Width = gridLength;
+			} else {
+				var gridLength = new GridLength(1,GridUnitType.Star);
+				Column1.Width = gridLength;
+				Column3.Width = gridLength;
+			}
+		}
+
+		private void deleteButton_Click(object sender,RoutedEventArgs e) {
+			WorkoutEditor.PendingDeletion = segment;
+			stillOnThePage = false;
+			Frame.GoBack();
+		}
+
+		private int reps;
+		private int seconds;
+
+		private const int repsIterationAmount = 5;
+		private const int secondsIterationAmount = 5;
+
+		private void UpdateSecondsLabel() {
+			if(seconds == 0) {
+				secondsLabelBlock.Text = "no timer";
+			} else {
+				secondsLabelBlock.Text = $"{seconds}s timer";
+			}
+		}
+		private void UpdateRepsLabel() {
+			if(reps == 0) {
+				repsLabelBlock.Text = "no rep count";
+			} else {
+				repsLabelBlock.Text = $"{reps} reps";
+			}
+		}
+
+		private void secondsMinusButton_Click(object sender,RoutedEventArgs e) {
+			if(seconds == 0) {
+				return;
+			}
+			seconds -= secondsIterationAmount;
+			UpdateSecondsLabel();
+		}
+
+		private void secondsPlusButton_Click(object sender,RoutedEventArgs e) {
+			if(seconds > int.MaxValue - secondsIterationAmount) {
+				return;
+			}
+			seconds += secondsIterationAmount;
+			UpdateSecondsLabel();
+		}
+
+		private void repsMinusButton_Click(object sender,RoutedEventArgs e) {
+			if(reps == 0) {
+				return;
+			}
+			reps -= repsIterationAmount;
+			UpdateRepsLabel();
+		}
+
+		private void repsPlusButton_Click(object sender,RoutedEventArgs e) {
+			if(reps > int.MaxValue - repsIterationAmount) {
+				return;
+			}
+			reps += repsIterationAmount;
+			UpdateRepsLabel();
+		}
+
+		private void StackPanel_Tapped(object sender,TappedRoutedEventArgs e) {
+			OpenImagePrompt();
 		}
 	}
 }

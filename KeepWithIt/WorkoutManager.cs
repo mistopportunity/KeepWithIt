@@ -43,7 +43,10 @@ namespace KeepWithIt {
 						BitmapEncoder.JpegEncoderId,
 						randomAccessStream
 					);
+
 					encoder.SetSoftwareBitmap(sourceImage);
+
+					;
 					try {
 						await encoder.FlushAsync();
 					} catch {
@@ -84,6 +87,15 @@ namespace KeepWithIt {
 		private const int MaxImageDimension = 1024;
 
 		private async static Task<SoftwareBitmap> ProcessIncomingBitmap(SoftwareBitmap bitmap) {
+			if(bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || bitmap.BitmapAlphaMode == BitmapAlphaMode.Straight) {
+				bitmap = SoftwareBitmap.Convert(
+					bitmap,
+					BitmapPixelFormat.Bgra8,
+					BitmapAlphaMode.Premultiplied
+				);
+			}
+
+
 			uint newWidth;
 			uint newHeight;
 			if(bitmap.PixelWidth > MaxImageDimension) {
@@ -97,21 +109,13 @@ namespace KeepWithIt {
 					(MaxImageDimension / (double)bitmap.PixelHeight) * bitmap.PixelWidth
 				);
 			} else {
-				if(bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 ||
-					bitmap.BitmapAlphaMode == BitmapAlphaMode.Straight) {
-					bitmap = SoftwareBitmap.Convert(
-						bitmap,
-						BitmapPixelFormat.Bgra8,
-						BitmapAlphaMode.Premultiplied
-					);
-				}
 				return bitmap;
 			}
 
 			var bitmapTransform = new BitmapTransform() {
 				ScaledWidth = newWidth,
 				ScaledHeight = newHeight,
-				InterpolationMode = BitmapInterpolationMode.Fant
+				InterpolationMode = BitmapInterpolationMode.Cubic
 			};
 
 
@@ -136,7 +140,7 @@ namespace KeepWithIt {
 					BitmapPixelFormat.Bgra8,
 					BitmapAlphaMode.Premultiplied,
 					bitmapTransform,ExifOrientationMode.IgnoreExifOrientation,
-					ColorManagementMode.DoNotColorManage
+					ColorManagementMode.ColorManageToSRgb
 				);
 
 				var pixels = pixelData.DetachPixelData();

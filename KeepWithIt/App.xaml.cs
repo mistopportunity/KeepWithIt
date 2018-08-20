@@ -35,7 +35,8 @@ namespace KeepWithIt {
 
 		protected async override void OnFileActivated(FileActivatedEventArgs args) {
 			Frame rootFrame = Window.Current.Content as Frame;
-			if(rootFrame == null) {
+			var thisIsANewFrame = rootFrame == null;
+			if(thisIsANewFrame) {
 
 				rootFrame = new Frame();
 				rootFrame.NavigationFailed += OnNavigationFailed;
@@ -45,18 +46,23 @@ namespace KeepWithIt {
 
 			if(args.Files.Count == 1) {
 				var success = await WorkoutManager.AddWorkout(args.Files[0] as StorageFile);
-				if(success) {
-					var workout = WorkoutManager.Workouts.Last();
-					rootFrame.Navigate(typeof(MainPage),workout);
-				} else {
-					rootFrame.Navigate(typeof(MainPage));
+				if(thisIsANewFrame) {
+					if(success) {
+						var workout = WorkoutManager.Workouts.Last();
+						rootFrame.Navigate(typeof(MainPage),workout);
+					} else {
+						rootFrame.Navigate(typeof(MainPage));
+					}
 				}
 			} else {
 				foreach(var file in args.Files) {
 					await WorkoutManager.AddWorkout(file as StorageFile);
 				}
-				rootFrame.Navigate(typeof(MainPage),new UselessPotato());
+				if(thisIsANewFrame) {
+					rootFrame.Navigate(typeof(MainPage),new UselessPotato());
+				}
 			}
+
 			Window.Current.Activate();
 		}
 

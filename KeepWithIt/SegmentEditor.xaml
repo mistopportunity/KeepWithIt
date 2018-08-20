@@ -5,9 +5,50 @@
     xmlns:local="using:KeepWithIt"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" LayoutUpdated="Page_LayoutUpdated">
+	<ScrollViewer>
+		<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition x:Name="Column1" Width="1*"></ColumnDefinition>
+				<ColumnDefinition x:Name="Column2" Width="4*"></ColumnDefinition>
+				<ColumnDefinition x:Name="Column3" Width="1*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<TextBox x:Name="nameBox" Grid.Column="1" VerticalAlignment="Top" Margin="10,10,10,0" HorizontalAlignment="Stretch" FontSize="18" Height="36" MaxLength="32" TabIndex="0"/>
+			<ToggleButton x:Name="doubleSidedToggle" Content="is double sided" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Margin="10,354,10,0" Height="36" FontSize="18" IsChecked="False" TabIndex="6"/>
+			<Button x:Name="deleteButton" Content="delete segment" Grid.Column="1" Height="36" VerticalAlignment="Top" Margin="10,407,10,0" FontSize="18" HorizontalAlignment="Stretch" TabIndex="7" Click="deleteButton_Click"/>
+			<StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,45,0,0">
+				<StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,10,10,10">
+					<Button x:Name="secondsMinusButton" Content="-" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Height="50" FontSize="36" FontWeight="Bold" Padding="0,-10,0,0" TabIndex="1" Click="secondsMinusButton_Click"/>
+					<Button x:Name="secondsPlusButton" Content="+" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Height="50" FontSize="36" FontWeight="Bold" Padding="0,-10,0,0" TabIndex="2" Click="secondsPlusButton_Click"/>
+					<TextBlock x:Name="secondsLabelBlock" Text="0 seconds" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+				</StackPanel>
+				<StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,10,10">
+					<Button x:Name="repsMinusButton" Content="-" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Height="50" FontSize="36" FontWeight="Bold" Padding="0,-10,0,0" TabIndex="3" Click="repsMinusButton_Click"/>
+					<Button x:Name="repsPlusButton" Content="+" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Height="50" FontSize="36" FontWeight="Bold" Padding="0,-10,0,0" TabIndex="4" Click="repsPlusButton_Click"/>
+					<TextBlock x:Name="repsLabelBlock" Text="2 reps" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+				</StackPanel>
+			</StackPanel>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,197,10,0" Grid.Column="1" Orientation="Horizontal" Tapped="StackPanel_Tapped">
 
-    </Grid>
+				<Border BorderThickness="2,2,0,2">
+					<Border.BorderBrush>
+						<SolidColorBrush Color="{ThemeResource SystemBaseHighColor}"></SolidColorBrush>
+					</Border.BorderBrush>
+
+					<Grid Width="125" Height="125">
+						<Image x:Name="backImage" Source="Assets/Default.png" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="125" Height="125"/>
+						<Image x:Name="frontImage" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" Width="125" Height="125"/>
+					</Grid>
+				</Border>
+				<Border BorderThickness="0,2,2,2">
+					<Border.BorderBrush>
+						<SolidColorBrush Color="{ThemeResource SystemBaseHighColor}"></SolidColorBrush>
+					</Border.BorderBrush>
+					<TextBlock x:Name="pictureLabel" Text="No image selected" VerticalAlignment="Center" Padding="10,10,10,10" FontSize="18" FontFamily="Calibri"></TextBlock>
+				</Border>
+			</StackPanel>
+
+		</Grid>
+	</ScrollViewer>
 </Page>
