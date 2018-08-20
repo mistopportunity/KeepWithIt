@@ -95,7 +95,7 @@ namespace KeepWithIt {
 				if(app.WasThatComplicatedNavigationalMessFromANewWorkout) {
 					AddedANewDamnWorkoutToTheMix(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals);
 				}
-				PostImportSelect(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals);
+				PostImportSelect(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals,false);
 				UpdateASpecificSquare(presentedSquareIndex);
 				app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = null;
 				app.WasThatComplicatedNavigationalMessFromANewWorkout = false;
@@ -106,7 +106,7 @@ namespace KeepWithIt {
 					UpdateSquaresSinceNewOnesWereAdded();
 				}
 				if(e.Parameter is Workout) {
-					PostImportSelect(e.Parameter as Workout);
+					PostImportSelect(e.Parameter as Workout,true);
 				} else if(e.Parameter is UselessPotato) {
 					var workout = WorkoutManager.Workouts.Last();
 					selectedIndex = (WorkoutManager.Workouts.Count - 1) + interfaceSquaresCount;
@@ -123,6 +123,8 @@ namespace KeepWithIt {
 			base.OnNavigatingFrom(e);
 
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
+
+			UnsubscribeBackButton();
 
 		}
 
@@ -212,7 +214,7 @@ namespace KeepWithIt {
 
 		}
 
-		public void ClearPresentSquare(bool playSound = true) {
+		public void ClearPresentSquare(bool playSound) {
 			if(presentedSquare != null) {
 				TopGrid.Children.Remove(presentedSquare);
 			}
@@ -232,7 +234,7 @@ namespace KeepWithIt {
 
 		private int presentedSquareIndex = -1;
 
-		public void PresentSquare(Grid square) {
+		public void PresentSquare(Grid square,bool playSound) {
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 			currentView.BackRequested += CurrentView_BackRequested;
@@ -260,7 +262,9 @@ namespace KeepWithIt {
 			PushSquaresLeft();
 			TopGrid.Children.Add(square);
 
-			ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+			if(playSound) {
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+			}
 		}
 
 		private void SquareTapped(Grid grid) {
@@ -287,7 +291,7 @@ namespace KeepWithIt {
 
 				var presentationSquare = GetPresentationSquare();
 
-				PresentSquare(presentationSquare);
+				PresentSquare(presentationSquare,true);
 
 			}
 		}
@@ -302,7 +306,7 @@ namespace KeepWithIt {
 			if(exporting) {
 				return;
 			}
-			ClearPresentSquare();
+			ClearPresentSquare(true);
 			e.Handled = true;
 		}
 
@@ -584,7 +588,7 @@ namespace KeepWithIt {
 					case VirtualKey.Escape:
 					case VirtualKey.GamepadB:
 					case VirtualKey.NavigationCancel:
-						ClearPresentSquare();
+						ClearPresentSquare(true);
 						break;
 					case VirtualKey.GamepadDPadDown:
 					case VirtualKey.GamepadDPadRight:
@@ -704,7 +708,7 @@ namespace KeepWithIt {
 				var currentSquare = presentedSquareIndex;
 				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
-				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
 			}
 		}
 		private void GotoActualWorkout() {
@@ -712,7 +716,7 @@ namespace KeepWithIt {
 				var currentSquare = presentedSquareIndex;
 				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutPage),WorkoutManager.Workouts[currentSquare]);
-				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
 			}
 		}
 		private void GotoCreation()  {
@@ -720,14 +724,14 @@ namespace KeepWithIt {
 				var currentSquare = presentedSquareIndex;
 				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutEditor));
-				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
 
 			}
 		}
 		private void GotoAbout() {
 			if(squaresCentered && !importing) {
 				Frame.Navigate(typeof(AboutPage));
-				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
 			}
 		}
 		private bool importing = false;
@@ -753,7 +757,7 @@ namespace KeepWithIt {
 					} else {
 						var newWorkout = WorkoutManager.Workouts.Last();
 						AddedANewDamnWorkoutToTheMix(newWorkout);
-						PostImportSelect(newWorkout);
+						PostImportSelect(newWorkout,true);
 					}
 				}
 				ElementSoundPlayer.Play(ElementSoundKind.Hide);
@@ -761,13 +765,12 @@ namespace KeepWithIt {
 			}
 		}
 
-		private void PostImportSelect(Workout workout) {
+		private void PostImportSelect(Workout workout,bool playSound) {
 			presentedSquareIndex = WorkoutManager.Workouts.IndexOf(workout);
 			selectedIndex = presentedSquareIndex + interfaceSquaresCount;
 			selectedGrid = squaresGrid.Children[selectedIndex] as Grid;
 			UpdateScroll();
-			PresentSquare(workout.GetPresentationGrid());
-			ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+			PresentSquare(workout.GetPresentationGrid(),playSound);
 		}
 
 		private bool deleting = false;
@@ -785,7 +788,7 @@ namespace KeepWithIt {
 				messageDialog.Commands.Add(new UICommand("Yes. Leave me alone!",(command) => {
 					WorkoutManager.DeleteWorkout(presentedSquareIndex);
 					DeleteAWorkoutRestInPeace(presentedSquareIndex);
-					ClearPresentSquare();
+					ClearPresentSquare(true);
 					deleting = false;
 				}));
 				messageDialog.Commands.Add(new UICommand("No! Please, Daddy don't delete it!",(command) => {

@@ -137,13 +137,6 @@ namespace KeepWithIt {
 				case VirtualKey.Escape:
 				case VirtualKey.GamepadB:
 				case VirtualKey.NavigationCancel:
-					if(FocusManager.GetFocusedElement() == nameBox) {
-						if(!string.IsNullOrEmpty(nameBox.Text)) {
-							nameBox.Text = string.Empty;
-							ElementSoundPlayer.Play(ElementSoundKind.Invoke);
-							return;
-						}
-					}
 					GoBackAndNibbaRigSomeShit();
 					break;
 				case VirtualKey.GamepadA:
@@ -182,6 +175,7 @@ namespace KeepWithIt {
 
 		private async void GoBackAndNibbaRigSomeShit() {
 			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = workout;
+			loaded = false;
 			Frame.GoBack();
 			if(workout.Name == null) {
 				if(string.IsNullOrEmpty(processedNameBox)) {

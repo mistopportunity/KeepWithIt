@@ -68,6 +68,7 @@ namespace KeepWithIt {
 			pauseButton.Visibility = Visibility.Visible;
 			if(totalSeconds != 0) {
 				timer.Start();
+				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 			}
 		}
 
@@ -84,18 +85,21 @@ namespace KeepWithIt {
 		private void ExitWorkout() {
 			//ask the user if they are sure they want to do this? - only if workoutCompleted is false
 			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = currentWorkout;
+			timer.Stop();
+			timer = null;
 			Frame.GoBack();
 		}
 
 		private async void rightButton_Click(object sender,RoutedEventArgs e) {
 			if(++segmentIndex == currentWorkout.Segments.Count) {
 				ExitWorkout();
-				ElementSoundPlayer.Play(ElementSoundKind.Show);
-				MessageDialog messageDialog = new MessageDialog("Workout completed! Congratulations. Day added to the workout calendar.") {
+				MessageDialog messageDialog = new MessageDialog(
+					"Workout completed! Congratulations. Day added to the workout calendar."
+				) {
 					DefaultCommandIndex = 0,
 					CancelCommandIndex = 0
 				};
-				messageDialog.Commands.Add(new UICommand("Yay! I share your enthusiasm!"));
+				messageDialog.Commands.Add(new UICommand("Yay! I share this enthusiasm!"));
 				await messageDialog.ShowAsync();
 				ElementSoundPlayer.Play(ElementSoundKind.Hide);
 			} else {
@@ -178,6 +182,7 @@ namespace KeepWithIt {
 						}
 					} else {
 						timer.Start();
+						ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 					}
 				}
 			}
@@ -196,13 +201,17 @@ namespace KeepWithIt {
 			progressBar.Value = totalSeconds - remainingSeconds;
 			if(remainingSeconds == 0) {
 				timerFinished();
+				UpdateSecondsLabel();
+				return;
 			}
+			ElementSoundPlayer.Play(ElementSoundKind.Hide);
 			UpdateSecondsLabel();
 		}
 
 		private bool runTimerTwice = false;
 
 		private void timerFinished() {
+			ElementSoundPlayer.Play(ElementSoundKind.Show);
 			if(runTimerTwice) {
 				runTimerTwice = false;
 				remainingSeconds = totalSeconds;
@@ -224,6 +233,7 @@ namespace KeepWithIt {
 				} else {
 					if(remainingSeconds > 0) {
 						timer.Start();
+						ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
 					}
 				}
 			}

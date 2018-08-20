@@ -7,6 +7,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -16,8 +17,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-//Todo: audio on this page too because of the same reason
 
 namespace KeepWithIt {
 	public sealed partial class SegmentEditor:Page {
@@ -31,7 +30,7 @@ namespace KeepWithIt {
 			if(openingOrProcessingImage || imageLoading) {
 				return;
 			}
-			setPictureLabelText("selecting image");
+			setPictureLabelText("Selecting image");
 			openingOrProcessingImage = true;
 			FileOpenPicker fileOpenPicker = new FileOpenPicker();
 			fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
@@ -48,7 +47,7 @@ namespace KeepWithIt {
 				}
 				return;
 			}
-			setPictureLabelText("loading new image");
+			setPictureLabelText("Loading new image");
 			SoftwareBitmap softwareBitmap;
 			try {
 				softwareBitmap = await WorkoutManager.GetBitMapFromFile(file);
@@ -57,7 +56,7 @@ namespace KeepWithIt {
 			}
 
 			if(softwareBitmap != null) {
-				setPictureLabelText("processing new image");
+				setPictureLabelText("Processing new image");
 				segment.PropertyChanged += Segment_PropertyChanged;
 				segment.SetImage(softwareBitmap);
 				imageLoading = true;
@@ -78,7 +77,7 @@ namespace KeepWithIt {
 		}
 
 		private void setPictureLabelText(string text) {
-			pictureLabel.Text = text.PadRight(24,' ') + "😁";
+			pictureLabel.Text = text;
 		}
 
 		private bool imageLoading = false;
@@ -154,7 +153,44 @@ namespace KeepWithIt {
 		}
 
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
-			//Todo: Handle key presses for controller and keyboard only support
+			switch(args.VirtualKey) {
+				case VirtualKey.Escape:
+				case VirtualKey.GamepadB:
+				case VirtualKey.NavigationCancel:
+					GoBack();
+					break;
+				case VirtualKey.GamepadA:
+				case VirtualKey.Enter:
+				case VirtualKey.NavigationAccept:
+					if(FocusManager.GetFocusedElement() == null) {
+						nameBox.Focus(FocusState.Programmatic);
+					}
+					break;
+				case VirtualKey.Up:
+				case VirtualKey.GamepadDPadUp:
+				case VirtualKey.NavigationUp:
+					FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+					break;
+				case VirtualKey.Down:
+				case VirtualKey.GamepadDPadDown:
+				case VirtualKey.NavigationDown:
+					FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+					break;
+				case VirtualKey.Left:
+				case VirtualKey.GamepadDPadLeft:
+				case VirtualKey.NavigationLeft:
+					if(FocusManager.GetFocusedElement() != nameBox) {
+						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
+					}
+					break;
+				case VirtualKey.Right:
+				case VirtualKey.GamepadDPadRight:
+				case VirtualKey.NavigationRight:
+					if(FocusManager.GetFocusedElement() != nameBox) {
+						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+					}
+					break;
+			}
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 			base.OnNavigatingFrom(e);
@@ -190,14 +226,14 @@ namespace KeepWithIt {
 
 		private void UpdateSecondsLabel() {
 			if(seconds == 0) {
-				secondsLabelBlock.Text = "no timer";
+				secondsLabelBlock.Text = "No timer";
 			} else {
 				secondsLabelBlock.Text = $"{seconds}s timer";
 			}
 		}
 		private void UpdateRepsLabel() {
 			if(reps == 0) {
-				repsLabelBlock.Text = "no rep count";
+				repsLabelBlock.Text = "No rep count";
 			} else {
 				repsLabelBlock.Text = $"{reps} reps";
 			}
@@ -235,7 +271,7 @@ namespace KeepWithIt {
 			UpdateRepsLabel();
 		}
 
-		private void StackPanel_Tapped(object sender,TappedRoutedEventArgs e) {
+		private void Button_Click(object sender,RoutedEventArgs e) {
 			OpenImagePrompt();
 		}
 	}

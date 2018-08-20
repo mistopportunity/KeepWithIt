@@ -14,8 +14,8 @@
 				<ColumnDefinition x:Name="Column3" Width="1*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<TextBox x:Name="nameBox" Grid.Column="1" VerticalAlignment="Top" Margin="10,10,10,0" HorizontalAlignment="Stretch" FontSize="18" Height="36" MaxLength="32" TabIndex="0"/>
-			<ToggleButton x:Name="doubleSidedToggle" Content="is double sided" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Margin="10,354,10,0" Height="36" FontSize="18" IsChecked="False" TabIndex="6"/>
-			<Button x:Name="deleteButton" Content="delete segment" Grid.Column="1" Height="36" VerticalAlignment="Top" Margin="10,407,10,0" FontSize="18" HorizontalAlignment="Stretch" TabIndex="7" Click="deleteButton_Click"/>
+			<ToggleButton x:Name="doubleSidedToggle" Content="is double sided" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Margin="10,354,10,0" Height="36" FontSize="18" IsChecked="False" TabIndex="6" FontWeight="Bold"/>
+			<Button x:Name="deleteButton" Content="delete segment" Grid.Column="1" Height="36" VerticalAlignment="Top" Margin="10,407,10,0" FontSize="18" HorizontalAlignment="Stretch" TabIndex="7" Click="deleteButton_Click" FontWeight="Bold"/>
 			<StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,45,0,0">
 				<StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10">
 					<Button x:Name="secondsMinusButton" Content="-" HorizontalAlignment="Center" VerticalAlignment="Center" Width="50" Height="50" FontSize="36" FontWeight="Bold" Padding="0,-10,0,0" TabIndex="1" Click="secondsMinusButton_Click"/>
@@ -29,26 +29,38 @@
 				</StackPanel>
 			</StackPanel>
 
-			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,197,10,0" Grid.Column="1" Orientation="Horizontal" Tapped="StackPanel_Tapped">
+			<Grid HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,197,10,0" Grid.Column="1">
+				<StackPanel Orientation="Horizontal">
+					<StackPanel.Background>
+						<SolidColorBrush Color="{ThemeResource SystemAltHighColor}"></SolidColorBrush>
+					</StackPanel.Background>
 
-				<Border BorderThickness="2,2,0,2">
-					<Border.BorderBrush>
-						<SolidColorBrush Color="{ThemeResource SystemBaseHighColor}"></SolidColorBrush>
-					</Border.BorderBrush>
+					<Border BorderThickness="2,2,0,2">
+						<Border.BorderBrush>
+							<SolidColorBrush Color="{ThemeResource SystemBaseHighColor}"></SolidColorBrush>
+						</Border.BorderBrush>
 
-					<Grid Width="125" Height="125">
-						<Image x:Name="backImage" Source="Assets/Default.png" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="125" Height="125"/>
-						<Image x:Name="frontImage" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" Width="125" Height="125"/>
-					</Grid>
-				</Border>
-				<Border BorderThickness="0,2,2,2">
-					<Border.BorderBrush>
-						<SolidColorBrush Color="{ThemeResource SystemBaseHighColor}"></SolidColorBrush>
-					</Border.BorderBrush>
-					<TextBlock x:Name="pictureLabel" Text="No image selected" VerticalAlignment="Center" Padding="10,10,10,10" FontSize="18" FontFamily="Calibri"></TextBlock>
-				</Border>
-			</StackPanel>
-
+						<Grid Width="125" Height="125">
+							<Image x:Name="backImage" Source="Assets/Default.png" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="125" Height="125"/>
+							<Image x:Name="frontImage" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" Width="125" Height="125"/>
+						</Grid>
+					</Border>
+					<Border BorderThickness="0,2,2,2">
+						<Border.BorderBrush>
+							<SolidColorBrush Color="{ThemeResource SystemBaseHighColor}"></SolidColorBrush>
+						</Border.BorderBrush>
+						<TextBlock x:Name="pictureLabel" Text="No image selected" VerticalAlignment="Center" Padding="10,10,10,10" FontSize="18" FontFamily="Calibri" TextDecorations="Underline"/>
+					</Border>
+				</StackPanel>
+				<Button FocusVisualPrimaryThickness="2" FocusVisualSecondaryThickness="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#00000000" BorderBrush="Transparent" Foreground="Transparent" TabIndex="5" Click="Button_Click">
+					<Button.FocusVisualPrimaryBrush>
+						<SolidColorBrush Color="{ThemeResource SystemAccentColor}"></SolidColorBrush>
+					</Button.FocusVisualPrimaryBrush>
+					<Button.FocusVisualSecondaryBrush>
+						<SolidColorBrush Color="{ThemeResource SystemAccentColor}"></SolidColorBrush>
+					</Button.FocusVisualSecondaryBrush>
+				</Button>
+			</Grid>
 		</Grid>
 	</ScrollViewer>
 </Page>
