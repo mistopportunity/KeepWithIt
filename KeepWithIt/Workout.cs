@@ -10,19 +10,28 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using Windows.Graphics.Imaging;
 
 namespace KeepWithIt {
 
 	internal class WorkoutSegment:INotifyPropertyChanged {
 
-		private BitmapImage previewImage;
-		internal BitmapImage PreviewImage {
+		private SoftwareBitmap image;
+
+		internal async void SetImage(SoftwareBitmap image) {
+			this.image = image;
+			var source = new SoftwareBitmapSource();
+			await source.SetBitmapAsync(image);
+			usableImage = source;
+			OnPropertyChanged("UsableImage");
+		}
+		internal SoftwareBitmap GetImage() {
+			return image;
+		}
+		private ImageSource usableImage;
+		internal ImageSource UsableImage {
 			get {
-				return previewImage;
-			}
-			set {
-				previewImage = value;
-				OnPropertyChanged("PreviewImage");
+				return usableImage;
 			}
 		}
 
@@ -185,7 +194,7 @@ namespace KeepWithIt {
 
 				if(Segments.Count > 0) {
 					Image image = new Image();
-					image.Source = Segments[i % Segments.Count].PreviewImage;
+					image.Source = Segments[i % Segments.Count].UsableImage;
 					image.Stretch = Stretch.Fill;
 					imageGrid.Children.Add(image);
 				}

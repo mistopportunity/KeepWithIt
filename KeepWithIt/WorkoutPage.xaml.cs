@@ -110,7 +110,7 @@ namespace KeepWithIt {
 				leftButton.IsEnabled = false;
 			} else {
 				leftOverlay.Visibility = Visibility.Visible;
-				var leftSource = currentWorkout.Segments[index-1].PreviewImage;
+				var leftSource = currentWorkout.Segments[index-1].UsableImage;
 				if(leftSource != null) {
 					leftImage.Source = leftSource;
 				} else {
@@ -120,7 +120,7 @@ namespace KeepWithIt {
 				leftButton.IsEnabled = true;
 			}
 
-			var middleSource = segment.PreviewImage;
+			var middleSource = segment.UsableImage;
 			if(middleSource != null) {
 				middleImage.Source = middleSource;
 			} else {
@@ -129,7 +129,7 @@ namespace KeepWithIt {
 
 
 			if(currentWorkout.Segments.Count > index + 1) {
-				var rightSource = currentWorkout.Segments[index + 1].PreviewImage;
+				var rightSource = currentWorkout.Segments[index + 1].UsableImage;
 				if(rightSource != null) {
 					rightImage.Source = rightSource;
 				} else {

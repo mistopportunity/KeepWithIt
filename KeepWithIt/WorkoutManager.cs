@@ -5,8 +5,12 @@ using Windows.UI.Xaml.Media.Imaging;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using System.IO;
 using Windows.Storage.Streams;
 using Windows.Security.Cryptography;
+using Windows.Graphics.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
+
 namespace KeepWithIt {
 
 	//Todo: Remove prototype workouts
@@ -18,25 +22,80 @@ namespace KeepWithIt {
 			SaveWorkouts();
 		}
 
-		internal static BitmapImage GetBitMapFromFile(StorageFile file) {
-			//Todo - BitmapImage GetBitMapFromFile(StorageFile file)
-			return null;
+		private async static Task<SoftwareBitmap> GetBitmapFromBase64(string data) {
+			var bytes = Convert.FromBase64String(data);
+
+			using(var randomAccessStream = new InMemoryRandomAccessStream()) {
+				await randomAccessStream.WriteAsync(bytes.AsBuffer());
+				var decoder = await BitmapDecoder.CreateAsync(randomAccessStream);
+
+				var softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+				//error handling needed all over the place
+				return softwareBitmap;
+
+			}
+
+
 		}
 
-		private static BitmapImage ProcessIncomingBitmap(BitmapImage bitmap) {
-			//Todo - BitmapImage ProcessIncomingBitmap(BitmapImage bitmap)
-			return null;
+		private async static Task<string> GetBase64OfBitmap(SoftwareBitmap sourceImage) {
+			byte[] bytes = new byte[0];
+			using(var randomAccessStream = new InMemoryRandomAccessStream()) {
+				var encoder = await BitmapEncoder.CreateAsync(
+					BitmapEncoder.JpegEncoderId,
+					randomAccessStream
+				);
+				encoder.SetSoftwareBitmap(sourceImage);
+				try {
+					await encoder.FlushAsync();
+				} catch {
+					return null;
+				}
+
+				bytes = new byte[randomAccessStream.Size];
+				await randomAccessStream.ReadAsync(
+					bytes.AsBuffer(),
+					(uint)bytes.Length,
+					InputStreamOptions.None
+				);
+			}
+			var base64String = Convert.ToBase64String(bytes);
+			return base64String;
 		}
+
+		internal async static Task<SoftwareBitmap> GetBitMapFromFile(StorageFile file) {
+			SoftwareBitmap softwareBitmap;
+			using(var stream = await file.OpenAsync(FileAccessMode.Read)) {
+				BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+				softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+				ProcessIncomingBitmap(softwareBitmap);
+			}
+			return softwareBitmap.ProcessIncomingBitmap();
+		}
+
+		private static SoftwareBitmap ProcessIncomingBitmap(this SoftwareBitmap bitmap) {
+			if(bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 ||
+				bitmap.BitmapAlphaMode == BitmapAlphaMode.Straight) {
+				bitmap = SoftwareBitmap.Convert(
+					bitmap,
+					BitmapPixelFormat.Bgra8,
+					BitmapAlphaMode.Premultiplied
+				);
+			}
+			return bitmap;
+		}
+
 
 		internal static void AddWorkout(Workout workout) {
 			Workouts.Add(workout);
 		}
 
 		internal static string ProcessWorkoutName(string name) {
-
+			return name.Replace(Environment.NewLine," ");
 		}
 
 		internal static string ProcessSegmentName(string name) {
+			return name.Replace(Environment.NewLine," ");
 		}
 
 		private static string GetWorkoutStringData(Workout workout) {
@@ -166,7 +225,10 @@ namespace KeepWithIt {
 
 			var path = "ms-appx:///Assets/Kitten.png";
 			Uri uri = new Uri(path,UriKind.RelativeOrAbsolute);
-			var debugImage = new BitmapImage(uri);
+
+
+
+
 
 			var workout1 = new Workout() {
 				Name = "Debug workout 1",
@@ -174,25 +236,26 @@ namespace KeepWithIt {
 			workout1.Dates.Add(DateTime.Today - TimeSpan.FromDays(54));
 
 			workout1.Segments.Add(new WorkoutSegment() {
-				PreviewImage = debugImage,
 				Name = "Segment 1 - reps, secs",
 				Reps = 5,
 				Seconds = 2,
 			});
+
+
 			workout1.Segments.Add(new WorkoutSegment() {
-				PreviewImage = debugImage,
+
 				Name = "Segment 2 - no reps, secs",
 				Reps = 0,
 				Seconds = 2,
 			});
 			workout1.Segments.Add(new WorkoutSegment() {
-				PreviewImage = debugImage,
+
 				Name = "Segment 3 - reps, no secs",
 				Reps = 69,
 				Seconds = 0,
 			});
 			workout1.Segments.Add(new WorkoutSegment() {
-				PreviewImage = debugImage,
+
 				Name = "Segment 4 - no reps, no secs",
 				Reps = 0,
 				Seconds = 0,
