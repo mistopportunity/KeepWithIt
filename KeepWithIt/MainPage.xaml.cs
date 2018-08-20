@@ -560,7 +560,9 @@ namespace KeepWithIt {
 
 		private void removeSelectionAttributes(Grid grid) {
 
-			grid.BorderThickness = new Thickness(0,0,0,0);
+			if(grid != null) {
+				grid.BorderThickness = new Thickness(0,0,0,0);
+			}
 
 		}
 

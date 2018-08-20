@@ -13,9 +13,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 namespace KeepWithIt {
 	internal static class WorkoutManager {
 		internal static readonly List<Workout> Workouts = new List<Workout>();
-		internal static void DeleteWorkout(int workoutIndex) {
+		internal async static void DeleteWorkout(int workoutIndex) {
 			Workouts.RemoveAt(workoutIndex);
-			SaveWorkouts();
+			await SaveWorkouts();
 		}
 
 		private async static Task<SoftwareBitmap> GetBitmapFromBase64(string data) {
@@ -248,7 +248,12 @@ namespace KeepWithIt {
 			//preparing for overflow file deletion
 			var filesNamesList = new Dictionary<int,StorageFile>();
 			foreach(var file in filesList) {
-				filesNamesList.Add(int.Parse(file.Name),file);
+				var x = file.Path;
+				if(int.TryParse(file.Name,out int result)) {
+					filesNamesList.Add(result,file);
+				} else {
+					await file.DeleteAsync();
+				}
 			}
 			if(Workouts.Count != 0) {
 				for(int i = 0;i<Workouts.Count;i++) {

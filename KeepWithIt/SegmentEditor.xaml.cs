@@ -99,9 +99,10 @@ namespace KeepWithIt {
 			segment = e.Parameter as WorkoutSegment;
 
 			nameBox.PlaceholderText = segment.Name;
+			nameBox.Text = segment.Name;
 
 			reps = segment.Reps;
-			seconds = segment.Reps;
+			seconds = segment.Seconds;
 
 			doubleSidedToggle.IsChecked = segment.DoubleSided;
 

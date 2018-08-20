@@ -162,6 +162,9 @@ namespace KeepWithIt {
 				}
 				addCompletionTimeIfApplicable();
 			} else {
+				if(segment.DoubleSided) {
+					runTimerTwice = true;
+				}
 				progressBar.IsIndeterminate = false;
 				remainingSeconds = segment.Seconds;
 				totalSeconds = remainingSeconds;
@@ -197,8 +200,16 @@ namespace KeepWithIt {
 			UpdateSecondsLabel();
 		}
 
+		private bool runTimerTwice = false;
 
 		private void timerFinished() {
+			if(runTimerTwice) {
+				runTimerTwice = false;
+				remainingSeconds = totalSeconds;
+				progressBar.Value = 0;
+				return;
+			}
+
 			rightButton.IsEnabled = true;
 			rightButton.Focus(FocusState.Programmatic);
 			timer.Stop();

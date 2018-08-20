@@ -80,7 +80,7 @@ namespace KeepWithIt {
 
 		internal string GetRepDescription() {
 			if(reps < 1) {
-				return "no rep count";
+				return $"no rep count{(DoubleSided ? $", both sides" : string.Empty)}";
 			} else {
 				return $"{repsString()}{(DoubleSided ? $", both sides" : string.Empty)}";
 			}

@@ -180,7 +180,7 @@ namespace KeepWithIt {
 			}
 		}
 
-		private void GoBackAndNibbaRigSomeShit() {
+		private async void GoBackAndNibbaRigSomeShit() {
 			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = workout;
 			Frame.GoBack();
 			if(workout.Name == null) {
@@ -196,7 +196,7 @@ namespace KeepWithIt {
 					workout.Name = processedNameBox;
 				}
 			}
-			WorkoutManager.SaveWorkouts();
+			await WorkoutManager.SaveWorkouts();
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 			GoBackAndNibbaRigSomeShit();
