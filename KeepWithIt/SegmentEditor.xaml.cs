@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+//Todo: Make the segment editor - we saved the best for last... woot
+
 namespace KeepWithIt {
 	public sealed partial class SegmentEditor:Page {
 		private WorkoutSegment segment;
@@ -68,7 +70,7 @@ namespace KeepWithIt {
 		}
 
 		private void GoBack() {
-			//Todo - Push changes onto the segment object
+			//Todo: Push changes onto the segment object
 			Frame.GoBack();
 		}
 
@@ -77,7 +79,7 @@ namespace KeepWithIt {
 		}
 
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
-			//Todo - Handle key presses
+			//Todo: Handle key presses
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 			base.OnNavigatingFrom(e);

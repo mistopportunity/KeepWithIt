@@ -12,9 +12,6 @@ using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace KeepWithIt {
-
-	//Todo: Remove prototype workouts
-
 	internal static class WorkoutManager {
 		internal static readonly List<Workout> Workouts = new List<Workout>();
 		internal static void DeleteWorkout(int workoutIndex) {
@@ -29,9 +26,7 @@ namespace KeepWithIt {
 				using(var randomAccessStream = new InMemoryRandomAccessStream()) {
 					await randomAccessStream.WriteAsync(bytes.AsBuffer());
 					var decoder = await BitmapDecoder.CreateAsync(randomAccessStream);
-
 					var softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-					//error handling needed all over the place
 					return softwareBitmap;
 
 				}
@@ -69,7 +64,6 @@ namespace KeepWithIt {
 			}
 
 		}
-
 		internal async static Task<SoftwareBitmap> GetBitMapFromFile(StorageFile file) {
 			SoftwareBitmap softwareBitmap;
 			try {
@@ -80,9 +74,7 @@ namespace KeepWithIt {
 					ProcessIncomingBitmap(softwareBitmap);
 				}
 				return softwareBitmap.ProcessIncomingBitmap();
-			} catch(Exception exception) {
-				var x = exception.Message;
-				;
+			} catch {
 				return null;
 			}
 		}
@@ -191,8 +183,6 @@ namespace KeepWithIt {
 					return false;
 				}
 
-				//might just cheap out and do an overall try catch atrocity
-
 				using(var inputStream = stream.GetInputStreamAt(0)) {
 
 					using(var dataReader = new DataReader(inputStream)) {
@@ -228,58 +218,39 @@ namespace KeepWithIt {
 			if(workoutData == null) {
 				return false;
 			}
-
 			var buffer = CryptographicBuffer.ConvertStringToBinary(
 				workoutData,
 				BinaryStringEncoding.Utf8
 			);
-
 			await FileIO.WriteBufferAsync(file,buffer);
 			return true;
 		}
 
 		internal async static void LoadWorkouts() {
-
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-
 			var filesList = await localFolder.GetFilesAsync();
 
 			//sort the files if out of order or unexpected order becomes an annoyance
 
 			foreach(var file in filesList) {
-
 				await AddWorkout(file);
-
 			}
-
-
-#if DEBUG
-			if(Workouts.Count == 0)
-			LoadPrototypeWorkouts();
-#endif
 		}
 
 		internal async static void SaveWorkouts() {
-
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 			var filesList = await localFolder.GetFilesAsync();
-
 			//preparing for overflow file deletion
 			var filesNamesList = new Dictionary<int,StorageFile>();
 			foreach(var file in filesList) {
 				filesNamesList.Add(int.Parse(file.Name),file);
 			}
-
 			if(Workouts.Count != 0) {
 				for(int i = 0;i<Workouts.Count;i++) {
-
 					filesNamesList.Remove(i);
-
 					var workout = Workouts[i];
 					var file = await localFolder.CreateFileAsync(i.ToString(),CreationCollisionOption.ReplaceExisting);
-
 					var passed = await ExportWorkout(file,workout);
-
 					//remove this to not override working files that may be deleted because the new components are broken
 					if(!passed) {
 						await file.DeleteAsync();
@@ -287,59 +258,11 @@ namespace KeepWithIt {
 
 				}
 			}
-
-
-
 			//deleting overflowing files if the new saved data is smaller than the previous
 			foreach(var remainingFile in filesNamesList) {
 				await remainingFile.Value.DeleteAsync();
 			}
 
 		}
-
-		private static void LoadPrototypeWorkouts() {
-
-			var path = "ms-appx:///Assets/Kitten.png";
-			Uri uri = new Uri(path,UriKind.RelativeOrAbsolute);
-
-
-
-
-
-			var workout1 = new Workout() {
-				Name = "Debug workout 1",
-			};
-			workout1.Dates.Add(DateTime.Today - TimeSpan.FromDays(54));
-
-			workout1.Segments.Add(new WorkoutSegment() {
-				Name = "Segment 1 - reps, secs",
-				Reps = 5,
-				Seconds = 2,
-			});
-
-
-			workout1.Segments.Add(new WorkoutSegment() {
-
-				Name = "Segment 2 - no reps, secs",
-				Reps = 0,
-				Seconds = 2,
-			});
-			workout1.Segments.Add(new WorkoutSegment() {
-
-				Name = "Segment 3 - reps, no secs",
-				Reps = 69,
-				Seconds = 0,
-			});
-			workout1.Segments.Add(new WorkoutSegment() {
-
-				Name = "Segment 4 - no reps, no secs",
-				Reps = 0,
-				Seconds = 0,
-			});
-
-			AddWorkout(workout1);
-
-		}
-
 	}
 }
