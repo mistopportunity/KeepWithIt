@@ -23,44 +23,51 @@ namespace KeepWithIt {
 		}
 
 		private async static Task<SoftwareBitmap> GetBitmapFromBase64(string data) {
-			var bytes = Convert.FromBase64String(data);
+			try {
+				var bytes = Convert.FromBase64String(data);
 
-			using(var randomAccessStream = new InMemoryRandomAccessStream()) {
-				await randomAccessStream.WriteAsync(bytes.AsBuffer());
-				var decoder = await BitmapDecoder.CreateAsync(randomAccessStream);
+				using(var randomAccessStream = new InMemoryRandomAccessStream()) {
+					await randomAccessStream.WriteAsync(bytes.AsBuffer());
+					var decoder = await BitmapDecoder.CreateAsync(randomAccessStream);
 
-				var softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-				//error handling needed all over the place
-				return softwareBitmap;
+					var softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+					//error handling needed all over the place
+					return softwareBitmap;
 
+				}
+			} catch {
+				return null;
 			}
-
-
 		}
 
 		private async static Task<string> GetBase64OfBitmap(SoftwareBitmap sourceImage) {
-			byte[] bytes = new byte[0];
-			using(var randomAccessStream = new InMemoryRandomAccessStream()) {
-				var encoder = await BitmapEncoder.CreateAsync(
-					BitmapEncoder.JpegEncoderId,
-					randomAccessStream
-				);
-				encoder.SetSoftwareBitmap(sourceImage);
-				try {
-					await encoder.FlushAsync();
-				} catch {
-					return null;
-				}
+			try {
+				byte[] bytes = new byte[0];
+				using(var randomAccessStream = new InMemoryRandomAccessStream()) {
+					var encoder = await BitmapEncoder.CreateAsync(
+						BitmapEncoder.JpegEncoderId,
+						randomAccessStream
+					);
+					encoder.SetSoftwareBitmap(sourceImage);
+					try {
+						await encoder.FlushAsync();
+					} catch {
+						return null;
+					}
 
-				bytes = new byte[randomAccessStream.Size];
-				await randomAccessStream.ReadAsync(
-					bytes.AsBuffer(),
-					(uint)bytes.Length,
-					InputStreamOptions.None
-				);
+					bytes = new byte[randomAccessStream.Size];
+					await randomAccessStream.ReadAsync(
+						bytes.AsBuffer(),
+						(uint)bytes.Length,
+						InputStreamOptions.None
+					);
+				}
+				var base64String = Convert.ToBase64String(bytes);
+				return base64String;
+			} catch {
+				return null;
 			}
-			var base64String = Convert.ToBase64String(bytes);
-			return base64String;
+
 		}
 
 		internal async static Task<SoftwareBitmap> GetBitMapFromFile(StorageFile file) {
@@ -100,66 +107,124 @@ namespace KeepWithIt {
 		internal static string ProcessWorkoutName(string name) {
 			if(name == null)
 				return null;
-			return name.Replace(Environment.NewLine," ");
+			return name.Replace("\n"," ");
 		}
 
 		internal static string ProcessSegmentName(string name) {
 			if(name == null)
 				return null;
-			return name.Replace(Environment.NewLine," ");
+			return name.Replace("\n"," ");
 		}
 
-		private static string GetWorkoutStringData(Workout workout) {
-			//todo - convert a workout object to string, returning null if failing - use crytpographic namespace to base64 bitmaps
-			return null;
-		}
+		private static async Task<string> GetWorkoutStringData(Workout workout) {
+			var lines = new List<string>();
 
-		private static Workout GetWorkoutFromData(string data) {
-			//todo - convert a string to workout object, returning null if failing - use crytpographic namespace to decode base64 bitmaps
-			return null;
-		}
+			lines.Add(workout.Name);
 
-		internal async static Task<bool> AddWorkout(StorageFile file) {
+			foreach(var segment in workout.Segments) {
 
-			var stream = await file.OpenAsync(FileAccessMode.Read);
-			ulong size = stream.Size;
+				lines.Add(segment.Name.ToString());
+				lines.Add(segment.Reps.ToString());
+				lines.Add(segment.Seconds.ToString());
+				lines.Add(segment.DoubleSided.ToString());
 
-			if(size == 0) {
-				return false;
-			}
-
-			//might just cheap out and do an overall try catch atrocity
-
-			using(var inputStream = stream.GetInputStreamAt(0)) {
-
-				using(var dataReader = new DataReader(inputStream)) {
-
-					var length = (uint)size;
-
-					await dataReader.LoadAsync(length);
-
-					var buffer = dataReader.ReadBuffer(length);
-					var text = CryptographicBuffer.ConvertBinaryToString(
-						BinaryStringEncoding.Utf8,
-						buffer
-					);
-
-					var workoutFromData = GetWorkoutFromData(text);
-					if(workoutFromData == null) {
-						return false;
-					} else {
-						Workouts.Add(workoutFromData);
-						return true;
-					}
-
+				var imageString = await GetBase64OfBitmap(segment.GetImage());
+				if(imageString == null) {
+					lines.Add(string.Empty);
+				} else {
+					lines.Add(imageString);
 				}
 
 			}
 
+			return string.Join("\n",lines);
+		}
+
+		private async static Task<Workout> GetWorkoutFromData(string data) {
+			var lines = data.Split("\n");
+
+			if(lines.Length < 1) {
+				return null;
+			}
+
+			Workout workout = new Workout();
+
+			workout.Name = lines[0];
+
+			if(lines.Length < 6) {
+				return null;
+			}
+
+			for(int i = 1;i<lines.Length;i+=5) {
+				var segment = new WorkoutSegment();
+				try {
+
+					segment.Name = lines[i];
+					segment.Reps = int.Parse(lines[i+1]);
+					segment.Seconds = int.Parse(lines[i+2]);
+					segment.DoubleSided = bool.Parse(lines[i+3]);
+
+					var line5 = lines[i+4];
+
+					if(!string.IsNullOrEmpty(line5)) {
+						var bitmap = await GetBitmapFromBase64(line5);
+						if(bitmap != null) {
+							segment.SetImage(bitmap);
+						}
+					}
+
+				} catch {
+					continue;
+				}
+				workout.Segments.Add(segment);
+			}
+
+			return workout;
+		}
+
+		internal async static Task<bool> AddWorkout(StorageFile file) {
+			try {
+				var stream = await file.OpenAsync(FileAccessMode.Read);
+				ulong size = stream.Size;
+
+				if(size == 0) {
+					return false;
+				}
+
+				//might just cheap out and do an overall try catch atrocity
+
+				using(var inputStream = stream.GetInputStreamAt(0)) {
+
+					using(var dataReader = new DataReader(inputStream)) {
+
+						var length = (uint)size;
+
+						await dataReader.LoadAsync(length);
+
+						var buffer = dataReader.ReadBuffer(length);
+						var text = CryptographicBuffer.ConvertBinaryToString(
+							BinaryStringEncoding.Utf8,
+							buffer
+						);
+
+						var workoutFromData = await GetWorkoutFromData(text);
+						if(workoutFromData == null) {
+							return false;
+						} else {
+							Workouts.Add(workoutFromData);
+							return true;
+						}
+
+					}
+
+				}
+			} catch {
+				return false;
+			}
 		}
 
 		internal async static Task<bool> ExportWorkout(StorageFile file,Workout workout) {
-			var workoutData = GetWorkoutStringData(workout);
+			var workoutData = await GetWorkoutStringData(workout);
 			if(workoutData == null) {
 				return false;
 			}
