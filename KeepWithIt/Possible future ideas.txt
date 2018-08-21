@@ -1,0 +1,7 @@
+﻿
+-Encrypting workout files
+-Workout descriptions
+-Workout segment descriptions
+-Workout settings
+  -shuffle segments
+  -allow skipping
