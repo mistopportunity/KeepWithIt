@@ -111,7 +111,7 @@ namespace KeepWithIt {
 		private DispatcherTimer timer;
 		private void changeSegment(int index) {
 
-			titleBlock.Text = $"{index+1}/{currentWorkout.Segments.Count} {currentWorkout.Name}";
+			titleBlock.Text = currentWorkout.Name;
 
 			var segment = currentWorkout.Segments[index];
 
@@ -152,7 +152,7 @@ namespace KeepWithIt {
 				rightImage.Source = checkerPattern;
 			}
 			repInfoBlock.Text = segment.GetRepDescription();
-			segmentTitleBlock.Text = segment.Name;
+			segmentTitleBlock.Text = $"{index+1}/{currentWorkout.Segments.Count} - {segment.Name}";
 			progressBar.Value = 0;
 			if(segment.Seconds == 0) {
 				timer.Stop();
@@ -274,7 +274,15 @@ namespace KeepWithIt {
 
 		private void FocusTappedOrClickedOrWhateverTheHell() {
 			if(!startButton.IsEnabled) {
-
+				if(FocusManager.GetFocusedElement() == null) {
+					if(rightButton.IsEnabled) {
+						rightButton.Focus(FocusState.Programmatic);
+					} else {
+						pauseButton.Focus(FocusState.Programmatic);
+					}
+				}
+			} else {
+				startButton.Focus(FocusState.Programmatic);
 			}
 		}
 
@@ -353,7 +361,7 @@ namespace KeepWithIt {
 			}
 		}
 
-		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
+		protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 			base.OnNavigatingFrom(e);
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 
@@ -364,6 +372,11 @@ namespace KeepWithIt {
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 			currentView.BackRequested -= CurrentView_BackRequested;
 
+			if(completedWorkout) {
+
+				await WorkoutManager.SaveWorkouts();
+
+			}
 		}
 	}
 }
