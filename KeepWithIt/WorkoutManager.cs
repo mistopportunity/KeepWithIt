@@ -263,7 +263,7 @@ namespace KeepWithIt {
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 			var files = await localFolder.GetFilesAsync();
 			foreach(var file in files) {
-				if(!file.Name.StartsWith("workout") || file.Name.Split('.').Length != 0) {
+				if(!file.Name.StartsWith("workout") || file.Name.Split('.').Length != 1) {
 					await file.DeleteAsync();
 					return;
 				}
