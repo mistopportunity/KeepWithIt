@@ -37,8 +37,6 @@ namespace KeepWithIt {
 
 			currentWorkout = e.Parameter as Workout;
 
-			changeSegment(segmentIndex);
-
 			startButton.Visibility = Visibility.Visible;
 
 
@@ -55,6 +53,8 @@ namespace KeepWithIt {
 			timer = new DispatcherTimer();
 			timer.Tick += Timer_Tick;
 			timer.Interval = new TimeSpan(0,0,1);
+
+			changeSegment(segmentIndex);
 
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
