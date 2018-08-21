@@ -13,7 +13,6 @@ using System.Collections.ObjectModel;
 using Windows.Graphics.Imaging;
 
 namespace KeepWithIt {
-
 	internal class WorkoutSegment:INotifyPropertyChanged {
 
 		private SoftwareBitmap image;
@@ -109,15 +108,7 @@ namespace KeepWithIt {
 			PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(name));
 		}
 	}
-
-
 	internal sealed class Workout {
-
-		internal Workout() {
-			Segments = new ObservableCollection<WorkoutSegment>();
-		
-		}
-
 		private string name;
 		internal string Name {
 			get {
@@ -127,10 +118,12 @@ namespace KeepWithIt {
 				name = WorkoutManager.ProcessWorkoutName(value);
 			}
 		}
+		internal readonly ObservableCollection<WorkoutSegment> Segments =
+			new ObservableCollection<WorkoutSegment>();
+		internal readonly List<DateTime> Dates =
+			new List<DateTime>();
 
-		internal readonly ObservableCollection<WorkoutSegment> Segments;
-
-		internal readonly List<DateTime> Dates = new List<DateTime>();
+		internal string FileName = null;
 
 		internal void AddDate(DateTime dateTime) {
 			if(Dates.Count < 1) {
@@ -154,28 +147,19 @@ namespace KeepWithIt {
 				return;
 			}
 		}
-
 		private Grid generate81SquareGrid() {
 			Grid grid = new Grid();
-
 			for(int i = 0;i < 9;i++) {
 				grid.ColumnDefinitions.Add(new ColumnDefinition());
 				grid.RowDefinitions.Add(new RowDefinition());
 			}
-
-			return grid;
-			
+			return grid;	
 		}
-
 		internal Grid GetGrid() {
 			var grid = generate81SquareGrid();
-
 			grid.Background = Application.Current.Resources["SystemBaseHighColor"] as SolidColorBrush;
-
 			var checker2Color = new SolidColorBrush(Color.FromArgb(180,165,165,165));
 			var checker1Color = new SolidColorBrush(Color.FromArgb(180,76,76,76));
-
-
 
 			for(var i = 0;i<9;i++) {
 

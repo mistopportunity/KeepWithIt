@@ -5,18 +5,24 @@ using Windows.UI.Xaml.Media.Imaging;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using System.IO;
 using Windows.Storage.Streams;
 using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace KeepWithIt {
 	internal static class WorkoutManager {
-		internal static readonly List<Workout> Workouts = new List<Workout>();
-		internal async static void DeleteWorkout(int workoutIndex) {
-			Workouts.RemoveAt(workoutIndex);
-			await SaveWorkouts();
+		internal static string ProcessWorkoutName(string name) {
+			if(name == null)
+				return null;
+			return name.Replace("\n"," ");
 		}
+		internal static string ProcessSegmentName(string name) {
+			if(name == null)
+				return null;
+			return name.Replace("\n"," ");
+		}
+
+		internal static readonly List<Workout> Workouts = new List<Workout>();
 
 		private async static Task<SoftwareBitmap> GetBitmapFromBase64(string data) {
 
@@ -32,7 +38,6 @@ namespace KeepWithIt {
 				}
 
 		}
-
 		private async static Task<string> GetBase64OfBitmap(SoftwareBitmap sourceImage) {
 
 			byte[] bytes = new byte[0];
@@ -78,9 +83,6 @@ namespace KeepWithIt {
 				return softwareBitmap;
 
 		}
-
-		private const int MaxImageDimension = 1024;
-
 		private static SoftwareBitmap ProcessIncomingBitmap(SoftwareBitmap bitmap) {
 			if(bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || bitmap.BitmapAlphaMode == BitmapAlphaMode.Straight) {
 				bitmap = SoftwareBitmap.Convert(
@@ -89,30 +91,10 @@ namespace KeepWithIt {
 					BitmapAlphaMode.Premultiplied
 				);
 			}
-
 			return bitmap;
-
-
 		}
 
-
-		internal static void AddWorkout(Workout workout) {
-			Workouts.Add(workout);
-		}
-
-		internal static string ProcessWorkoutName(string name) {
-			if(name == null)
-				return null;
-			return name.Replace("\n"," ");
-		}
-
-		internal static string ProcessSegmentName(string name) {
-			if(name == null)
-				return null;
-			return name.Replace("\n"," ");
-		}
-
-		private static async Task<string> GetWorkoutStringData(Workout workout) {
+		private async static Task<string> GetWorkoutStringData(Workout workout) {
 			var lines = new List<string>();
 
 			lines.Add(workout.Name);
@@ -145,7 +127,6 @@ namespace KeepWithIt {
 
 			return string.Join("\n",lines);
 		}
-
 		private async static Task<Workout> GetWorkoutFromData(string data) {
 			var lines = data.Split("\n");
 
@@ -203,76 +184,103 @@ namespace KeepWithIt {
 		}
 
 		internal async static Task<bool> AddWorkout(StorageFile file) {
-
-			var text = await FileIO.ReadTextAsync(file);
+			string text;
+			try {
+				text = await FileIO.ReadTextAsync(file);
+			} catch {
+				return false;
+			}
 			if(string.IsNullOrEmpty(text)) {
 				return false;
 			}
 
-			var workoutFromData = await GetWorkoutFromData(text);
+			var workoutFromData =
+				await GetWorkoutFromData(text);
+
 			if(workoutFromData == null) {
 				return false;
 			} else {
 				Workouts.Add(workoutFromData);
+
+				//re-encode to save
+				SaveWorkout(workoutFromData);
+
 				return true;
 			}
 
-
 		}
 
+		internal async static Task DeleteWorkout(int workoutIndex) {
+			var workout = Workouts[workoutIndex];
+			Workouts.RemoveAt(workoutIndex);
+			if(workout.FileName != null) {
+				StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+				var file = await localFolder.TryGetItemAsync(workout.FileName);
+				if(file != null) {
+					await file.DeleteAsync();
+				}
+			}
+		}
+
+		internal async static void SaveWorkout(Workout workout) {
+			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+			if(workout.FileName == null) {
+				var files = await localFolder.GetFilesAsync();
+				var highestIndex = 0;
+				foreach(var file in files) {
+					var nameSplit = file.Name.Split('_');
+					if(nameSplit.Length == 2) {
+						if(int.TryParse(nameSplit[1],out int result)) {
+							highestIndex = result;
+						}
+					}
+				}
+				workout.FileName = $"workout_{highestIndex+1}";
+			}
+			StorageFile saveFile;
+			try {
+				saveFile = await localFolder.CreateFileAsync(
+					workout.FileName,CreationCollisionOption.ReplaceExisting
+				);
+			} catch {
+				return;
+			}
+			await ExportWorkout(saveFile,workout);
+		}
 		internal async static Task<bool> ExportWorkout(StorageFile file,Workout workout) {
 			var workoutData = await GetWorkoutStringData(workout);
 			if(workoutData == null) {
 				return false;
 			}
-			var x = file.Path;
-			;
-			await FileIO.WriteTextAsync(file,workoutData);
+			try {
+				await FileIO.WriteTextAsync(file,workoutData);
+			} catch {
+				return false;
+			}
 			return true;
 		}
-
 		internal async static Task LoadWorkouts() {
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-			var filesList = await localFolder.GetFilesAsync();
-
-			//sort the files if out of order or unexpected order becomes an annoyance
-
-			foreach(var file in filesList) {
-				await AddWorkout(file);
-			}
-		}
-
-		internal async static Task SaveWorkouts() {
-			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-			var filesList = await localFolder.GetFilesAsync();
-			//preparing for overflow file deletion
-			var filesNamesList = new Dictionary<int,StorageFile>();
-			foreach(var file in filesList) {
-				var x = file.Path;
-				if(int.TryParse(file.Name,out int result)) {
-					filesNamesList.Add(result,file);
-				} else {
+			var files = await localFolder.GetFilesAsync();
+			foreach(var file in files) {
+				if(!file.Name.StartsWith("workout") || file.Name.Split('.').Length != 0) {
 					await file.DeleteAsync();
+					return;
 				}
-			}
-			if(Workouts.Count != 0) {
-				for(int i = 0;i<Workouts.Count;i++) {
-					filesNamesList.Remove(i);
-					var workout = Workouts[i];
-					var file = await localFolder.CreateFileAsync(i.ToString(),CreationCollisionOption.ReplaceExisting);
-					var passed = await ExportWorkout(file,workout);
-					//remove this to not override working files that may be deleted because the new components are broken
-					if(!passed) {
-						await file.DeleteAsync();
+				string output = null;
+				try {
+					output = await FileIO.ReadTextAsync(file);
+				} catch {
+					continue;
+				}
+				if(!string.IsNullOrWhiteSpace(output)) {
+					var workout = await GetWorkoutFromData(output);
+					if(workout != null) {
+						workout.FileName = file.Name;
+						Workouts.Add(workout);
 					}
-
 				}
 			}
-			//deleting overflowing files if the new saved data is smaller than the previous
-			foreach(var remainingFile in filesNamesList) {
-				await remainingFile.Value.DeleteAsync();
-			}
-
 		}
 	}
 }

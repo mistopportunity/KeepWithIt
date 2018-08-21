@@ -28,7 +28,6 @@ namespace KeepWithIt {
 			this.InitializeComponent();
 			this.Suspending += OnSuspending;
 
-
 			ElementSoundPlayer.State = ElementSoundPlayerState.On;
 
 		}
@@ -41,36 +40,32 @@ namespace KeepWithIt {
 				rootFrame = new Frame();
 				rootFrame.NavigationFailed += OnNavigationFailed;
 				Window.Current.Content = rootFrame;
-
 			}
-
 			if(args.Files.Count == 1) {
-				var success = false;
-				try {
-					success = await WorkoutManager.AddWorkout(args.Files[0] as StorageFile);
-				} catch { }
-
-					if(success) {
-						var workout = WorkoutManager.Workouts.Last();
-						rootFrame.Navigate(typeof(MainPage),workout);
-					} else {
-						rootFrame.Navigate(typeof(MainPage));
-					}
-				
-			} else {
-				foreach(var file in args.Files) {
-					await WorkoutManager.AddWorkout(file as StorageFile);
+				var success  = await WorkoutManager.AddWorkout(args.Files[0] as StorageFile);
+				if(success) {
+					var workout = WorkoutManager.Workouts.Last();
+					rootFrame.Navigate(typeof(MainPage),workout);
+				} else {
+					rootFrame.Navigate(typeof(MainPage));
 				}
-				rootFrame.Navigate(typeof(MainPage),new UselessPotato());
-
+			} else {
+				var successOnce = false;
+				foreach(var file in args.Files) {
+					var passed = await WorkoutManager.AddWorkout(file as StorageFile);
+					if(passed) {
+						successOnce = true;
+					}
+				}
+				if(successOnce) {
+					rootFrame.Navigate(typeof(MainPage),new UselessPotato());
+				}
 			}
-
 			Window.Current.Activate();
 		}
 
 		protected async override void OnLaunched(LaunchActivatedEventArgs e) {
 			Frame rootFrame = Window.Current.Content as Frame;
-
 			if(rootFrame == null) {
 				await WorkoutManager.LoadWorkouts();
 				rootFrame = new Frame();
@@ -94,9 +89,9 @@ namespace KeepWithIt {
 			throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
 		}
 
-		private async void OnSuspending(object sender,SuspendingEventArgs e) {
+		private void OnSuspending(object sender,SuspendingEventArgs e) {
 			var deferral = e.SuspendingOperation.GetDeferral();
-			await WorkoutManager.SaveWorkouts();
+			//await WorkoutManager.SaveWorkouts();
 			deferral.Complete();
 		}
 	}

@@ -784,8 +784,8 @@ namespace KeepWithIt {
 					DefaultCommandIndex = 0,
 					CancelCommandIndex = 1,
 				};
-				messageDialog.Commands.Add(new UICommand("Yes. Leave me alone!",(command) => {
-					WorkoutManager.DeleteWorkout(presentedSquareIndex);
+				messageDialog.Commands.Add(new UICommand("Yes. Leave me alone!",async (command) => {
+					await WorkoutManager.DeleteWorkout(presentedSquareIndex);
 					DeleteAWorkoutRestInPeace(presentedSquareIndex);
 					ClearPresentSquare(true);
 					deleting = false;

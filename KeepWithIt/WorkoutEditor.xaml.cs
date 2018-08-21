@@ -39,7 +39,8 @@ namespace KeepWithIt {
 					nameBox.Text = workout.Name;
 				} else {
 					workout = new Workout();
-					WorkoutManager.AddWorkout(workout);
+					WorkoutManager.Workouts.Add(workout);
+					WorkoutManager.SaveWorkout(workout);
 					((App)Application.Current).WasThatComplicatedNavigationalMessFromANewWorkout = true;
 				}
 
@@ -173,7 +174,7 @@ namespace KeepWithIt {
 			}
 		}
 
-		private async void GoBackAndNibbaRigSomeShit() {
+		private void GoBackAndNibbaRigSomeShit() {
 			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = workout;
 			loaded = false;
 			Frame.GoBack();
@@ -190,7 +191,7 @@ namespace KeepWithIt {
 					workout.Name = processedNameBox;
 				}
 			}
-			await WorkoutManager.SaveWorkouts();
+			WorkoutManager.SaveWorkout(workout);
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 			GoBackAndNibbaRigSomeShit();

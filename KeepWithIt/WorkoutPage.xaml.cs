@@ -361,7 +361,7 @@ namespace KeepWithIt {
 			}
 		}
 
-		protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
+		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
 			base.OnNavigatingFrom(e);
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 
@@ -374,7 +374,7 @@ namespace KeepWithIt {
 
 			if(completedWorkout) {
 
-				await WorkoutManager.SaveWorkouts();
+				WorkoutManager.SaveWorkout(currentWorkout);
 
 			}
 		}
