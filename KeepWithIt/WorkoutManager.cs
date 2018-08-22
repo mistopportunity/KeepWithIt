@@ -203,7 +203,9 @@ namespace KeepWithIt {
 				Workouts.Add(workoutFromData);
 
 				//re-encode to save
-				SaveWorkout(workoutFromData).Start();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+				SaveWorkout(workoutFromData);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 				return true;
 			}

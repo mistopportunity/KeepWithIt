@@ -41,7 +41,9 @@ namespace KeepWithIt {
 				} else {
 					workout = new Workout();
 					WorkoutManager.Workouts.Add(workout);
-					WorkoutManager.SaveWorkout(workout).Start();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+					WorkoutManager.SaveWorkout(workout);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 					((App)Application.Current).WasThatComplicatedNavigationalMessFromANewWorkout = true;
 				}
 
@@ -192,7 +194,9 @@ namespace KeepWithIt {
 					workout.Name = processedNameBox;
 				}
 			}
-			WorkoutManager.SaveWorkout(workout).Start();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+			WorkoutManager.SaveWorkout(workout);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 			workout = null;
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
