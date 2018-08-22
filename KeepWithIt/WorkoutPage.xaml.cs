@@ -70,6 +70,12 @@ namespace KeepWithIt {
 			if(totalSeconds != 0) {
 				timer.Start();
 				ElementSoundPlayer.Play(ElementSoundKind.MoveNext);
+			} else {
+				rightButton.IsEnabled = true;
+				if(FocusManager.GetFocusedElement() == null) {
+					rightButton.Focus(FocusState.Programmatic);
+				}
+				addCompletionTimeIfApplicable();
 			}
 		}
 
@@ -159,11 +165,13 @@ namespace KeepWithIt {
 				progressBar.IsIndeterminate = true;
 				remainingSeconds = -1;
 				totalSeconds = 0;
-				rightButton.IsEnabled = true;
-				if(FocusManager.GetFocusedElement() == null) {
-					rightButton.Focus(FocusState.Programmatic);
+				if(!startButton.IsEnabled) {
+					rightButton.IsEnabled = true;
+					if(FocusManager.GetFocusedElement() == null) {
+						rightButton.Focus(FocusState.Programmatic);
+					}
+					addCompletionTimeIfApplicable();
 				}
-				addCompletionTimeIfApplicable();
 			} else {
 				if(segment.DoubleSided) {
 					runTimerTwice = true;
@@ -189,7 +197,7 @@ namespace KeepWithIt {
 		}
 
 		private void addCompletionTimeIfApplicable() {
-			if(!completedWorkout && segmentIndex + 1 == currentWorkout.Segments.Count) {
+			if(completedWorkout && segmentIndex + 1 == currentWorkout.Segments.Count) {
 				currentWorkout.AddDate(DateTime.Now);
 				completedWorkout = true;
 			}

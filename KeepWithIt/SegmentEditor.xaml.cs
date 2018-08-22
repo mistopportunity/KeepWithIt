@@ -37,6 +37,7 @@ namespace KeepWithIt {
 			fileOpenPicker.FileTypeFilter.Add(".jpg");
 			fileOpenPicker.FileTypeFilter.Add(".png");
 			fileOpenPicker.FileTypeFilter.Add(".jpeg");
+			fileOpenPicker.FileTypeFilter.Add(".gif");
 			fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
 			ElementSoundPlayer.Play(ElementSoundKind.Show);
 			var file = await fileOpenPicker.PickSingleFileAsync();
