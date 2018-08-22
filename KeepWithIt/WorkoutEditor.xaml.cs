@@ -194,6 +194,7 @@ namespace KeepWithIt {
 			WorkoutManager.SaveWorkout(workout);
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
+			e.Handled = true;
 			GoBackAndNibbaRigSomeShit();
 		}
 

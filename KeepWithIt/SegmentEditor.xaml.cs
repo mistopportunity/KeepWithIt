@@ -150,6 +150,7 @@ namespace KeepWithIt {
 		}
 
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
+			e.Handled = true;
 			GoBack();
 		}
 

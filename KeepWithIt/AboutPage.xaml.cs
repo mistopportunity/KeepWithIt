@@ -47,6 +47,7 @@ namespace KeepWithIt {
 			currentView.BackRequested -= CurrentView_BackRequested;
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
+			e.Handled = true;
 			Frame.GoBack();
 		}
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {

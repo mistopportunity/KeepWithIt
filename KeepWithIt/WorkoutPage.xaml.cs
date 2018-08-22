@@ -277,6 +277,7 @@ namespace KeepWithIt {
 
 		private bool completedWorkout = false;
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
+			e.Handled = true;
 			ExitWorkout();
 		}
 

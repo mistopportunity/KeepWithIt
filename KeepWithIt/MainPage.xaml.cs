@@ -169,9 +169,7 @@ namespace KeepWithIt {
 				HorizontalAlignment = HorizontalAlignment.Stretch,
 				VerticalAlignment = VerticalAlignment.Center,
 				FontSize = 20,
-				TextAlignment = TextAlignment.Center,
-				//What the fuck is the difference????
-				HorizontalTextAlignment = TextAlignment.Center
+				TextAlignment = TextAlignment.Center
 			};
 
 			grid.Children.Add(image);
@@ -302,11 +300,11 @@ namespace KeepWithIt {
 		}
 
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
+			e.Handled = true;
 			if(exporting) {
 				return;
 			}
 			ClearPresentSquare(true);
-			e.Handled = true;
 		}
 
 		private void UpdateSquareLayout(Grid grid,int? index = null) {

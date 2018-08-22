@@ -128,7 +128,7 @@ namespace KeepWithIt {
 			return string.Join("\n",lines);
 		}
 		private async static Task<Workout> GetWorkoutFromData(string data) {
-			var lines = data.Split("\n");
+			var lines = data.Split('\n');
 
 			if(lines.Length < 1) {
 				return null;
