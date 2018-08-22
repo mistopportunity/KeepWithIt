@@ -383,7 +383,7 @@ namespace KeepWithIt {
 
 			if(completedWorkout) {
 
-				WorkoutManager.SaveWorkout(currentWorkout);
+				WorkoutManager.SaveWorkout(currentWorkout).Start();
 
 			}
 		}

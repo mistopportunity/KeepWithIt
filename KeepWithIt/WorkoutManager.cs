@@ -203,7 +203,7 @@ namespace KeepWithIt {
 				Workouts.Add(workoutFromData);
 
 				//re-encode to save
-				SaveWorkout(workoutFromData);
+				SaveWorkout(workoutFromData).Start();
 
 				return true;
 			}
@@ -222,7 +222,7 @@ namespace KeepWithIt {
 			}
 		}
 
-		internal async static void SaveWorkout(Workout workout) {
+		internal async static Task SaveWorkout(Workout workout) {
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 			if(workout.FileName == null) {
 				var files = await localFolder.GetFilesAsync();

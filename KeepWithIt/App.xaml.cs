@@ -89,9 +89,11 @@ namespace KeepWithIt {
 			throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
 		}
 
-		private void OnSuspending(object sender,SuspendingEventArgs e) {
+		private async void OnSuspending(object sender,SuspendingEventArgs e) {
 			var deferral = e.SuspendingOperation.GetDeferral();
-			//await WorkoutManager.SaveWorkouts();
+			if(WorkoutEditor.workout != null) {
+				await WorkoutManager.SaveWorkout(WorkoutEditor.workout);
+			}
 			deferral.Complete();
 		}
 	}

@@ -23,13 +23,14 @@ namespace KeepWithIt {
 			this.InitializeComponent();
 		}
 
-		private Workout workout;
+		internal static Workout workout;
 
 		private string workoutDefaultName;
 
 		private bool loaded = false;
 
 		internal static WorkoutSegment PendingDeletion = null;
+
 
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
 			base.OnNavigatedTo(e);
@@ -40,7 +41,7 @@ namespace KeepWithIt {
 				} else {
 					workout = new Workout();
 					WorkoutManager.Workouts.Add(workout);
-					WorkoutManager.SaveWorkout(workout);
+					WorkoutManager.SaveWorkout(workout).Start();
 					((App)Application.Current).WasThatComplicatedNavigationalMessFromANewWorkout = true;
 				}
 
@@ -191,7 +192,8 @@ namespace KeepWithIt {
 					workout.Name = processedNameBox;
 				}
 			}
-			WorkoutManager.SaveWorkout(workout);
+			WorkoutManager.SaveWorkout(workout).Start();
+			workout = null;
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 			e.Handled = true;
