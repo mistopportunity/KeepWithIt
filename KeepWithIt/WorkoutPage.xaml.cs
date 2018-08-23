@@ -116,6 +116,8 @@ namespace KeepWithIt {
 		//expects a not negative index
 
 		private DispatcherTimer timer;
+
+		private int highestIndex = 0;
 		private void changeSegment(int index) {
 
 			titleBlock.Text = currentWorkout.Name;
@@ -182,7 +184,12 @@ namespace KeepWithIt {
 				totalSeconds = remainingSeconds;
 				progressBar.Maximum = totalSeconds;
 				progressBar.Value = 0;
-				rightButton.IsEnabled = false;
+				if(index < highestIndex || completedWorkout) {
+					rightButton.IsEnabled = true;
+				} else {
+					rightButton.IsEnabled = false;
+				}
+
 				if(!startButton.IsEnabled) {
 					if(isTimerPasued) {
 						if(FocusManager.GetFocusedElement() == null) {
@@ -195,6 +202,9 @@ namespace KeepWithIt {
 				}
 			}
 			UpdateSecondsLabel();
+			if(index > highestIndex) {
+				highestIndex = index;
+			}
 		}
 
 		private void addCompletionTimeIfApplicable() {

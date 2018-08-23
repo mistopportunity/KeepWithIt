@@ -41,6 +41,12 @@ namespace KeepWithIt {
 				rootFrame.NavigationFailed += OnNavigationFailed;
 				Window.Current.Content = rootFrame;
 			}
+			if(WorkoutEditor.workout != null) {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+				WorkoutManager.SaveWorkout(WorkoutEditor.workout);
+				WorkoutEditor.workout = null;
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+			}
 			if(args.Files.Count == 1) {
 				var success  = await WorkoutManager.AddWorkout(args.Files[0] as StorageFile);
 				if(success) {
