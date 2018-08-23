@@ -175,7 +175,9 @@ namespace KeepWithIt {
 
 					void segmentPropertyUpdater(object sender,PropertyChangedEventArgs e) {
 						if(e.PropertyName == "UsableImage") {
-							image.Source = segment.UsableImage;
+							if(image.Source == null) {
+								image.Source = segment.UsableImage;
+							}
 							segment.PropertyChanged -= segmentPropertyUpdater;
 						}
 					}
