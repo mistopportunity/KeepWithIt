@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="4c9d0693-7748-451a-bbaf-e2ba82a561d9" Publisher="CN=jedisammy4" Version="0.1.5.0" />
+  <Identity Name="4c9d0693-7748-451a-bbaf-e2ba82a561d9" Publisher="CN=jedisammy4" Version="0.1.6.0" />
   <mp:PhoneIdentity PhoneProductId="4c9d0693-7748-451a-bbaf-e2ba82a561d9" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Keep with it</DisplayName>

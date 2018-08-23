@@ -99,12 +99,13 @@ namespace KeepWithIt {
 			if(++segmentIndex == currentWorkout.Segments.Count) {
 				ExitWorkout();
 				MessageDialog messageDialog = new MessageDialog(
-					"Workout completed! Congratulations. Day added to the workout calendar."
+					"Workout completed! Congratulations!"
 				) {
 					DefaultCommandIndex = 0,
 					CancelCommandIndex = 0
 				};
 				messageDialog.Commands.Add(new UICommand("Yay! I share this enthusiasm!"));
+				ElementSoundPlayer.Play(ElementSoundKind.Show);
 				await messageDialog.ShowAsync();
 				ElementSoundPlayer.Play(ElementSoundKind.Hide);
 			} else {
@@ -197,7 +198,7 @@ namespace KeepWithIt {
 		}
 
 		private void addCompletionTimeIfApplicable() {
-			if(completedWorkout && segmentIndex + 1 == currentWorkout.Segments.Count) {
+			if(segmentIndex + 1 == currentWorkout.Segments.Count) {
 				currentWorkout.AddDate(DateTime.Now);
 				completedWorkout = true;
 			}

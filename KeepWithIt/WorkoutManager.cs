@@ -146,11 +146,16 @@ namespace KeepWithIt {
 				if(lines[startIndex] == "END DATES") {
 					finishedDates = true;
 				} else {
-					try {
-						var date = long.Parse(lines[startIndex]);
-						var dateTime = new DateTime(date);
-						workout.AddDate(dateTime);
-					} catch { }
+					if(long.TryParse(lines[startIndex],out long result)) {
+						try {
+							workout.Dates.Add(new DateTime(result));
+						} catch {
+#if DEBUG
+							throw new Exception("Import or cached date processing exception - did the value of result overflow DateTime?");
+#endif
+						}
+					}
+
 				}
 				startIndex+=1;
 			}
@@ -223,7 +228,6 @@ namespace KeepWithIt {
 				}
 			}
 		}
-
 		internal async static Task SaveWorkout(Workout workout) {
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 			if(workout.FileName == null) {
