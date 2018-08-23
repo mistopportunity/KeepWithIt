@@ -52,7 +52,7 @@
 						<TextBlock x:Name="pictureLabel" Text="No image selected" VerticalAlignment="Center" Padding="10,10,10,10" FontSize="18" FontFamily="Calibri" TextDecorations="Underline"/>
 					</Border>
 				</StackPanel>
-				<Button FocusVisualPrimaryThickness="2" FocusVisualSecondaryThickness="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#00000000" BorderBrush="Transparent" Foreground="Transparent" TabIndex="5" Click="Button_Click">
+				<Button ElementSoundMode="FocusOnly" FocusVisualPrimaryThickness="2" FocusVisualSecondaryThickness="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#00000000" BorderBrush="Transparent" Foreground="Transparent" TabIndex="5" Click="Button_Click">
 					<Button.FocusVisualPrimaryBrush>
 						<SolidColorBrush Color="{ThemeResource SystemAccentColor}"></SolidColorBrush>
 					</Button.FocusVisualPrimaryBrush>

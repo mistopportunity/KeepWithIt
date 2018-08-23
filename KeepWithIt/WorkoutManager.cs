@@ -100,7 +100,7 @@ namespace KeepWithIt {
 			lines.Add(workout.Name);
 
 			foreach(var date in workout.Dates) {
-				lines.Add(date.ToBinary().ToString());
+				lines.Add(date.Ticks.ToString());
 			}
 
 			lines.Add("END DATES");

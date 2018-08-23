@@ -156,6 +156,7 @@ namespace KeepWithIt {
 			return grid;	
 		}
 		internal Grid GetGrid() {
+
 			var grid = generate81SquareGrid();
 			grid.Background = Application.Current.Resources["SystemBaseHighColor"] as SolidColorBrush;
 			var checker2Color = new SolidColorBrush(Color.FromArgb(180,165,165,165));
@@ -171,11 +172,16 @@ namespace KeepWithIt {
 				if(Segments.Count > 0) {
 					Image image = new Image();
 					var segment = Segments[i % Segments.Count];
-					segment.PropertyChanged += (sender,e) => {
+
+					void segmentPropertyUpdater(object sender,PropertyChangedEventArgs e) {
 						if(e.PropertyName == "UsableImage") {
 							image.Source = segment.UsableImage;
+							segment.PropertyChanged -= segmentPropertyUpdater;
 						}
-					};
+					}
+
+					segment.PropertyChanged += segmentPropertyUpdater;
+
 					image.Source = segment.UsableImage;
 					image.Stretch = Stretch.UniformToFill;
 
