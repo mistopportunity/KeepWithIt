@@ -17,12 +17,12 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <PackageCertificateKeyFile>My lit PFX File.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>78E965E0E0833F45C4B074F48EAEB4A4A214BAFB</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>KeepWithIt_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>CE1C8B7A1AA34705E6CB1DFF92A9511DF5B7A786</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -173,8 +173,10 @@
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Attributions and credits.txt" />
+    <None Include="KeepWithIt_StoreKey.pfx" />
     <None Include="My lit PFX File.pfx" />
     <None Include="Possible future ideas.txt" />
+    <None Include="Package.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

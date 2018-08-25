@@ -94,13 +94,15 @@ namespace KeepWithIt {
 			return bitmap;
 		}
 
-		private async static Task<string> GetWorkoutStringData(Workout workout) {
+		private async static Task<string> GetWorkoutStringData(Workout workout,bool includeDates) {
 			var lines = new List<string>();
 
 			lines.Add(workout.Name);
 
-			foreach(var date in workout.Dates) {
-				lines.Add(date.Ticks.ToString());
+			if(includeDates) {
+				foreach(var date in workout.Dates) {
+					lines.Add(date.Ticks.ToString());
+				}
 			}
 
 			lines.Add("END DATES");
@@ -251,10 +253,10 @@ namespace KeepWithIt {
 			} catch {
 				return;
 			}
-			await ExportWorkout(saveFile,workout);
+			await ExportWorkout(saveFile,workout,true);
 		}
-		internal async static Task<bool> ExportWorkout(StorageFile file,Workout workout) {
-			var workoutData = await GetWorkoutStringData(workout);
+		internal async static Task<bool> ExportWorkout(StorageFile file,Workout workout,bool includeDates) {
+			var workoutData = await GetWorkoutStringData(workout,includeDates);
 			if(workoutData == null) {
 				return false;
 			}

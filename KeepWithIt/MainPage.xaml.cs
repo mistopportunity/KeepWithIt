@@ -677,7 +677,7 @@ namespace KeepWithIt {
 				StorageFile file = await savePicker.PickSaveFileAsync();
 				if(file != null) {
 					CachedFileManager.DeferUpdates(file);
-					var exportPassed = await WorkoutManager.ExportWorkout(file,exportWorkout);
+					var exportPassed = await WorkoutManager.ExportWorkout(file,exportWorkout,false);
 					var status = FileUpdateStatus.Incomplete;
 					if(exportPassed) {
 						status = await CachedFileManager.CompleteUpdatesAsync(file);
