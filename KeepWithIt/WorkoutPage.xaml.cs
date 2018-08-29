@@ -89,8 +89,22 @@ namespace KeepWithIt {
 			changeSegment(--segmentIndex);
 		}
 
-		private void ExitWorkout() {
-			//ask the user if they are sure they want to do this? - only if workoutCompleted is false
+		private async void ExitWorkout() {
+			if(!completedWorkout) {
+				if(startButton.Visibility == Visibility.Collapsed) {
+					MessageDialog messageDialog = new MessageDialog("Are you sure you want to be leaving so soon?") {
+						DefaultCommandIndex = 0,
+						CancelCommandIndex = 1,
+					};
+					messageDialog.Commands.Add(new UICommand("Yes. Bye.",null,false));
+					messageDialog.Commands.Add(new UICommand("No, I have had second thoughts",null,true));
+					var result = await messageDialog.ShowAsync();
+					if((bool)result.Id) {
+						return;
+					}
+				}
+			}
+
 			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = currentWorkout;
 			Frame.GoBack();
 		}
