@@ -125,26 +125,22 @@ namespace KeepWithIt {
 
 		internal string FileName = null;
 
-		internal void AddDate(DateTime dateTime) {
-			if(Dates.Count < 1) {
-				Dates.Add(dateTime);
+		internal void AddDate(DateTime newDate) {
+			if(Dates.Count == 0) {
+				Dates.Add(newDate);
 				return;
 			}
-			var day = dateTime.Day;
-			var month = dateTime.Month;
-			var year = dateTime.Year;
-			var pastDate = Dates.Last();
-			if(year > pastDate.Year) {
-				Dates.Add(dateTime);
+			var lastDate = Dates.Last();
+			if(newDate.Year > lastDate.Year) {
+				Dates.Add(newDate);
 				return;
 			}
-			if(month > pastDate.Month) {
-				Dates.Add(dateTime);
+			if(newDate.Month > lastDate.Month) {
+				Dates.Add(newDate);
 				return;
 			}
-			if(day > dateTime.Day) {
-				Dates.Add(dateTime);
-				return;
+			if(newDate.Day > lastDate.Day) {
+				Dates.Add(newDate);
 			}
 		}
 		private Grid generate81SquareGrid() {
