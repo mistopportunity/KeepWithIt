@@ -17,7 +17,6 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.System;
 using Windows.UI.Popups;
-//Todo: audio on this page because I had to write it without headphones because my computer is across the fucking room
 
 namespace KeepWithIt {
 	public sealed partial class WorkoutPage:Page {
@@ -32,7 +31,6 @@ namespace KeepWithIt {
 
 		private int segmentIndex = 0;
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
-			base.OnNavigatedTo(e);
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 
 			currentWorkout = e.Parameter as Workout;
@@ -396,7 +394,6 @@ namespace KeepWithIt {
 		}
 
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
-			base.OnNavigatingFrom(e);
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 
 			timer.Stop();

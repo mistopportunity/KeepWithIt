@@ -33,7 +33,6 @@ namespace KeepWithIt {
 
 
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
-			base.OnNavigatedTo(e);
 			if(!loaded) {
 				if(e.Parameter != null && e.Parameter is Workout) {
 					workout = e.Parameter as Workout;
@@ -76,7 +75,6 @@ namespace KeepWithIt {
 
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
-			base.OnNavigatingFrom(e);
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
@@ -179,8 +177,6 @@ namespace KeepWithIt {
 
 		private void GoBackAndNibbaRigSomeShit() {
 			((App)Application.Current).AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals = workout;
-			loaded = false;
-			Frame.GoBack();
 			if(workout.Name == null) {
 				if(string.IsNullOrEmpty(processedNameBox)) {
 					workout.Name = workoutDefaultName;
@@ -194,10 +190,11 @@ namespace KeepWithIt {
 					workout.Name = processedNameBox;
 				}
 			}
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-			WorkoutManager.SaveWorkout(workout);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+			Frame.GoBack();
+			var workoutToSave = workout;
 			workout = null;
+			WorkoutManager.SaveWorkout(workoutToSave);
+			loaded = false;
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 			e.Handled = true;

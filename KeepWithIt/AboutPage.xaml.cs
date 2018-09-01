@@ -32,7 +32,6 @@ namespace KeepWithIt {
 			}
 		}
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
-			base.OnNavigatedTo(e);
 			Window.Current.CoreWindow.KeyDown += CoreWindow_KeyPressEvent;
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -40,7 +39,6 @@ namespace KeepWithIt {
 
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
-			base.OnNavigatingFrom(e);
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 			var currentView = SystemNavigationManager.GetForCurrentView();
 			currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;

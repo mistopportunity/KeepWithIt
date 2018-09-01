@@ -89,7 +89,6 @@ namespace KeepWithIt {
 		}
 
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
-			base.OnNavigatedTo(e);
 			var app = ((App)Application.Current);
 			if(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals != null) {
 				if(app.WasThatComplicatedNavigationalMessFromANewWorkout) {
@@ -118,8 +117,6 @@ namespace KeepWithIt {
 
 		}
 		protected override void OnNavigatingFrom(NavigatingCancelEventArgs e) {
-
-			base.OnNavigatingFrom(e);
 
 			Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyPressEvent;
 
