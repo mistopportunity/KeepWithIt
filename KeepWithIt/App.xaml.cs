@@ -26,9 +26,11 @@ namespace KeepWithIt {
 		public App() {
 
 			this.InitializeComponent();
-			this.Suspending += OnSuspending;
+			this.RequiresPointerMode = ApplicationRequiresPointerMode.WhenRequested;
 
 			ElementSoundPlayer.State = ElementSoundPlayerState.On;
+
+			this.Suspending += OnSuspending;
 
 		}
 

@@ -17,7 +17,7 @@
 			IsItemClickEnabled="True"
 			IsSwipeEnabled="False"
 			CanDragItems="False"
-			SelectionMode="None" Margin="10,100,10,0" ItemClick="listView_ItemClick" IsTabStop="True" TabIndex="2" TabNavigation="Local" TabFocusNavigation="Local">
+			SelectionMode="None" Margin="10,100,10,0" ItemClick="listView_ItemClick" IsTabStop="False" TabIndex="2" TabNavigation="Local" TabFocusNavigation="Local">
 			<ListView.ItemTemplate>
 				<DataTemplate x:DataType="local:WorkoutSegment">
 					<StackPanel Orientation="Horizontal" Margin="0,10,10,10">
@@ -30,7 +30,7 @@
 				</DataTemplate>
 			</ListView.ItemTemplate>
 		</ListView>
-		<TextBox x:Name="nameBox" Grid.Column="1" VerticalAlignment="Top" Margin="10,10,10,0" HorizontalAlignment="Stretch" FontSize="18" TextChanged="nameBox_TextChanged" Height="36" MaxLength="32" TabIndex="0"/>
+		<TextBox x:Name="nameBox" Grid.Column="1" VerticalAlignment="Top" Margin="10,10,10,0" HorizontalAlignment="Stretch" FontSize="18" TextChanged="nameBox_TextChanged" Height="36" MaxLength="32" TabIndex="0" PreventKeyboardDisplayOnProgrammaticFocus="True" KeyUp="nameBox_KeyUp"/>
 		<Button x:Name="addButton" Content="add segment" Grid.Column="1" Height="36" VerticalAlignment="Top" Margin="10,55,10,0" FontSize="18" HorizontalAlignment="Stretch" TabIndex="1" Click="addButton_Click"/>
 	</Grid>
 </Page>

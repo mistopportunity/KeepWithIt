@@ -251,6 +251,7 @@ namespace KeepWithIt {
 
 			rightButton.IsEnabled = true;
 			rightButton.Focus(FocusState.Programmatic);
+			highestIndex++;
 			timer.Stop();
 			addCompletionTimeIfApplicable();
 		}
@@ -361,33 +362,23 @@ namespace KeepWithIt {
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
 			switch(args.VirtualKey) {
 				case VirtualKey.Escape:
-				case VirtualKey.GamepadB:
-				case VirtualKey.NavigationCancel:
 					ExitWorkout();
 					break;
-				case VirtualKey.GamepadA:
 				case VirtualKey.Enter:
 				case VirtualKey.NavigationAccept:
+				case VirtualKey.GamepadA:
 					FocusTappedOrClickedOrWhateverTheHell();
 					break;
 				case VirtualKey.Up:
-				case VirtualKey.GamepadDPadUp:
-				case VirtualKey.NavigationUp:
 					focusUp();
 					break;
 				case VirtualKey.Down:
-				case VirtualKey.GamepadDPadDown:
-				case VirtualKey.NavigationDown:
 					focusDown();
 					break;
 				case VirtualKey.Left:
-				case VirtualKey.GamepadDPadLeft:
-				case VirtualKey.NavigationLeft:
 					focusUp();
 					break;
 				case VirtualKey.Right:
-				case VirtualKey.GamepadDPadRight:
-				case VirtualKey.NavigationRight:
 					focusDown();
 					break;
 			}

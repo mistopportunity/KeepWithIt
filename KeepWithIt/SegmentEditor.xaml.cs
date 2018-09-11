@@ -100,6 +100,9 @@ namespace KeepWithIt {
 			nameBox.PlaceholderText = segment.Name;
 			nameBox.Text = segment.Name;
 
+			nameBox.SelectionStart = nameBox.MaxLength-1;
+			nameBox.SelectionLength = 0;
+
 			reps = segment.Reps;
 			seconds = segment.Seconds;
 
@@ -156,8 +159,6 @@ namespace KeepWithIt {
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
 			switch(args.VirtualKey) {
 				case VirtualKey.Escape:
-				case VirtualKey.GamepadB:
-				case VirtualKey.NavigationCancel:
 					GoBack();
 					break;
 				case VirtualKey.GamepadA:
@@ -168,25 +169,21 @@ namespace KeepWithIt {
 					}
 					break;
 				case VirtualKey.Up:
-				case VirtualKey.GamepadDPadUp:
-				case VirtualKey.NavigationUp:
+
 					FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
 					break;
 				case VirtualKey.Down:
-				case VirtualKey.GamepadDPadDown:
-				case VirtualKey.NavigationDown:
+
 					FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
 					break;
 				case VirtualKey.Left:
-				case VirtualKey.GamepadDPadLeft:
-				case VirtualKey.NavigationLeft:
+
 					if(FocusManager.GetFocusedElement() != nameBox) {
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
 					}
 					break;
 				case VirtualKey.Right:
-				case VirtualKey.GamepadDPadRight:
-				case VirtualKey.NavigationRight:
+
 					if(FocusManager.GetFocusedElement() != nameBox) {
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
 					}
@@ -273,6 +270,20 @@ namespace KeepWithIt {
 
 		private void Button_Click(object sender,RoutedEventArgs e) {
 			OpenImagePrompt();
+		}
+
+		private void doubleSidedToggle_Checked(object sender,RoutedEventArgs e) {
+			doubleSidedToggle.Content = "is double sided";
+		}
+
+		private void doubleSidedToggle_Unchecked(object sender,RoutedEventArgs e) {
+			doubleSidedToggle.Content = "not double sided";
+		}
+
+		private void nameBox_KeyUp(object sender,KeyRoutedEventArgs e) {
+			if(e.Key == VirtualKey.Enter) {
+				FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+			}
 		}
 	}
 }

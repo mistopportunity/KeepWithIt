@@ -13,8 +13,8 @@
 				<ColumnDefinition x:Name="Column2" Width="4*"></ColumnDefinition>
 				<ColumnDefinition x:Name="Column3" Width="1*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<TextBox x:Name="nameBox" Grid.Column="1" VerticalAlignment="Top" Margin="10,10,10,0" HorizontalAlignment="Stretch" FontSize="18" Height="36" MaxLength="32" TabIndex="0"/>
-			<ToggleButton x:Name="doubleSidedToggle" Content="is double sided" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Margin="10,354,10,0" Height="36" FontSize="18" IsChecked="False" TabIndex="6" FontWeight="Bold"/>
+			<TextBox x:Name="nameBox" Grid.Column="1" VerticalAlignment="Top" Margin="10,10,10,0" HorizontalAlignment="Stretch" FontSize="18" Height="36" MaxLength="32" TabIndex="0" PreventKeyboardDisplayOnProgrammaticFocus="True" KeyUp="nameBox_KeyUp"/>
+			<ToggleButton x:Name="doubleSidedToggle" Content="not double sided" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="1" Margin="10,354,10,0" Height="36" FontSize="18" TabIndex="6" FontWeight="Bold" Checked="doubleSidedToggle_Checked" Unchecked="doubleSidedToggle_Unchecked"/>
 			<Button x:Name="deleteButton" Content="delete segment" Grid.Column="1" Height="36" VerticalAlignment="Top" Margin="10,407,10,0" FontSize="18" HorizontalAlignment="Stretch" TabIndex="7" Click="deleteButton_Click" FontWeight="Bold"/>
 			<StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,45,0,0">
 				<StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10">

@@ -23,12 +23,12 @@
 						<LineBreak/>
 						<Run Text="'Flat lines' by Eleonor Wan (CC 3.0 BY)" FontSize="16"/>
 						<LineBreak/>
-						<Hyperlink NavigateUri="https://www.flaticon.com/packs/flat-lines">https://www.flaticon.com/packs/flat-lines</Hyperlink>
+						<Run TextDecorations="Underline">https://www.flaticon.com/packs/flat-lines</Run>
 						<LineBreak/>
 						<LineBreak/>
 						<Run Text="'Kittens!' By Nicolas Suzor (CC BY-SA 2.0)" FontSize="16"/>
 						<LineBreak/>
-						<Hyperlink NavigateUri="https://en.wikipedia.org/wiki/File:Cute_grey_kitten.jpg">https://en.wikipedia.org/wiki/File:Cute_grey_kitten.jpg</Hyperlink>
+						<Run TextDecorations="Underline" >https://en.wikipedia.org/wiki/File:Cute_grey_kitten.jpg</Run>
 					</Paragraph>
 				</RichTextBlock>
 			</Viewbox>

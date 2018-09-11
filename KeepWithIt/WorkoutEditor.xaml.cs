@@ -57,6 +57,8 @@ namespace KeepWithIt {
 
 				nameBox.SelectionStart = nameBox.MaxLength-1;
 				nameBox.SelectionLength = 0;
+
+
 				loaded = true;
 			} else if(PendingDeletion != null) {
 
@@ -137,8 +139,6 @@ namespace KeepWithIt {
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
 			switch(args.VirtualKey) {
 				case VirtualKey.Escape:
-				case VirtualKey.GamepadB:
-				case VirtualKey.NavigationCancel:
 					GoBackAndNibbaRigSomeShit();
 					break;
 				case VirtualKey.GamepadA:
@@ -149,25 +149,17 @@ namespace KeepWithIt {
 					}
 					break;
 				case VirtualKey.Up:
-				case VirtualKey.GamepadDPadUp:
-				case VirtualKey.NavigationUp:
 					focusUp();
 					break;
 				case VirtualKey.Down:
-				case VirtualKey.GamepadDPadDown:
-				case VirtualKey.NavigationDown:
 					focusDown();
 					break;
 				case VirtualKey.Left:
-				case VirtualKey.GamepadDPadLeft:
-				case VirtualKey.NavigationLeft:
 					if(FocusManager.GetFocusedElement() != nameBox) {
 						focusUp();
 					}
 					break;
 				case VirtualKey.Right:
-				case VirtualKey.GamepadDPadRight:
-				case VirtualKey.NavigationRight:
 					if(FocusManager.GetFocusedElement() != nameBox) {
 						focusDown();
 					}
@@ -193,8 +185,10 @@ namespace KeepWithIt {
 			Frame.GoBack();
 			var workoutToSave = workout;
 			workout = null;
-			WorkoutManager.SaveWorkout(workoutToSave);
 			loaded = false;
+			#pragma warning disable CS4014
+			WorkoutManager.SaveWorkout(workoutToSave);
+			#pragma warning restore CS4014
 		}
 		private void CurrentView_BackRequested(object sender,BackRequestedEventArgs e) {
 			e.Handled = true;
@@ -236,6 +230,12 @@ namespace KeepWithIt {
 				Seconds = 0,
 			});
 			Frame.Navigate(typeof(SegmentEditor),workout.Segments.Last());
+		}
+
+		private void nameBox_KeyUp(object sender,KeyRoutedEventArgs e) {
+			if(e.Key == VirtualKey.Enter) {
+				FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+			}
 		}
 	}
 }

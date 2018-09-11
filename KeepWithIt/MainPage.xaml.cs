@@ -22,6 +22,7 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.Storage;
 using System.Threading.Tasks;
+using Windows.UI.ViewManagement;
 
 namespace KeepWithIt {
 	public sealed partial class MainPage:Page {
@@ -89,6 +90,9 @@ namespace KeepWithIt {
 		}
 
 		protected override void OnNavigatedTo(NavigationEventArgs e) {
+
+			ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+
 			var app = ((App)Application.Current);
 			if(app.AWeirdPlaceForAWorkoutObjectThatIsViolatingCodingPrincipals != null) {
 				if(app.WasThatComplicatedNavigationalMessFromANewWorkout) {
@@ -580,27 +584,15 @@ namespace KeepWithIt {
 			if(!squaresCentered) {
 				switch(args.VirtualKey) {
 					case VirtualKey.Escape:
-					case VirtualKey.GamepadB:
-					case VirtualKey.NavigationCancel:
 						ClearPresentSquare(true);
 						break;
-					case VirtualKey.GamepadDPadDown:
-					case VirtualKey.GamepadDPadRight:
 					case VirtualKey.Right:
 					case VirtualKey.Down:
-					case VirtualKey.NavigationDown:
-					case VirtualKey.NavigationRight:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
-						ElementSoundPlayer.Play(ElementSoundKind.Focus);
 						break;
-					case VirtualKey.GamepadDPadLeft:
-					case VirtualKey.GamepadDPadUp:
-					case VirtualKey.NavigationLeft:
-					case VirtualKey.NavigationUp:
 					case VirtualKey.Left:
 					case VirtualKey.Up:
 						FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
-						ElementSoundPlayer.Play(ElementSoundKind.Focus);
 						break;
 
 				}
@@ -616,21 +608,25 @@ namespace KeepWithIt {
 					case VirtualKey.Up:
 					case VirtualKey.GamepadDPadUp:
 					case VirtualKey.NavigationUp:
+					case VirtualKey.GamepadLeftThumbstickUp:
 						updateSelection(0,-1);
 						break;
 					case VirtualKey.Down:
 					case VirtualKey.GamepadDPadDown:
 					case VirtualKey.NavigationDown:
+					case VirtualKey.GamepadLeftThumbstickDown:
 						updateSelection(0,1);
 						break;
 					case VirtualKey.Left:
 					case VirtualKey.GamepadDPadLeft:
 					case VirtualKey.NavigationLeft:
+					case VirtualKey.GamepadLeftThumbstickLeft:
 						updateSelection(-1,0);
 						break;
 					case VirtualKey.Right:
 					case VirtualKey.GamepadDPadRight:
 					case VirtualKey.NavigationRight:
+					case VirtualKey.GamepadLeftThumbstickRight:
 						updateSelection(1,0);
 						break;
 				}
@@ -670,7 +666,7 @@ namespace KeepWithIt {
 				savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 				savePicker.FileTypeChoices.Add("Keep with it Workout File",new List<string>() {".kwiw"});
 				savePicker.SuggestedFileName = WorkoutManager.Workouts[presentedSquareIndex].Name;
-				ElementSoundPlayer.Play(ElementSoundKind.Show);
+
 				StorageFile file = await savePicker.PickSaveFileAsync();
 				if(file != null) {
 					CachedFileManager.DeferUpdates(file);
@@ -680,7 +676,7 @@ namespace KeepWithIt {
 						status = await CachedFileManager.CompleteUpdatesAsync(file);
 					}
 					if(status != FileUpdateStatus.Complete) {
-						ElementSoundPlayer.Play(ElementSoundKind.Show);
+
 						MessageDialog messageDialog = new MessageDialog("Workout couldn't be exported! SAD SAD SAD SAADDDDD SAD") {
 							DefaultCommandIndex = 0,
 							CancelCommandIndex = 0
@@ -688,8 +684,10 @@ namespace KeepWithIt {
 						messageDialog.Commands.Add(new UICommand("Okay :("));
 						await messageDialog.ShowAsync();
 					}
+				} else {
+					ElementSoundPlayer.Play(ElementSoundKind.Hide);
 				}
-				ElementSoundPlayer.Play(ElementSoundKind.Hide);
+
 				setButtonsEnabled(true);
 				exporting = false;
 			}
@@ -702,7 +700,7 @@ namespace KeepWithIt {
 				var currentSquare = presentedSquareIndex;
 				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutEditor),WorkoutManager.Workouts[currentSquare]);
-				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
+
 			}
 		}
 		private void GotoActualWorkout() {
@@ -710,38 +708,39 @@ namespace KeepWithIt {
 				var currentSquare = presentedSquareIndex;
 				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutPage),WorkoutManager.Workouts[currentSquare]);
-				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
+
 			}
 		}
 		private void GotoCreation()  {
 			if(squaresCentered && !importing) {
+				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
 				var currentSquare = presentedSquareIndex;
 				userIsAwayFromThisPlace = true;
 				Frame.Navigate(typeof(WorkoutEditor));
-				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
+
 
 			}
 		}
 		private void GotoAbout() {
 			if(squaresCentered && !importing) {
-				Frame.Navigate(typeof(AboutPage));
 				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
+				Frame.Navigate(typeof(AboutPage));
+
 			}
 		}
 		private bool importing = false;
 		private async void GotoImport() {
 			if(squaresCentered && !importing) {
 				importing = true;
+				ElementSoundPlayer.Play(ElementSoundKind.Invoke);
 				var picker = new FileOpenPicker();
 				picker.ViewMode = PickerViewMode.Thumbnail;
 				picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 				picker.FileTypeFilter.Add(".kwiw");
-				ElementSoundPlayer.Play(ElementSoundKind.Show);
 				var file = await picker.PickSingleFileAsync();
 				if(file != null) {
 					var fileResult = await WorkoutManager.AddWorkout(file);
 					if(fileResult == false) {
-						ElementSoundPlayer.Play(ElementSoundKind.Show);
 						MessageDialog messageDialog = new MessageDialog("Workout couldn't be imported! SAD SAD SAD SAADDDDD SAD") {
 							DefaultCommandIndex = 0,
 							CancelCommandIndex = 0
@@ -753,8 +752,10 @@ namespace KeepWithIt {
 						AddedANewDamnWorkoutToTheMix(newWorkout);
 						PostImportSelect(newWorkout,true);
 					}
+				} else {
+					ElementSoundPlayer.Play(ElementSoundKind.Hide);
 				}
-				ElementSoundPlayer.Play(ElementSoundKind.Hide);
+
 				importing = false;
 			}
 		}
@@ -782,16 +783,16 @@ namespace KeepWithIt {
 				messageDialog.Commands.Add(new UICommand("Yes. Leave me alone!",async (command) => {
 					await WorkoutManager.DeleteWorkout(presentedSquareIndex);
 					DeleteAWorkoutRestInPeace(presentedSquareIndex);
-					ClearPresentSquare(true);
+					ClearPresentSquare(playSound: false);
 					deleting = false;
 				}));
 				messageDialog.Commands.Add(new UICommand("No! Please, Daddy don't delete it!",(command) => {
 					deleting = false;
 					setButtonsEnabled(true);
 					FocusManager.TryMoveFocus(FocusNavigationDirection.Previous);
-					ElementSoundPlayer.Play(ElementSoundKind.Hide);
+
 				}));
-				ElementSoundPlayer.Play(ElementSoundKind.Show);
+
 				await messageDialog.ShowAsync();
 			}
 		}

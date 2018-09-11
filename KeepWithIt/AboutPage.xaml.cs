@@ -51,29 +51,7 @@ namespace KeepWithIt {
 		private void CoreWindow_KeyPressEvent(CoreWindow sender,KeyEventArgs args) {
 			switch(args.VirtualKey) {
 				case VirtualKey.Escape:
-				case VirtualKey.GamepadB:
-				case VirtualKey.NavigationCancel:
 					Frame.GoBack();
-					break;
-				case VirtualKey.Up:
-				case VirtualKey.GamepadDPadUp:
-				case VirtualKey.NavigationUp:
-					FocusManager.TryMoveFocus(FocusNavigationDirection.Up);
-					break;
-				case VirtualKey.Down:
-				case VirtualKey.GamepadDPadDown:
-				case VirtualKey.NavigationDown:
-					FocusManager.TryMoveFocus(FocusNavigationDirection.Down);
-					break;
-				case VirtualKey.Left:
-				case VirtualKey.GamepadDPadLeft:
-				case VirtualKey.NavigationLeft:
-					FocusManager.TryMoveFocus(FocusNavigationDirection.Down);
-					break;
-				case VirtualKey.Right:
-				case VirtualKey.GamepadDPadRight:
-				case VirtualKey.NavigationRight:
-					FocusManager.TryMoveFocus(FocusNavigationDirection.Up);
 					break;
 			}
 		}
